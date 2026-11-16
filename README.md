@@ -12,7 +12,7 @@
 
 An Android app modelled on the 12-digit business calculator on my desk. The key layout, colours and calculation rules follow the real device and the function card printed on the back of its packaging. The interface is redrawn natively with Android Canvas, keeping the depth of the keys, the soft shadows and the press-and-spring-back feel.
 
-> The layout and key arrangement are based on the LIBERTY LB-5003CA desk calculator. This is a personal coursework project, not an official product, and is not affiliated with LIBERTY (利百代).
+> The layout and key arrangement are based on the LIBERTY LB-5003CA desk calculator. This is a personal project, not an official product, and is not affiliated with LIBERTY (利百代).
 
 ### Installation
 
@@ -98,7 +98,7 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 
 把我桌上那台 12 位數商用計算機做成 Android App。按鍵配置、配色和運算規則都照實機與包裝背面的功能說明卡；畫面用 Android 原生 Canvas 重畫，保留按鍵的厚度、柔和陰影和按壓回彈的手感。
 
-> 介面與按鍵配置參考利百代 LB-5003CA 桌上型計算機。本專案為個人課程作業，非官方產品，與利百代公司無關。
+> 介面與按鍵配置參考利百代 LB-5003CA 桌上型計算機。本專案為個人作品，非官方產品，與利百代公司無關。
 
 ### 安裝
 
