@@ -96,7 +96,7 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 
 [English (GB)](#english-gb) · **正體中文**
 
-把我桌上那台 12 位數商用計算機做成 Android App。按鍵配置、配色和運算規則都照實機與包裝背面的功能說明卡；畫面用 Android 原生 Canvas 重畫，保留按鍵的厚度、柔和陰影和按壓回彈的手感。
+我把桌上那台 12 位數商用計算機做成 Android App。按鍵配置、配色和運算規則都照實機與包裝背面的功能說明卡；畫面用 Android 原生 Canvas 重畫，保留按鍵的厚度、柔和陰影和按壓回彈的手感。
 
 > 介面與按鍵配置參考利百代 LB-5003CA 桌上型計算機。本專案為個人作品，非官方產品，與利百代公司無關。
 
