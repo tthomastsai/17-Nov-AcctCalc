@@ -111,8 +111,11 @@ public class CalcEngine {
         op = o; newEntry = true; typed = false;
     }
 
-    private void equals() {
-        double r; boolean counted = true;
+    private void equals() { equals(true); }
+
+    /** @param toGt false when the result is only being finished for M+ / M− (it must not go into GT) */
+    private void equals(boolean toGt) {
+        double r; boolean counted = toGt;
         if (op != null) {
             double a = acc, b = cur();
             if (op.equals("div") && !typed) r = a == 0 ? Double.NaN : 1 / a;   // 5 ÷ = -> 0.2
@@ -147,7 +150,7 @@ public class CalcEngine {
     }
 
     private void memAdd(int sign) {
-        if (op != null && typed) equals();
+        if (op != null && typed) equals(false);   // finish the pending calculation, but only = and % feed GT
         if (err) return;
         mem = round(mem + sign * cur()); save();
         newEntry = true; typed = false;

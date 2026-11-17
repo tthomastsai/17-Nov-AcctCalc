@@ -16,7 +16,7 @@ An Android app modelled on the 12-digit business calculator on my desk. The key 
 
 ### Installation
 
-Download [`dist/Calculator-v2.5.apk`](dist/Calculator-v2.5.apk), open it on an Android phone and allow *Install unknown apps*. Requires Android 6.0 or later.
+Download [`dist/Calculator-v2.6.apk`](dist/Calculator-v2.6.apk), open it on an Android phone and allow *Install unknown apps*. Requires Android 6.0 or later.
 
 ### Keys and calculation rules
 
@@ -27,7 +27,7 @@ Download [`dist/Calculator-v2.5.apk`](dist/Calculator-v2.5.apk), open it on an A
 | `%` | `3000 × 20 %` → 600; `3000 + 20 %` → 3'600 (add-on); `3000 − 20 %` → 2'400 (discount); `20 ÷ 500 %` → 4 |
 | `√` | Square root of the displayed number; can be used within a calculation (`9 √ × 6 =` → 18) |
 | `M+` `M−` `MR` `MC` | Memory; if a calculation is still pending, it is completed before the result is stored |
-| `GT` | Every result from `=` or `%` is added to the grand total. Press once to recall it; pressing again (second press onwards) clears the grand total while the display stays as it is |
+| `GT` | Every result from `=` or `%` is added to the grand total (a result finished by `M+` / `M−` is not). Press once to recall it; pressing again (second press onwards) clears the grand total while the display stays as it is |
 | `ON/C·CE` | First press clears the number just entered (CE); second press clears the calculation (C). GT and memory are kept |
 | `AC` | Clears everything, including GT and memory |
 | `▶` | Deletes the last digit |
@@ -75,7 +75,7 @@ sudo apt install aapt dalvik-exchange apksigner zipalign android-sdk-platform-23
 ./build.sh
 ```
 
-`build.sh` first runs the 74 test cases in `test/cases.txt` against the calculation engine (including every example on the function card). Only if they all pass does it compile and sign `build/Calculator.apk`.
+`build.sh` first runs the 79 test cases in `test/cases.txt` against the calculation engine (including every example on the function card). Only if they all pass does it compile and sign `build/Calculator.apk`.
 
 ### Project structure
 
@@ -117,7 +117,7 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 
 ### 安裝
 
-下載 [`dist/Calculator-v2.5.apk`](dist/Calculator-v2.5.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
+下載 [`dist/Calculator-v2.6.apk`](dist/Calculator-v2.6.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
 
 ### 按鍵與運算規則
 
@@ -128,7 +128,7 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 | `%` | `3000 × 20 %` → 600；`3000 + 20 %` → 3'600（加成）；`3000 − 20 %` → 2'400（折扣）；`20 ÷ 500 %` → 4 |
 | `√` | 對螢幕上的數開根號，可以接在算式中（`9 √ × 6 =` → 18） |
 | `M+` `M−` `MR` `MC` | 記憶運算；有算式還沒算完時，會先算出結果再存入 |
-| `GT` | 每次按 `=` 或 `%` 的結果都會累加到 GT。按一下叫出；連按第二下起清空 GT，螢幕數字不變 |
+| `GT` | 每次按 `=` 或 `%` 的結果都會累加到 GT（用 `M+`／`M−` 算出的結果不會）。按一下叫出；連按第二下起清空 GT，螢幕數字不變 |
 | `ON/C·CE` | 第一下清除剛輸入的數（CE），第二下清除算式（C）；GT 與 M 保留 |
 | `AC` | 全部清除，包含 GT 與 M |
 | `▶` | 刪除最後一位 |
@@ -174,7 +174,7 @@ sudo apt install aapt dalvik-exchange apksigner zipalign android-sdk-platform-23
 ./build.sh
 ```
 
-`build.sh` 會先用 `test/cases.txt` 的 74 組案例測試運算邏輯（包含功能說明卡上的全部範例），全部通過才會編譯、簽章，輸出 `build/Calculator.apk`。
+`build.sh` 會先用 `test/cases.txt` 的 79 組案例測試運算邏輯（包含功能說明卡上的全部範例），全部通過才會編譯、簽章，輸出 `build/Calculator.apk`。
 
 ### 專案結構
 

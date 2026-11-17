@@ -74,3 +74,9 @@ dot 1 add dot 2 eq | 0.3
 1 0 div 1 0 0 eq mul 6 0 eq | 6   # 按比例分攤
 1 0 div 1 0 0 eq mul 6 0 eq 3 0 eq | 3
 1 0 div 1 0 0 eq mul 6 0 eq 3 0 eq 1 0 eq | 1
+# --- M+ / M− 不會進 GT，只有 = 和 % 的結果才會 ---
+2 5 mul 5 mplus gt | 0   # 25 × 5 M+：125 進 M，不進 GT
+2 5 mul 5 mplus mr | 125
+2 5 mul 5 mplus 1 add 1 eq gt | 2   # GT 只有 1 + 1 = 的結果
+6 0 div 3 mminus 3 add 4 eq gt | 7
+1 0 add 5 eq mplus gt | 15   # 先按 = 進 GT，再 M+ 不會重複加
