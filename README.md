@@ -10,13 +10,13 @@
 
 ## English (GB)
 
-An Android app modelled on the 12-digit business calculator on my desk. The key layout, colours and calculation rules follow the real device and the function card printed on the back of its packaging. The interface is redrawn natively with Android Canvas, keeping the depth of the keys, the soft shadows and the press-and-spring-back feel.
+An Android app modelled on the 12-digit business calculator on my desk. The key layout, colours and calculation rules follow the real device and the function card printed on the back of its packaging. The interface is redrawn natively with Android Canvas, keeping the depth of the keys, the soft shadows and the press-and-spring-back feel. On the home screen it appears as **Accounting Calculator**, so it is not confused with the phone's built-in calculator.
 
 > The layout and key arrangement are based on the LIBERTY LB-5003CA desk calculator. This is a personal project, not an official product, and is not affiliated with LIBERTY (利百代).
 
 ### Installation
 
-Download [`dist/Calculator-v2.3.apk`](dist/Calculator-v2.3.apk), open it on an Android phone and allow *Install unknown apps*. Requires Android 6.0 or later.
+Download [`dist/Calculator-v2.4.apk`](dist/Calculator-v2.4.apk), open it on an Android phone and allow *Install unknown apps*. Requires Android 6.0 or later.
 
 ### Keys and calculation rules
 
@@ -96,13 +96,13 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 
 [English (GB)](#english-gb) · **正體中文**
 
-我把桌上那台 12 位數商用計算機做成 Android App。按鍵配置、配色和運算規則都照實機與包裝背面的功能說明卡；畫面用 Android 原生 Canvas 重畫，保留按鍵的厚度、柔和陰影和按壓回彈的手感。
+我把桌上那台 12 位數商用計算機做成 Android App。按鍵配置、配色和運算規則都照實機與包裝背面的功能說明卡；畫面用 Android 原生 Canvas 重畫，保留按鍵的厚度、柔和陰影和按壓回彈的手感。App 在桌面上的名稱是 **Accounting Calculator**，以免跟手機內建的計算機搞混。
 
 > 介面與按鍵配置參考利百代 LB-5003CA 桌上型計算機。本專案為個人作品，非官方產品，與利百代公司無關。
 
 ### 安裝
 
-下載 [`dist/Calculator-v2.3.apk`](dist/Calculator-v2.3.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
+下載 [`dist/Calculator-v2.4.apk`](dist/Calculator-v2.4.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
 
 ### 按鍵與運算規則
 

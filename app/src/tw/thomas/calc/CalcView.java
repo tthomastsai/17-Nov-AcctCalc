@@ -75,7 +75,7 @@ public class CalcView extends View {
     private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint text = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
     private final Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Path path = new Path(), path2 = new Path(), path3 = new Path();
+    private final Path path = new Path();
     private final RectF tmp = new RectF();
     private final Rect bounds = new Rect();
     private final SparseArray<Key> pointers = new SparseArray<>();
@@ -184,7 +184,7 @@ public class CalcView extends View {
 
         // solar panel
         float sr = contentR - 1.5f * u, sl = sr - 30 * u, st = headTop, sb = headTop + 7.2f * u;
-        fill.setColor(Color.BLACK); fill.setShader(new LinearGradient(0, st, 0, sb, new int[]{0xFF2A2423, 0xFF171313, 0xFF241E1D}, new float[]{0, .6f, 1}, Shader.TileMode.CLAMP));
+        fill.setShader(new LinearGradient(0, st, 0, sb, new int[]{0xFF2A2423, 0xFF171313, 0xFF241E1D}, new float[]{0, .6f, 1}, Shader.TileMode.CLAMP));
         tmp.set(sl, st, sr, sb);
         c.drawRoundRect(tmp, .6f * u, .6f * u, fill);
         fill.setShader(null);
@@ -233,23 +233,27 @@ public class CalcView extends View {
         fill.setShader(null); fill.setColor(th.bezelLine);
         tmp.set(bezel); tmp.inset(-.35f * u, -.35f * u);
         c.drawRoundRect(tmp, 2.5f * u, 2.5f * u, fill);
-        fill.setColor(Color.BLACK); fill.setShader(new LinearGradient(0, bezel.top, 0, bezel.bottom, th.bezelTop, th.bezelBot, Shader.TileMode.CLAMP));
+        fill.setShader(new LinearGradient(0, bezel.top, 0, bezel.bottom, th.bezelTop, th.bezelBot, Shader.TileMode.CLAMP));
         c.drawRoundRect(bezel, 2.2f * u, 2.2f * u, fill);
         fill.setShader(null); fill.setColor(th.frame);
         c.drawRoundRect(frame, 1.4f * u, 1.4f * u, fill);
 
         // glass
-        fill.setColor(Color.BLACK); fill.setShader(new LinearGradient(lcd.left, lcd.top, lcd.left + lcd.width() * .17f, lcd.bottom,
+        fill.setShader(new LinearGradient(lcd.left, lcd.top, lcd.left + lcd.width() * .17f, lcd.bottom,
             new int[]{0xFFB9BFB6, 0xFFA9AFA6, 0xFFA2A89F}, new float[]{0, .55f, 1}, Shader.TileMode.CLAMP));
         c.drawRoundRect(lcd, .6f * u, .6f * u, fill);
+        c.save();
         path.reset(); path.addRoundRect(lcd, .6f * u, .6f * u, Path.Direction.CW);
-        glassFx(c, lcd.left, lcd.top, lcd.right, lcd.top + 2.2f * u,
-            new LinearGradient(0, lcd.top, 0, lcd.top + 2.2f * u, 0x47000000, 0x00000000, Shader.TileMode.CLAMP));
-        glassFx(c, lcd.left, lcd.top, lcd.left + 1.2f * u, lcd.bottom,
-            new LinearGradient(lcd.left, 0, lcd.left + 1.2f * u, 0, 0x22000000, 0x00000000, Shader.TileMode.CLAMP));
+        c.clipPath(path);
+        fill.setShader(new LinearGradient(0, lcd.top, 0, lcd.top + 2.2f * u, 0x47000000, 0x00000000, Shader.TileMode.CLAMP));
+        c.drawRect(lcd.left, lcd.top, lcd.right, lcd.top + 2.2f * u, fill);
+        fill.setShader(new LinearGradient(lcd.left, 0, lcd.left + 1.2f * u, 0, 0x22000000, 0x00000000, Shader.TileMode.CLAMP));
+        c.drawRect(lcd.left, lcd.top, lcd.left + 1.2f * u, lcd.bottom, fill);
         float gx = lcd.width() * .45f, gy = lcd.height() * .42f;
-        glassFx(c, lcd.left, lcd.top, lcd.right, lcd.bottom,
-            new LinearGradient(lcd.left, lcd.top, lcd.left + gx, lcd.top + gy, 0x2EFFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
+        fill.setShader(new LinearGradient(lcd.left, lcd.top, lcd.left + gx, lcd.top + gy, 0x2EFFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
+        c.drawRect(lcd, fill);
+        fill.setShader(null);
+        c.restore();
 
         final int ink = 0xFF1D2320;
         boolean on = eng.on;
@@ -296,15 +300,6 @@ public class CalcView extends View {
         c.drawText(s, lcd.right - 2.4f * u, lcd.bottom - 2.4f * u - 0.2f * 10.5f * u, text);
     }
 
-    /** fill (rect ∩ current glass path) with a gradient */
-    private void glassFx(Canvas c, float l, float t, float rr, float b, Shader sh) {
-        path2.reset(); path2.addRect(l, t, rr, b, Path.Direction.CW);
-        path3.set(path); path3.op(path2, Path.Op.INTERSECT);
-        fill.setColor(Color.BLACK); fill.setShader(sh);
-        c.drawPath(path3, fill);
-        fill.setShader(null);
-    }
-
     private static int alpha(int color, float a) { return (color & 0x00FFFFFF) | (Math.round(a * 255) << 24); }
 
     private void drawKey(Canvas c, Key k) {
@@ -312,7 +307,7 @@ public class CalcView extends View {
         float pr = k.p, rad = 3f * u;
         RectF r = k.r;
         float dy = pr * .9f * u, side = (1.1f - .85f * pr) * u;
-        float shOff = (1.6f - 1.1f * pr) * u, shBlur = (1.3f - .6f * pr) * u, shA = (th.dark ? .45f : .22f) - .04f * pr;
+        float shOff = (1.6f - 1.1f * pr) * u, shBlur = (1.6f - .8f * pr) * u, shA = (th.dark ? .45f : .22f) - .04f * pr;
 
         // soft shadow: stacked translucent layers
         fill.setShader(null);
@@ -320,7 +315,7 @@ public class CalcView extends View {
         fill.setColor(alpha(Color.BLACK, a));
         for (int i = 0; i < n; i++) {
             float e = shBlur * (1f - i / (float) (n - 1));
-            tmp.set(r.left - e * .3f, r.top + dy + shOff, r.right + e * .3f, r.bottom + dy + shOff + e * .8f);
+            tmp.set(r.left - e * .6f, r.top + dy + shOff - e * .3f, r.right + e * .6f, r.bottom + dy + shOff + e);
             c.drawRoundRect(tmp, rad + e, rad + e, fill);
         }
         // key thickness
@@ -331,25 +326,18 @@ public class CalcView extends View {
         // face
         c.save();
         c.translate(0, dy);
-        // 1) face gradient
-        fill.setColor(Color.BLACK);
-        fill.setShader(new LinearGradient(0, r.top, 0, r.bottom, col[0], col[1], Shader.TileMode.CLAMP));
-        c.drawRoundRect(r, rad, rad, fill);
-        fill.setShader(null);
-        // 2) top highlight ON the face: the face shape minus itself moved down 0.4u (a thin crescent),
-        //    like CSS "inset 0 .4u 0 white"; built with Path.op so edges stay anti-aliased (no clipPath)
         path.reset(); path.addRoundRect(r, rad, rad, Path.Direction.CW);
-        path2.reset(); tmp.set(r); tmp.offset(0, .4f * u); path2.addRoundRect(tmp, rad, rad, Path.Direction.CW);
-        path3.set(path); path3.op(path2, Path.Op.DIFFERENCE);
+        c.save();
+        c.clipPath(path);
         fill.setColor(alpha(Color.WHITE, th.dark ? .14f : .55f));
-        c.drawPath(path3, fill);
-        // 3) soft shade along the bottom of the face
-        path2.reset(); path2.addRect(r.left, r.bottom - 1.2f * u, r.right, r.bottom, Path.Direction.CW);
-        path3.set(path); path3.op(path2, Path.Op.INTERSECT);
-        fill.setColor(Color.BLACK);
+        c.drawRect(r, fill);                                         // top highlight edge
+        fill.setShader(new LinearGradient(0, r.top, 0, r.bottom, col[0], col[1], Shader.TileMode.CLAMP));
+        tmp.set(r); tmp.offset(0, .4f * u);
+        c.drawRoundRect(tmp, rad, rad, fill);
         fill.setShader(new LinearGradient(0, r.bottom - 1.2f * u, 0, r.bottom, 0x00000000, 0x12000000, Shader.TileMode.CLAMP));
-        c.drawPath(path3, fill);
+        c.drawRect(r.left, r.bottom - 1.2f * u, r.right, r.bottom, fill);
         fill.setShader(null);
+        c.restore();
 
         drawLabel(c, k, col[3]);
         c.restore();
