@@ -23,7 +23,7 @@ Download [`dist/Calculator-v2.5.apk`](dist/Calculator-v2.5.apk), open it on an A
 | Key | Behaviour |
 |---|---|
 | `+ − × ÷` | Chain calculation; while the second number is being entered, the pending operator is shown in the top-right corner of the display |
-| `=` pressed repeatedly | Constant calculation: `345 + 67 = =` → 479; `678 − 12 = = =` → 642; `5 ÷ = = = =` → 0.0016; `20.5 × =` → 420.25 |
+| `=` (constant calculation) | After a calculation, enter a new number and press `=` to repeat the same operation, or press `=` again to repeat it on the result; see below |
 | `%` | `3000 × 20 %` → 600; `3000 + 20 %` → 3'600 (add-on); `3000 − 20 %` → 2'400 (discount); `20 ÷ 500 %` → 4 |
 | `√` | Square root of the displayed number; can be used within a calculation (`9 √ × 6 =` → 18) |
 | `M+` `M−` `MR` `MC` | Memory; if a calculation is still pending, it is completed before the result is stored |
@@ -32,6 +32,21 @@ Download [`dist/Calculator-v2.5.apk`](dist/Calculator-v2.5.apk), open it on an A
 | `AC` | Clears everything, including GT and memory |
 | `▶` | Deletes the last digit |
 | `⚙` | Settings (in place of the OFF key) |
+
+#### Constant calculation
+
+Once a calculation is done, the calculator keeps one of its numbers as a constant. Enter a new number and press `=`, and the same operation is applied with that constant. For × the constant is the **first** number; for +, − and ÷ it is the **second**.
+
+| Operation | Constant kept | Example | What is calculated |
+|---|---|---|---|
+| × | first number | `54 × 5 =` → 270, then `2 =` → 108, `3 =` → 162 | 54 × 2, 54 × 3 |
+| ÷ | second number (divisor) | `240 ÷ =` → 0.00416666667, then `2 =` → 0.00833333333, `5 =` → 0.02083333333 | 1 ÷ 240, 2 ÷ 240, 5 ÷ 240 |
+| + | second number | `5 + 5 =` → 10, then `6 =` → 11, `7 =` → 12, `10 =` → 15 | 6 + 5, 7 + 5, 10 + 5 |
+| − | second number | `5 − 1 =` → 4, then `3 =` → 2 | 3 − 1 |
+
+- Pressing `=` straight after the operator uses the displayed number as the second operand: `20.5 × =` → 420.25 (square); `240 ÷ =` → 1 ÷ 240 (reciprocal), with 240 kept as the divisor.
+- Pressing `=` again repeats the operation on the result: `345 + 67 = =` → 479; `678 − 12 = = =` → 642; `5 ÷ = = = =` → 0.0016 (5⁻⁴).
+- Example — sharing $10 in proportion to $60, $30 and $10 (total $100): `10 ÷ 100 =` → 0.1, then `× 60 =` → 6; 0.1 is now the constant, so `30 =` → 3 and `10 =` → 1.
 
 Display:
 
@@ -60,7 +75,7 @@ sudo apt install aapt dalvik-exchange apksigner zipalign android-sdk-platform-23
 ./build.sh
 ```
 
-`build.sh` first runs the 63 test cases in `test/cases.txt` against the calculation engine (including every example on the function card). Only if they all pass does it compile and sign `build/Calculator.apk`.
+`build.sh` first runs the 74 test cases in `test/cases.txt` against the calculation engine (including every example on the function card). Only if they all pass does it compile and sign `build/Calculator.apk`.
 
 ### Project structure
 
@@ -109,7 +124,7 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 | 按鍵 | 行為 |
 |---|---|
 | `+ − × ÷` | 連續計算；輸入第二個數時，螢幕右上會顯示目前的運算符號 |
-| `=` 連按 | 常數計算：`345 + 67 = =` → 479；`678 − 12 = = =` → 642；`5 ÷ = = = =` → 0.0016；`20.5 × =` → 420.25 |
+| `=`（常數計算） | 算完一次後，輸入新數字再按 `=` 會重複同樣的運算；直接再按 `=` 則對結果重複運算，見下方說明 |
 | `%` | `3000 × 20 %` → 600；`3000 + 20 %` → 3'600（加成）；`3000 − 20 %` → 2'400（折扣）；`20 ÷ 500 %` → 4 |
 | `√` | 對螢幕上的數開根號，可以接在算式中（`9 √ × 6 =` → 18） |
 | `M+` `M−` `MR` `MC` | 記憶運算；有算式還沒算完時，會先算出結果再存入 |
@@ -118,6 +133,21 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 | `AC` | 全部清除，包含 GT 與 M |
 | `▶` | 刪除最後一位 |
 | `⚙` | 設定（原本 OFF 鍵的位置） |
+
+#### 常數計算
+
+算完一次之後，計算機會記住其中一個數當「常數」。輸入新數字再按 `=`，就會用同樣的運算套上這個常數。乘法記住的是**第一個數**，加、減、除記住的是**第二個數**。
+
+| 運算 | 記住的常數 | 例子 | 實際算的是 |
+|---|---|---|---|
+| × | 第一個數 | `54 × 5 =` → 270，接著 `2 =` → 108、`3 =` → 162 | 54 × 2、54 × 3 |
+| ÷ | 第二個數（除數） | `240 ÷ =` → 0.00416666667，接著 `2 =` → 0.00833333333、`5 =` → 0.02083333333 | 1 ÷ 240、2 ÷ 240、5 ÷ 240 |
+| + | 第二個數 | `5 + 5 =` → 10，接著 `6 =` → 11、`7 =` → 12、`10 =` → 15 | 6 + 5、7 + 5、10 + 5 |
+| − | 第二個數 | `5 − 1 =` → 4，接著 `3 =` → 2 | 3 − 1 |
+
+- 運算符號後面直接按 `=`，會把螢幕上的數當成第二個數：`20.5 × =` → 420.25（平方）；`240 ÷ =` → 1 ÷ 240（倒數），同時把 240 記成除數。
+- 直接再按 `=`，會對結果重複運算：`345 + 67 = =` → 479；`678 − 12 = = =` → 642；`5 ÷ = = = =` → 0.0016（5⁻⁴）。
+- 例子：$10 依 $60、$30、$10（合計 $100）按比例分攤。先 `10 ÷ 100 =` 得到比例 0.1，再 `× 60 =` → 6；此時 0.1 成為常數，接著 `30 =` → 3、`10 =` → 1。
 
 螢幕顯示：
 
@@ -144,7 +174,7 @@ sudo apt install aapt dalvik-exchange apksigner zipalign android-sdk-platform-23
 ./build.sh
 ```
 
-`build.sh` 會先用 `test/cases.txt` 的 63 組案例測試運算邏輯（包含功能說明卡上的全部範例），全部通過才會編譯、簽章，輸出 `build/Calculator.apk`。
+`build.sh` 會先用 `test/cases.txt` 的 74 組案例測試運算邏輯（包含功能說明卡上的全部範例），全部通過才會編譯、簽章，輸出 `build/Calculator.apk`。
 
 ### 專案結構
 
