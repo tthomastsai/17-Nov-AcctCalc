@@ -16,7 +16,7 @@ An Android app modelled on the 12-digit business calculator on my desk. The key 
 
 ### Installation
 
-**Web version (any phone or computer):** open [`index.html`](index.html) in a browser. It is a single self-contained file that works offline, with the same calculation engine, look and settings as the Android app. It can also be published with GitHub Pages.
+**Web version (any phone or computer):** open [`index.html`](index.html) in a browser. It is a single self-contained file that works offline, with the same calculation engine, look and settings as the Android app. It can also be published with GitHub Pages; on an iPhone or iPad, Safari's *Share → Add to Home Screen* gives it a home-screen icon (`apple-touch-icon.png`).
 
 **Android app:** download [`dist/Calculator-v2.5.apk`](dist/Calculator-v2.5.apk), open it on an Android phone and allow *Install unknown apps*. Requires Android 6.0 or later.
 
@@ -122,7 +122,7 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 
 ### 安裝
 
-**網頁版（任何手機或電腦）：** 用瀏覽器打開 [`index.html`](index.html)。它是單一檔案、可離線使用，運算邏輯、外觀和設定都跟 Android 版相同，也可以用 GitHub Pages 發布成網址。
+**網頁版（任何手機或電腦）：** 用瀏覽器打開 [`index.html`](index.html)。它是單一檔案、可離線使用，運算邏輯、外觀和設定都跟 Android 版相同，也可以用 GitHub Pages 發布成網址；在 iPhone／iPad 上用 Safari 的「分享 → 加入主畫面」，就會有主畫面圖示（`apple-touch-icon.png`）。
 
 **Android 版：** 下載 [`dist/Calculator-v2.5.apk`](dist/Calculator-v2.5.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
 
