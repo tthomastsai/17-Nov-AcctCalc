@@ -124,8 +124,9 @@ function CalcEngine() {
     if (op !== null && typed) { show(calc(acc, op, cur())); if (err) return; }
     acc = cur(); op = o; newEntry = true; typed = false;
   }
-  function equals() {
-    let r, counted = true;
+  function equals(toGt) {
+    if (toGt === undefined) toGt = true;   // false when finished by M+ / M− (not added to GT)
+    let r, counted = toGt;
     if (op !== null) {
       const a = acc, b = cur();
       if (op === "div" && !typed) r = a === 0 ? NaN : 1 / a;
@@ -155,7 +156,7 @@ function CalcEngine() {
     acc = cur(); typed = false;
   }
   function memAdd(sign) {
-    if (op !== null && typed) equals();
+    if (op !== null && typed) equals(false);
     if (err) return;
     E.mem = round(E.mem + sign * cur()); save();
     newEntry = true; typed = false;
