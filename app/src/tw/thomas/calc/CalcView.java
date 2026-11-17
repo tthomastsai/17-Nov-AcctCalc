@@ -184,7 +184,7 @@ public class CalcView extends View {
 
         // solar panel
         float sr = contentR - 1.5f * u, sl = sr - 30 * u, st = headTop, sb = headTop + 7.2f * u;
-        fill.setShader(new LinearGradient(0, st, 0, sb, new int[]{0xFF2A2423, 0xFF171313, 0xFF241E1D}, new float[]{0, .6f, 1}, Shader.TileMode.CLAMP));
+        fill.setColor(Color.BLACK); fill.setShader(new LinearGradient(0, st, 0, sb, new int[]{0xFF2A2423, 0xFF171313, 0xFF241E1D}, new float[]{0, .6f, 1}, Shader.TileMode.CLAMP));
         tmp.set(sl, st, sr, sb);
         c.drawRoundRect(tmp, .6f * u, .6f * u, fill);
         fill.setShader(null);
@@ -233,24 +233,24 @@ public class CalcView extends View {
         fill.setShader(null); fill.setColor(th.bezelLine);
         tmp.set(bezel); tmp.inset(-.35f * u, -.35f * u);
         c.drawRoundRect(tmp, 2.5f * u, 2.5f * u, fill);
-        fill.setShader(new LinearGradient(0, bezel.top, 0, bezel.bottom, th.bezelTop, th.bezelBot, Shader.TileMode.CLAMP));
+        fill.setColor(Color.BLACK); fill.setShader(new LinearGradient(0, bezel.top, 0, bezel.bottom, th.bezelTop, th.bezelBot, Shader.TileMode.CLAMP));
         c.drawRoundRect(bezel, 2.2f * u, 2.2f * u, fill);
         fill.setShader(null); fill.setColor(th.frame);
         c.drawRoundRect(frame, 1.4f * u, 1.4f * u, fill);
 
         // glass
-        fill.setShader(new LinearGradient(lcd.left, lcd.top, lcd.left + lcd.width() * .17f, lcd.bottom,
+        fill.setColor(Color.BLACK); fill.setShader(new LinearGradient(lcd.left, lcd.top, lcd.left + lcd.width() * .17f, lcd.bottom,
             new int[]{0xFFB9BFB6, 0xFFA9AFA6, 0xFFA2A89F}, new float[]{0, .55f, 1}, Shader.TileMode.CLAMP));
         c.drawRoundRect(lcd, .6f * u, .6f * u, fill);
         c.save();
         path.reset(); path.addRoundRect(lcd, .6f * u, .6f * u, Path.Direction.CW);
         c.clipPath(path);
-        fill.setShader(new LinearGradient(0, lcd.top, 0, lcd.top + 2.2f * u, 0x47000000, 0x00000000, Shader.TileMode.CLAMP));
+        fill.setColor(Color.BLACK); fill.setShader(new LinearGradient(0, lcd.top, 0, lcd.top + 2.2f * u, 0x47000000, 0x00000000, Shader.TileMode.CLAMP));
         c.drawRect(lcd.left, lcd.top, lcd.right, lcd.top + 2.2f * u, fill);
-        fill.setShader(new LinearGradient(lcd.left, 0, lcd.left + 1.2f * u, 0, 0x22000000, 0x00000000, Shader.TileMode.CLAMP));
+        fill.setColor(Color.BLACK); fill.setShader(new LinearGradient(lcd.left, 0, lcd.left + 1.2f * u, 0, 0x22000000, 0x00000000, Shader.TileMode.CLAMP));
         c.drawRect(lcd.left, lcd.top, lcd.left + 1.2f * u, lcd.bottom, fill);
         float gx = lcd.width() * .45f, gy = lcd.height() * .42f;
-        fill.setShader(new LinearGradient(lcd.left, lcd.top, lcd.left + gx, lcd.top + gy, 0x2EFFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
+        fill.setColor(Color.BLACK); fill.setShader(new LinearGradient(lcd.left, lcd.top, lcd.left + gx, lcd.top + gy, 0x2EFFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
         c.drawRect(lcd, fill);
         fill.setShader(null);
         c.restore();
@@ -307,7 +307,7 @@ public class CalcView extends View {
         float pr = k.p, rad = 3f * u;
         RectF r = k.r;
         float dy = pr * .9f * u, side = (1.1f - .85f * pr) * u;
-        float shOff = (1.6f - 1.1f * pr) * u, shBlur = (1.6f - .8f * pr) * u, shA = (th.dark ? .45f : .22f) - .04f * pr;
+        float shOff = (1.6f - 1.1f * pr) * u, shBlur = (1.3f - .6f * pr) * u, shA = (th.dark ? .45f : .22f) - .04f * pr;
 
         // soft shadow: stacked translucent layers
         fill.setShader(null);
@@ -315,7 +315,7 @@ public class CalcView extends View {
         fill.setColor(alpha(Color.BLACK, a));
         for (int i = 0; i < n; i++) {
             float e = shBlur * (1f - i / (float) (n - 1));
-            tmp.set(r.left - e * .6f, r.top + dy + shOff - e * .3f, r.right + e * .6f, r.bottom + dy + shOff + e);
+            tmp.set(r.left - e * .3f, r.top + dy + shOff, r.right + e * .3f, r.bottom + dy + shOff + e * .8f);
             c.drawRoundRect(tmp, rad + e, rad + e, fill);
         }
         // key thickness
@@ -331,10 +331,10 @@ public class CalcView extends View {
         c.clipPath(path);
         fill.setColor(alpha(Color.WHITE, th.dark ? .14f : .55f));
         c.drawRect(r, fill);                                         // top highlight edge
-        fill.setShader(new LinearGradient(0, r.top, 0, r.bottom, col[0], col[1], Shader.TileMode.CLAMP));
+        fill.setColor(Color.BLACK); fill.setShader(new LinearGradient(0, r.top, 0, r.bottom, col[0], col[1], Shader.TileMode.CLAMP));
         tmp.set(r); tmp.offset(0, .4f * u);
         c.drawRoundRect(tmp, rad, rad, fill);
-        fill.setShader(new LinearGradient(0, r.bottom - 1.2f * u, 0, r.bottom, 0x00000000, 0x12000000, Shader.TileMode.CLAMP));
+        fill.setColor(Color.BLACK); fill.setShader(new LinearGradient(0, r.bottom - 1.2f * u, 0, r.bottom, 0x00000000, 0x12000000, Shader.TileMode.CLAMP));
         c.drawRect(r.left, r.bottom - 1.2f * u, r.right, r.bottom, fill);
         fill.setShader(null);
         c.restore();
