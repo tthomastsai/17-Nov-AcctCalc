@@ -62,3 +62,15 @@ dot 1 add dot 2 eq | 0.3
 1 div 3 eq mul 3 eq | 1
 1 div 3 eq neg add 1 eq | 0.66666666667
 1 0 div 4 eq back | 2.5
+# --- 常數計算：換數字再按 = ---
+5 4 mul 5 eq 2 eq | 108   # × 記住第一個數
+5 4 mul 5 eq 3 eq | 162
+2 4 0 div eq | 0.00416666667   # a ÷ = 取倒數
+2 4 0 div eq 2 eq | 0.00833333333   # ÷ 記住除數
+2 4 0 div eq 5 eq | 0.02083333333
+5 add 5 eq 6 eq | 11   # + 記住加數
+5 add 5 eq 1 0 eq | 15
+5 sub 1 eq 3 eq | 2   # − 記住減數
+1 0 div 1 0 0 eq mul 6 0 eq | 6   # 按比例分攤
+1 0 div 1 0 0 eq mul 6 0 eq 3 0 eq | 3
+1 0 div 1 0 0 eq mul 6 0 eq 3 0 eq 1 0 eq | 1
