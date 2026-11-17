@@ -16,7 +16,9 @@ An Android app modelled on the 12-digit business calculator on my desk. The key 
 
 ### Installation
 
-Download [`dist/Calculator-v2.5.apk`](dist/Calculator-v2.5.apk), open it on an Android phone and allow *Install unknown apps*. Requires Android 6.0 or later.
+**Web version (any phone or computer):** open [`index.html`](index.html) in a browser. It is a single self-contained file that works offline, with the same calculation engine, look and settings as the Android app. It can also be published with GitHub Pages.
+
+**Android app:** download [`dist/Calculator-v2.5.apk`](dist/Calculator-v2.5.apk), open it on an Android phone and allow *Install unknown apps*. Requires Android 6.0 or later.
 
 ### Keys and calculation rules
 
@@ -60,11 +62,14 @@ sudo apt install aapt dalvik-exchange apksigner zipalign android-sdk-platform-23
 ./build.sh
 ```
 
+To test the web version's engine: `node test/web-engine.test.js` (same 63 cases).
+
 `build.sh` first runs the 63 test cases in `test/cases.txt` against the calculation engine (including every example on the function card). Only if they all pass does it compile and sign `build/Calculator.apk`.
 
 ### Project structure
 
 ```
+index.html           Web version: one file, runs fully in the browser (JS port of the app)
 app/src/tw/thomas/calc/
   CalcEngine.java    Calculation logic (plain Java, testable on a computer)
   CalcView.java      Calculator face and key animation (drawn with Canvas)
@@ -102,7 +107,9 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 
 ### 安裝
 
-下載 [`dist/Calculator-v2.5.apk`](dist/Calculator-v2.5.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
+**網頁版（任何手機或電腦）：** 用瀏覽器打開 [`index.html`](index.html)。它是單一檔案、可離線使用，運算邏輯、外觀和設定都跟 Android 版相同，也可以用 GitHub Pages 發布成網址。
+
+**Android 版：** 下載 [`dist/Calculator-v2.5.apk`](dist/Calculator-v2.5.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
 
 ### 按鍵與運算規則
 
@@ -144,11 +151,14 @@ sudo apt install aapt dalvik-exchange apksigner zipalign android-sdk-platform-23
 ./build.sh
 ```
 
+網頁版的運算邏輯可以用 `node test/web-engine.test.js` 測試（同樣 63 組案例）。
+
 `build.sh` 會先用 `test/cases.txt` 的 63 組案例測試運算邏輯（包含功能說明卡上的全部範例），全部通過才會編譯、簽章，輸出 `build/Calculator.apk`。
 
 ### 專案結構
 
 ```
+index.html           網頁版：單一檔案，完全在瀏覽器執行（App 的 JavaScript 移植版）
 app/src/tw/thomas/calc/
   CalcEngine.java    運算邏輯（純 Java，可以在電腦上測試）
   CalcView.java      計算機畫面與按鍵動畫（Canvas 繪製）
