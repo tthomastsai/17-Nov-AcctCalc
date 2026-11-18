@@ -21,6 +21,17 @@ public final class I18n {
         put("done", "完成", "Done");
         put("auto_dark", "深色模式時自動切換為曜石黑", "Switch to Obsidian in dark mode");
         put("theme_light", "淺色模式下的主題配色", "Colour theme in light mode");
+        put("lang_system", "跟隨系統", "System default");
+        put("lang_hint", "也可以在手機的「設定 › 應用程式 › 會計計算機 › 語言」更改。", "You can also change this in the phone's Settings › Apps › Accounting Calculator › Language.");
+        put("display", "外觀", "Appearance");
+        put("about", "關於", "About");
+        put("version", "版本", "Version");
+        put("about_basis", "介面與按鍵配置參考利百代 LB-5003CA 桌上型計算機。本 App 為個人作品，非官方產品，與利百代公司無關。",
+            "The layout and keys are based on the LIBERTY LB-5003CA desk calculator. This is a personal project, not an official product, and is not affiliated with LIBERTY (利百代).");
+        put("about_made", "開發：tthomastsai（與 Claude 協作）", "Made by tthomastsai, with Claude");
+        put("about_font", "字型：Google Sans（SIL Open Font License 1.1）", "Font: Google Sans (SIL Open Font Licence 1.1)");
+        put("about_web", "網頁版", "Web version");
+        put("back", "返回", "Back");
         put("tour_replay", "重看導覽", "Replay the tour");
         put("tour_skip", "跳過", "Skip");
         put("tour_next", "下一步", "Next");

@@ -1,6 +1,13 @@
 package tw.thomas.calc;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 /** Colour sets. Each key type has: face top, face bottom, side (thickness), label. */
 public final class Theme {
@@ -43,6 +50,32 @@ public final class Theme {
             k("#FFFFFF", "#F1F4F8", "#C3CCD8", "#4F5C6E"),
             k("#FFCC45", "#F5B921", "#C79413", "#4F3D08")),
     };
+
+    // ---------------------------------------------------------------- shared helpers
+    public static boolean autoDark(SharedPreferences p) { return p.getBoolean("autoDark", true); }
+
+    public static boolean systemDark(Context c) {
+        return (c.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+    }
+
+    public static Theme chosen(SharedPreferences p) { return byId(p.getString("theme", "cream")); }
+
+    /** the theme on screen: Obsidian while the system is in dark mode (if enabled), otherwise the chosen one */
+    public static Theme current(Context c, SharedPreferences p) {
+        return autoDark(p) && systemDark(c) ? byId("obsidian") : chosen(p);
+    }
+
+    /** colour the status and navigation bars to match */
+    public static void applyBars(Activity a, Theme t) {
+        Window w = a.getWindow();
+        w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        w.setStatusBarColor(t.bg);
+        w.setNavigationBarColor(t.bg);
+        w.getDecorView().setBackgroundColor(t.bg);
+        int flags = 0;
+        if (!t.dark) flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+        w.getDecorView().setSystemUiVisibility(flags);
+    }
 
     public static Theme byId(String id) {
         for (Theme t : ALL) if (t.id.equals(id)) return t;

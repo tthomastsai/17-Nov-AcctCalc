@@ -16,7 +16,7 @@ An Android app modelled on the 12-digit business calculator on my desk. The key 
 
 ### Installation
 
-Download [`dist/Calculator-v2.12.apk`](dist/Calculator-v2.12.apk), open it on an Android phone and allow *Install unknown apps*. Requires Android 6.0 or later.
+Download [`dist/Calculator-v2.13.apk`](dist/Calculator-v2.13.apk), open it on an Android phone and allow *Install unknown apps*. Requires Android 6.0 or later.
 
 ### Keys and calculation rules
 
@@ -57,24 +57,26 @@ Display:
 
 ### Settings
 
+The ⚙ key opens the settings page.
+
 | Option | Choices |
 |---|---|
-| Language | 正體中文 / English (UK); follows the system language on first launch |
+| Language | System default / 正體中文 / English (UK). On Android 13 and later this is the app's own language, so it can also be changed in the phone's *Settings › Apps › Accounting Calculator › Language* |
 | Position | Top / Centre / Bottom (default: Bottom) |
 | Key height | 60%–100% |
 | Colour theme | Classic Cream, Obsidian, Mint, Sakura Pink, Sky Blue |
 | Switch to Obsidian in dark mode | On by default: while the phone is in dark mode the calculator uses Obsidian, and goes back to the chosen theme afterwards (the theme setting is then labelled *Colour theme in light mode*) |
 | Replay the tour | A short guided tour opens the first time the app starts; it can be replayed from here |
+| About | Version, what the design is based on, credits, font licence and a link to the web version |
 
 ![](docs/screenshots/settings.png)
 
 ### Building and testing
 
-No Android Studio or Gradle needed. On Ubuntu / Debian:
+No Android Studio or Gradle needed: JDK 17 or later, plus Android SDK **build-tools 35** and **platform 34** (unzipped from Google's SDK repository). By default `build.sh` looks for them under `/opt/asdk/bt35/*/` and `/opt/asdk/p34/*/`; otherwise set `BUILD_TOOLS` and `ANDROID_JAR`:
 
 ```bash
-sudo apt install aapt dalvik-exchange apksigner zipalign android-sdk-platform-23 openjdk-17-jdk
-./build.sh
+BUILD_TOOLS=~/Android/Sdk/build-tools/35.0.1 ANDROID_JAR=~/Android/Sdk/platforms/android-34/android.jar ./build.sh
 ```
 
 `build.sh` first runs the 79 test cases in `test/cases.txt` against the calculation engine (including every example on the function card). Only if they all pass does it compile and sign `build/Calculator.apk`.
@@ -85,7 +87,10 @@ sudo apt install aapt dalvik-exchange apksigner zipalign android-sdk-platform-23
 app/src/tw/thomas/calc/
   CalcEngine.java    Calculation logic (plain Java, testable on a computer)
   CalcView.java      Calculator face and key animation (drawn with Canvas)
-  MainActivity.java  Settings panel and saved preferences
+  MainActivity.java  Starts the calculator, applies the saved settings
+  SettingsActivity.java  The settings page
+  TourView.java      First-run tour
+  Lang.java          App language (Android 13+ per-app language)
   Theme.java         The five colour themes
   I18n.java          Chinese and English strings
 app/assets/fonts/    Google Sans (SIL Open Font Licence 1.1)
@@ -119,7 +124,7 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 
 ### 安裝
 
-下載 [`dist/Calculator-v2.12.apk`](dist/Calculator-v2.12.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
+下載 [`dist/Calculator-v2.13.apk`](dist/Calculator-v2.13.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
 
 ### 按鍵與運算規則
 
@@ -160,22 +165,24 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 
 ### 設定
 
+按 ⚙ 鍵會開啟設定頁。
+
 | 選項 | 內容 |
 |---|---|
-| 語言 | 正體中文／English (UK)，第一次開啟時依系統語言 |
+| 語言 | 跟隨系統／正體中文／English (UK)。Android 13 以上使用系統的「個別 App 語言」，所以也可以在手機的「設定 › 應用程式 › 會計計算機 › 語言」更改 |
 | 機身位置 | 偏上／置中／偏下（預設偏下） |
 | 按鍵高度 | 60%–100% |
 | 主題配色 | 經典奶油、曜石黑、薄荷綠、櫻花粉、天空藍 |
 | 深色模式時自動切換為曜石黑 | 預設開啟：手機切到深色模式時改用曜石黑，切回淺色模式就回到原本選的主題（此時主題選項會標示為「淺色模式下的主題配色」） |
 | 重看導覽 | 第一次開啟 App 會出現簡短的導覽，之後可以從這裡重看 |
+| 關於 | 版本、設計依據、開發者、字型授權和網頁版連結 |
 
 ### 建置與測試
 
-不需要 Android Studio 或 Gradle。在 Ubuntu／Debian 上：
+不需要 Android Studio 或 Gradle，只要 JDK 17 以上，以及 Android SDK 的 **build-tools 35** 和 **platform 34**（從 Google 的 SDK 套件庫下載解壓）。`build.sh` 預設會到 `/opt/asdk/bt35/*/` 和 `/opt/asdk/p34/*/` 找；放在別處的話，用 `BUILD_TOOLS` 和 `ANDROID_JAR` 指定：
 
 ```bash
-sudo apt install aapt dalvik-exchange apksigner zipalign android-sdk-platform-23 openjdk-17-jdk
-./build.sh
+BUILD_TOOLS=~/Android/Sdk/build-tools/35.0.1 ANDROID_JAR=~/Android/Sdk/platforms/android-34/android.jar ./build.sh
 ```
 
 `build.sh` 會先用 `test/cases.txt` 的 79 組案例測試運算邏輯（包含功能說明卡上的全部範例），全部通過才會編譯、簽章，輸出 `build/Calculator.apk`。
@@ -186,7 +193,10 @@ sudo apt install aapt dalvik-exchange apksigner zipalign android-sdk-platform-23
 app/src/tw/thomas/calc/
   CalcEngine.java    運算邏輯（純 Java，可以在電腦上測試）
   CalcView.java      計算機畫面與按鍵動畫（Canvas 繪製）
-  MainActivity.java  設定面板、偏好設定儲存
+  MainActivity.java  啟動計算機、套用儲存的設定
+  SettingsActivity.java  設定頁
+  TourView.java      首次開啟的導覽
+  Lang.java          App 語言（Android 13 以上的個別 App 語言）
   Theme.java         五種配色
   I18n.java          中英文字串
 app/assets/fonts/    Google Sans（SIL Open Font License 1.1）
