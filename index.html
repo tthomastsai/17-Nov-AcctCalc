@@ -34,6 +34,19 @@ input[type=range] { width: 100%; margin: 6px 0 2px; }
 .tg::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left .15s; box-shadow: 0 1px 2px rgba(0,0,0,.25); }
 .tg:checked { background: var(--on); }
 .tg:checked::after { left: 19px; }
+#tour { position: fixed; inset: 0; display: none; z-index: 10; }
+#tour.open { display: block; }
+#tour.nohole { background: rgba(0,0,0,.6); }
+#tourHole { position: absolute; box-shadow: 0 0 0 200vmax rgba(0,0,0,.6); outline: 2px solid rgba(255,255,255,.9); pointer-events: none; }
+#tour.nohole #tourHole { display: none; }
+#tourCard { position: absolute; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 440px; border-radius: 22px; padding: 20px; box-sizing: border-box; }
+#tourCard h3 { margin: 0 0 8px; font-size: 18px; font-weight: 700; }
+#tourCard p { margin: 0; font-size: 15px; font-weight: 500; line-height: 1.45; }
+#tourCard .trow { display: flex; align-items: center; margin-top: 18px; }
+#tourCard .trow span { margin-left: auto; margin-right: 14px; font-size: 13px; font-weight: 500; }
+#tourCard button { border: 0; background: transparent; font: 700 15px inherit; font-family: inherit; cursor: pointer; padding: 12px 8px; margin-left: -8px; }
+#tourCard button.next { border-radius: 22px; padding: 12px 18px; margin: 0; }
+#replay { display: block; border: 0; background: transparent; padding: 0; margin-top: 18px; font: 500 15px inherit; font-family: inherit; cursor: pointer; }
 #done { display: block; width: 100%; margin-top: 22px; border: 0; border-radius: 22px; padding: 12px 0; font: 700 15px inherit; font-family: inherit; cursor: pointer; }
 </style>
 </head>
@@ -41,6 +54,7 @@ input[type=range] { width: 100%; margin: 6px 0 2px; }
 <canvas id="c" aria-label="Calculator"></canvas>
 <div id="dim"></div>
 <div id="sheet" role="dialog" aria-modal="true"></div>
+<div id="tour" role="dialog" aria-modal="true"><div id="tourHole"></div><div id="tourCard"></div></div>
 
 <script>
 "use strict";
@@ -251,7 +265,21 @@ const STR = {
   cream: ["經典奶油", "Classic Cream"], obsidian: ["曜石黑", "Obsidian"], mint: ["薄荷綠", "Mint"],
   sakura: ["櫻花粉", "Sakura Pink"], sky: ["天空藍", "Sky Blue"],
   auto_dark: ["深色模式時自動切換為曜石黑", "Switch to Obsidian in dark mode"],
-  auto_dark_on: ["目前是深色模式，正在使用曜石黑", "Dark mode is on, so Obsidian is in use"], title: ["會計計算機", "Accounting Calculator"],
+  auto_dark_on: ["目前是深色模式，正在使用曜石黑", "Dark mode is on, so Obsidian is in use"],
+  theme_light: ["淺色模式下的主題配色", "Colour theme in light mode"],
+  tour_replay: ["重看導覽", "Replay the tour"], tour_skip: ["跳過", "Skip"], tour_next: ["下一步", "Next"], tour_start: ["開始使用", "Get started"],
+  tour1_t: ["歡迎使用會計計算機", "Welcome to Accounting Calculator"],
+  tour1_b: ["按鍵配置和運算規則都照 12 位數的桌上型商用計算機設計，以下帶你看幾個重點。", "The keys and calculation rules follow a real 12-digit desk calculator. Here are a few things worth knowing."],
+  tour2_t: ["螢幕指示", "Display indicators"],
+  tour2_b: ["MINUS、MEMORY、ERROR、GRAND TOTAL 作用中時，下方的橫條會亮起；右上角會顯示目前的運算符號。", "A bar lights up under MINUS, MEMORY, ERROR or GRAND TOTAL when it is active; the pending operator appears in the top-right corner."],
+  tour3_t: ["GT 總計", "GT (grand total)"],
+  tour3_b: ["每次按 = 或 % 算出的結果都會累加。按一下叫出，連按第二下清空。", "Every result from = or % is added up. Press once to recall it; press again to clear it."],
+  tour4_t: ["常數計算", "Constant calculation"],
+  tour4_b: ["算完一次後，輸入新數字再按 =，會重複同樣的運算。例如 54 × 5 = 之後按 2 =，會得到 108。", "After a calculation, enter a new number and press = to repeat it. For example, after 54 × 5 =, pressing 2 = gives 108."],
+  tour5_t: ["清除", "Clearing"],
+  tour5_b: ["ON/C·CE 按一下清除剛輸入的數，按第二下清除算式；AC 會連 M 和 GT 一起清空。", "ON/C·CE clears the number just entered, and the calculation on a second press. AC clears everything, including M and GT."],
+  tour6_t: ["設定", "Settings"],
+  tour6_b: ["主題配色、深色模式、按鍵高度、機身位置和語言都在這裡，也可以重看這份導覽。", "Colour theme, dark mode, key height, position and language are all here, and you can replay this tour."], title: ["會計計算機", "Accounting Calculator"],
 };
 
 /* ================= storage ================= */
@@ -574,6 +602,10 @@ cv.addEventListener("contextmenu", e => e.preventDefault());
 const KEYMAP = { "+": "add", "-": "sub", "*": "mul", "x": "mul", "/": "div", "=": "eq", "Enter": "eq", ".": "dot",
   "Backspace": "back", "Escape": "ac", "Delete": "onc", "%": "pct" };
 document.addEventListener("keydown", e => {
+  if (tourEl.classList.contains("open")) {
+    if (e.key === "Escape") endTour(); else if (e.key === "Enter" || e.key === "ArrowRight") { e.preventDefault(); tourNext(); }
+    return;
+  }
   if (sheet.classList.contains("open")) { if (e.key === "Escape") closeSettings(); return; }
   const k = /^[0-9]$/.test(e.key) ? e.key : KEYMAP[e.key];
   if (!k) return;
@@ -648,7 +680,7 @@ function buildSettings() {
     khRow.lastChild.textContent = range.value + "%"; layout(); invalidate();
   });
   sheet.appendChild(range);
-  sec(t("theme"));
+  sec(t(autoDark ? "theme_light" : "theme"));   // with dark mode on, the choice here only applies in light mode
   const sw = document.createElement("div"); sw.className = "sw";
   THEMES.forEach(opt => {
     const b = document.createElement("button"); b.type = "button";
@@ -670,6 +702,9 @@ function buildSettings() {
     const note = document.createElement("div"); note.textContent = t("auto_dark_on");
     note.style.cssText = "font-size:12px;margin-top:-4px;color:" + th.sub; sheet.appendChild(note);
   }
+  const rp = document.createElement("button"); rp.id = "replay"; rp.type = "button"; rp.textContent = t("tour_replay");
+  rp.style.color = th.label; rp.addEventListener("click", () => { closeSettings(); startTour(); });
+  sheet.appendChild(rp);
   const done = document.createElement("button"); done.id = "done"; done.type = "button"; done.textContent = t("done");
   done.style.background = th.acc[1]; done.style.color = th.acc[3];
   done.addEventListener("click", closeSettings);
@@ -683,6 +718,45 @@ if (darkMq) {
   if (darkMq.addEventListener) darkMq.addEventListener("change", onDark); else if (darkMq.addListener) darkMq.addListener(onDark);
 }
 
+/* ================= first-run tour ================= */
+const tourEl = document.getElementById("tour"), tourHole = document.getElementById("tourHole"), tourCard = document.getElementById("tourCard");
+const TOUR = [null, "indicators", "gt", "eq", "clear", "set"];
+let tourStep = 0;
+function tourRect(id) {
+  const kr = k => keys.find(x => x.k === k).r;
+  let r;
+  if (id === "indicators") r = { l: lcd.l, t: lcd.t, r: lcd.r, b: lcd.t + 6 * u };
+  else if (id === "clear") { const a = kr("ac"), b = kr("onc"); r = { l: Math.min(a.l, b.l), t: Math.min(a.t, b.t), r: Math.max(a.r, b.r), b: Math.max(a.b, b.b) }; }
+  else r = Object.assign({}, kr(id));
+  const e = 1.6 * u, dpr = window.devicePixelRatio || 1, rect = cv.getBoundingClientRect();
+  return { l: rect.left + (r.l - e) / dpr, t: rect.top + (r.t - e) / dpr, r: rect.left + (r.r + e) / dpr, b: rect.top + (r.b + e) / dpr, rad: 3.6 * u / dpr };
+}
+function renderTour() {
+  const id = TOUR[tourStep], last = tourStep === TOUR.length - 1, n = tourStep + 1;
+  tourCard.innerHTML = "";
+  tourCard.style.background = th.dark ? "#2A2C30" : th.bezelTop; tourCard.style.color = th.fn[3];
+  const h = document.createElement("h3"); h.textContent = t("tour" + n + "_t");
+  const p = document.createElement("p"); p.textContent = t("tour" + n + "_b");
+  const row = document.createElement("div"); row.className = "trow";
+  if (!last) { const sk = document.createElement("button"); sk.type = "button"; sk.textContent = t("tour_skip"); sk.style.color = th.sub; sk.addEventListener("click", endTour); row.appendChild(sk); }
+  const ct = document.createElement("span"); ct.textContent = n + " / " + TOUR.length; ct.style.color = th.sub; row.appendChild(ct);
+  const nx = document.createElement("button"); nx.type = "button"; nx.className = "next"; nx.textContent = t(last ? "tour_start" : "tour_next");
+  nx.style.background = th.acc[1]; nx.style.color = th.acc[3]; nx.addEventListener("click", tourNext); row.appendChild(nx);
+  tourCard.append(h, p, row);
+  const vh = window.innerHeight, m = 16;
+  if (!id) { tourEl.classList.add("nohole"); tourCard.style.top = Math.max(m, (vh - tourCard.offsetHeight) / 2) + "px"; return; }
+  tourEl.classList.remove("nohole");
+  const r = tourRect(id);
+  Object.assign(tourHole.style, { left: r.l + "px", top: r.t + "px", width: (r.r - r.l) + "px", height: (r.b - r.t) + "px", borderRadius: r.rad + "px" });
+  const ch = tourCard.offsetHeight;
+  const top = (r.t + r.b) / 2 < vh / 2 ? Math.min(r.b + m, vh - ch - m) : Math.max(r.t - m - ch, m);
+  tourCard.style.top = top + "px";
+}
+function startTour() { tourStep = 0; tourEl.classList.add("open"); renderTour(); }
+function tourNext() { if (tourStep === TOUR.length - 1) endTour(); else { tourStep++; renderTour(); } }
+function endTour() { tourEl.classList.remove("open"); store.set("tourDone", "1"); }
+window.addEventListener("resize", () => { if (tourEl.classList.contains("open")) renderTour(); });
+
 /* ================= start ================= */
 applyChrome();
 layout();
@@ -690,7 +764,9 @@ invalidate();
 if (document.fonts) {
   Promise.all([400, 500, 700].map(w => document.fonts.load(`${w} 20px 'Google Sans'`))).then(() => { layout(); invalidate(); }).catch(() => {});
 }
+if (store.get("tourDone", "0") !== "1") setTimeout(startTour, 350);
 window.calcPress = k => { eng.press(k); invalidate(); };       // for testing
+window.calcTour = { start: startTour, next: tourNext };
 window.calcState = () => ({ entry: eng.entry(), err: eng.err(), mem: eng.mem, gt: eng.gt });
 })();
 </script>
