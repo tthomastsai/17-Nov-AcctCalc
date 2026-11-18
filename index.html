@@ -356,7 +356,7 @@ function drawHead() {
   setText(700, 3.4 * u, hexA(th.label), .06); drawText("CALCULATOR", x, headTop + 5.2 * u);
   setText(500, 2.5 * u, hexA(th.sub), .14); drawText("ELECTRONIC", x, headTop + 9.1 * u);
 
-  const sr = contentR - 1.5 * u, sl = sr - 30 * u, st = headTop, sb = headTop + 7.2 * u;
+  const sl = (contentL + contentR) / 2 - 15 * u, sr = sl + 30 * u, st = headTop, sb = headTop + 7.2 * u;   // solar panel centred
   fill.shader = grad(0, st, 0, sb, [argb(0xFF2A2423), argb(0xFF171313), argb(0xFF241E1D)], [0, .6, 1]);
   fillRR(sl, st, sr, sb, .6 * u);
   fill.shader = null;
@@ -370,7 +370,7 @@ function drawHead() {
   setText(500, 1.9 * u, hexA(th.sub), .12); text.align = "center";
   drawText("TWO POWER", (sl + sr) / 2, sb + 3.1 * u);
   setText(700, 2.8 * u, hexA(th.label), 0); text.skew = -.22; text.align = "right";
-  drawText("12 digits", contentR - 1.5 * u, headTop + 16.1 * u);
+  drawText("12 digits", contentR - 1.5 * u, headTop + 4.6 * u);   // right of the panel, same row
 }
 
 function drawLcd() {
