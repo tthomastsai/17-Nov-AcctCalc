@@ -196,6 +196,7 @@ public class CalcView extends View {
         // solar panel, centred in the space between the two
         float sw = 26 * u;
         float sl = (L + labW + R - digW) / 2f - sw / 2f, sr = sl + sw, st = yc - 3.6f * u, sb = yc + 3.6f * u;
+        fill.setColor(Color.BLACK);   // opaque: otherwise the panel inherits the last key's 55% alpha after the first frame
         fill.setShader(new LinearGradient(0, st, 0, sb, new int[]{0xFF2A2423, 0xFF171313, 0xFF241E1D}, new float[]{0, .6f, 1}, Shader.TileMode.CLAMP));
         tmp.set(sl, st, sr, sb);
         c.drawRoundRect(tmp, .6f * u, .6f * u, fill);
