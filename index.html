@@ -30,6 +30,10 @@ input[type=range] { width: 100%; margin: 6px 0 2px; }
 .sw button { flex: 1; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; font: 500 11px inherit; font-family: inherit; cursor: pointer; color: inherit; }
 .sw canvas { width: 48px; height: 48px; }
 .sw span { margin-top: 6px; }
+.tg { -webkit-appearance: none; appearance: none; width: 40px; height: 24px; border-radius: 12px; background: var(--off); position: relative; cursor: pointer; flex: none; margin: 0 0 0 12px; transition: background .15s; opacity: .9; }
+.tg::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left .15s; box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.tg:checked { background: var(--on); }
+.tg:checked::after { left: 19px; }
 #done { display: block; width: 100%; margin-top: 22px; border: 0; border-radius: 22px; padding: 12px 0; font: 700 15px inherit; font-family: inherit; cursor: pointer; }
 </style>
 </head>
@@ -245,7 +249,9 @@ const STR = {
   pos_top: ["偏上", "Top"], pos_centre: ["置中", "Centre"], pos_bottom: ["偏下", "Bottom"],
   key_height: ["按鍵高度", "Key height"], theme: ["主題配色", "Colour theme"], done: ["完成", "Done"],
   cream: ["經典奶油", "Classic Cream"], obsidian: ["曜石黑", "Obsidian"], mint: ["薄荷綠", "Mint"],
-  sakura: ["櫻花粉", "Sakura Pink"], sky: ["天空藍", "Sky Blue"], title: ["會計計算機", "Accounting Calculator"],
+  sakura: ["櫻花粉", "Sakura Pink"], sky: ["天空藍", "Sky Blue"],
+  auto_dark: ["深色模式時自動切換為曜石黑", "Switch to Obsidian in dark mode"],
+  auto_dark_on: ["目前是深色模式，正在使用曜石黑", "Dark mode is on, so Obsidian is in use"], title: ["會計計算機", "Accounting Calculator"],
 };
 
 /* ================= storage ================= */
@@ -255,9 +261,15 @@ const store = {
 };
 let lang = store.get("lang", (navigator.language || "").toLowerCase().startsWith("zh") ? "zh" : "en-GB");
 const t = k => (STR[k] ? STR[k][lang === "zh" ? 0 : 1] : k);
-let th = THEMES.find(x => x.id === store.get("theme", "cream")) || THEMES[0];
+let chosen = THEMES.find(x => x.id === store.get("theme", "cream")) || THEMES[0];
+let autoDark = store.get("autoDark", "1") === "1";
+const darkMq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+const systemDark = () => !!(darkMq && darkMq.matches);
+// the theme on screen: Obsidian while the system is in dark mode (if enabled), otherwise the chosen one
+const effective = () => (autoDark && systemDark() ? THEMES.find(x => x.id === "obsidian") : chosen);
+let th = effective();
 let keyScale = Math.max(.6, Math.min(1, parseFloat(store.get("keyScale", "1")) || 1));
-let align = parseFloat(store.get("align", ".5")); if (isNaN(align)) align = .5;
+let align = parseFloat(store.get("align", "1")); if (isNaN(align)) align = 1;   // default: bottom
 
 const eng = new CalcEngine();
 eng.mem = parseFloat(store.get("mem", "0")) || 0;
@@ -640,13 +652,24 @@ function buildSettings() {
   const sw = document.createElement("div"); sw.className = "sw";
   THEMES.forEach(opt => {
     const b = document.createElement("button"); b.type = "button";
-    b.appendChild(swatch(opt, opt.id === th.id));
-    const n = document.createElement("span"); n.textContent = t(opt.id); n.style.color = opt.id === th.id ? txt : th.sub;
+    b.appendChild(swatch(opt, opt.id === chosen.id));
+    const n = document.createElement("span"); n.textContent = t(opt.id); n.style.color = opt.id === chosen.id ? txt : th.sub;
     b.appendChild(n);
-    b.addEventListener("click", () => { th = opt; store.set("theme", th.id); applyChrome(); invalidate(); buildSettings(); });
+    b.addEventListener("click", () => { chosen = opt; store.set("theme", opt.id); th = effective(); applyChrome(); invalidate(); buildSettings(); });
     sw.appendChild(b);
   });
   sheet.appendChild(sw);
+  // follow dark mode
+  const dr = document.createElement("label"); dr.className = "sec"; dr.style.alignItems = "center"; dr.style.cursor = "pointer";
+  const dl = document.createElement("span"); dl.textContent = t("auto_dark"); dr.appendChild(dl);
+  const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = autoDark; cb.className = "tg";
+  cb.style.setProperty("--on", th.acc[1]); cb.style.setProperty("--off", th.sub);
+  cb.addEventListener("change", () => { autoDark = cb.checked; store.set("autoDark", autoDark ? "1" : "0"); th = effective(); applyChrome(); invalidate(); buildSettings(); });
+  dr.appendChild(cb); sheet.appendChild(dr);
+  if (autoDark && systemDark()) {
+    const note = document.createElement("div"); note.textContent = t("auto_dark_on");
+    note.style.cssText = "font-size:12px;margin-top:-4px;color:" + th.sub; sheet.appendChild(note);
+  }
   const done = document.createElement("button"); done.id = "done"; done.type = "button"; done.textContent = t("done");
   done.style.background = th.acc[1]; done.style.color = th.acc[3];
   done.addEventListener("click", closeSettings);
@@ -655,6 +678,10 @@ function buildSettings() {
 function openSettings() { buildSettings(); sheet.classList.add("open"); dim.classList.add("open"); for (const k of keys) k.down = false; pointers.clear(); }
 function closeSettings() { sheet.classList.remove("open"); dim.classList.remove("open"); invalidate(); }
 dim.addEventListener("click", closeSettings);
+if (darkMq) {
+  const onDark = () => { th = effective(); applyChrome(); invalidate(); if (sheet.classList.contains("open")) buildSettings(); };
+  if (darkMq.addEventListener) darkMq.addEventListener("change", onDark); else if (darkMq.addListener) darkMq.addListener(onDark);
+}
 
 /* ================= start ================= */
 applyChrome();
