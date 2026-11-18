@@ -122,7 +122,7 @@ public class CalcView extends View {
         if (w == 0 || h == 0) return;
         u = Math.min(w / 100f, h / 200f);
         float chFull = Math.min(h - 8 * u, 205 * u);
-        float fixed = 6 * u + 17.9f * u + 27.9f * u + 6 * u + 7 * u;     // everything except the keys
+        float fixed = 6 * u + 15.3f * u + 27.9f * u + 6 * u + 7 * u;     // everything except the keys
         float hk = chFull - fixed, hkS = hk * keyScale;
         float ch = fixed + hkS;                                          // actual body height
         float left0 = (w - 100 * u) / 2f;
@@ -132,7 +132,7 @@ public class CalcView extends View {
         float keysBottom = top0 + ch - 7 * u;
 
         headTop = top0 + 6 * u;
-        bezel.set(contentL, headTop + 17.9f * u, contentR, headTop + 45.8f * u);
+        bezel.set(contentL, headTop + 15.3f * u, contentR, headTop + 43.2f * u);
         frame.set(bezel); frame.inset(1.6f * u, 1.6f * u);
         lcd.set(frame); lcd.inset(1.1f * u, 1.1f * u);
 
@@ -176,15 +176,26 @@ public class CalcView extends View {
     }
 
     private void drawHead(Canvas c) {
-        float x = contentL + 1.5f * u;
-        setText(t700, 3.4f * u, th.label, 0.06f);
-        c.drawText("CALCULATOR", x, headTop + 5.2f * u, text);
-        setText(t500, 2.5f * u, th.sub, 0.14f);
-        c.drawText("ELECTRONIC", x, headTop + 9.1f * u, text);
+        // the three elements share one centre line, and the outer two line up with the LCD glass edges
+        float L = lcd.left, R = lcd.right, yc = headTop + 3.6f * u;
 
-        // solar panel
-        // solar panel centred, as on the real calculator
-        float sl = (contentL + contentR) / 2f - 15 * u, sr = sl + 30 * u, st = headTop, sb = headTop + 7.2f * u;
+        // label block: cap top of CALCULATOR to baseline of ELECTRONIC is centred on yc
+        setText(t700, 3.4f * u, th.label, 0.06f);
+        float labW = text.measureText("CALCULATOR");
+        c.drawText("CALCULATOR", L, yc - .75f * u, text);
+        setText(t500, 2.5f * u, th.sub, 0.14f);
+        c.drawText("ELECTRONIC", L, yc + 3.15f * u, text);
+
+        // "12 digits", right-aligned to the LCD
+        setText(t700, 2.8f * u, th.label, 0);
+        text.setTextSkewX(-0.22f);
+        float digW = text.measureText("12 digits");
+        text.setTextAlign(Paint.Align.RIGHT);
+        c.drawText("12 digits", R, yc + 1f * u, text);
+
+        // solar panel, centred in the space between the two
+        float sw = 26 * u;
+        float sl = (L + labW + R - digW) / 2f - sw / 2f, sr = sl + sw, st = yc - 3.6f * u, sb = yc + 3.6f * u;
         fill.setShader(new LinearGradient(0, st, 0, sb, new int[]{0xFF2A2423, 0xFF171313, 0xFF241E1D}, new float[]{0, .6f, 1}, Shader.TileMode.CLAMP));
         tmp.set(sl, st, sr, sb);
         c.drawRoundRect(tmp, .6f * u, .6f * u, fill);
@@ -200,12 +211,6 @@ public class CalcView extends View {
         setText(t500, 1.9f * u, th.sub, 0.12f);
         text.setTextAlign(Paint.Align.CENTER);
         c.drawText("TWO POWER", (sl + sr) / 2f, sb + 3.1f * u, text);
-
-        setText(t700, 2.8f * u, th.label, 0);
-        text.setTextSkewX(-0.22f);
-        text.setTextAlign(Paint.Align.CENTER);
-        c.drawText("12 digits", (sr + contentR) / 2f, headTop + 4.6f * u, text);   // centred between the panel and the edge
-
     }
 
     private final Path gear = new Path(), gearTmp = new Path();
