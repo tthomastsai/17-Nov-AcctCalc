@@ -183,7 +183,8 @@ public class CalcView extends View {
         c.drawText("ELECTRONIC", x, headTop + 9.1f * u, text);
 
         // solar panel
-        float sr = contentR - 1.5f * u, sl = sr - 30 * u, st = headTop, sb = headTop + 7.2f * u;
+        // solar panel centred, as on the real calculator
+        float sl = (contentL + contentR) / 2f - 15 * u, sr = sl + 30 * u, st = headTop, sb = headTop + 7.2f * u;
         fill.setShader(new LinearGradient(0, st, 0, sb, new int[]{0xFF2A2423, 0xFF171313, 0xFF241E1D}, new float[]{0, .6f, 1}, Shader.TileMode.CLAMP));
         tmp.set(sl, st, sr, sb);
         c.drawRoundRect(tmp, .6f * u, .6f * u, fill);
@@ -203,7 +204,7 @@ public class CalcView extends View {
         setText(t700, 2.8f * u, th.label, 0);
         text.setTextSkewX(-0.22f);
         text.setTextAlign(Paint.Align.RIGHT);
-        c.drawText("12 digits", contentR - 1.5f * u, headTop + 16.1f * u, text);
+        c.drawText("12 digits", contentR - 1.5f * u, headTop + 4.6f * u, text);   // to the right of the panel, same row
 
     }
 
