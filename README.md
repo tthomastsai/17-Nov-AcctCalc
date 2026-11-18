@@ -62,9 +62,10 @@ Display:
 | Option | Choices |
 |---|---|
 | Language | 正體中文 / English (UK); follows the system language on first launch |
-| Position | Top / Centre / Bottom |
+| Position | Top / Centre / Bottom (default: Bottom) |
 | Key height | 60%–100% |
 | Colour theme | Classic Cream, Obsidian, Mint, Sakura Pink, Sky Blue |
+| Switch to Obsidian in dark mode | On by default: while the phone is in dark mode the calculator uses Obsidian, and goes back to the chosen theme afterwards |
 
 ![](docs/screenshots/settings.png)
 
@@ -168,9 +169,10 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 | 選項 | 內容 |
 |---|---|
 | 語言 | 正體中文／English (UK)，第一次開啟時依系統語言 |
-| 機身位置 | 偏上／置中／偏下 |
+| 機身位置 | 偏上／置中／偏下（預設偏下） |
 | 按鍵高度 | 60%–100% |
 | 主題配色 | 經典奶油、曜石黑、薄荷綠、櫻花粉、天空藍 |
+| 深色模式時自動切換為曜石黑 | 預設開啟：手機切到深色模式時改用曜石黑，切回淺色模式就回到原本選的主題 |
 
 ### 建置與測試
 
