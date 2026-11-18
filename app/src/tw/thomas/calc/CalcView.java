@@ -203,8 +203,8 @@ public class CalcView extends View {
 
         setText(t700, 2.8f * u, th.label, 0);
         text.setTextSkewX(-0.22f);
-        text.setTextAlign(Paint.Align.RIGHT);
-        c.drawText("12 digits", contentR - 1.5f * u, headTop + 4.6f * u, text);   // to the right of the panel, same row
+        text.setTextAlign(Paint.Align.CENTER);
+        c.drawText("12 digits", (sr + contentR) / 2f, headTop + 4.6f * u, text);   // centred between the panel and the edge
 
     }
 
