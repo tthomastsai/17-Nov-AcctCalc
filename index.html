@@ -15,13 +15,20 @@ body { font-family: "Google Sans", Roboto, system-ui, sans-serif; }
 #c { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; display: block; touch-action: none; }
 
 /* ---------- settings sheet ---------- */
-#dim { position: fixed; inset: 0; background: rgba(0,0,0,.12); display: none; }
-#sheet { position: fixed; left: 50%; top: 12px; transform: translateX(-50%); width: calc(100% - 28px); max-width: 520px;
-  border-radius: 24px; padding: 20px 22px 16px; box-shadow: 0 8px 28px rgba(0,0,0,.18); display: none;
-  max-height: calc(100dvh - 24px); overflow-y: auto; }
-#sheet.open, #dim.open { display: block; }
-#sheet h2 { margin: 0; font-size: 20px; font-weight: 700; }
-.sec { font-size: 15px; font-weight: 500; margin: 18px 0 8px; display: flex; justify-content: space-between; }
+#sheet { position: fixed; inset: 0; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; z-index: 5; }
+#sheet .page { max-width: 560px; margin: 0 auto; padding: 8px 16px 28px; box-sizing: border-box; }
+#sheet.open { display: block; }
+#sheet .bar { display: flex; align-items: center; padding: 4px 0 12px; }
+#sheet .bar button { width: 44px; height: 44px; border: 0; background: transparent; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+#sheet .head { font-size: 13px; font-weight: 700; margin: 18px 6px 8px; }
+#sheet .card { border-radius: 20px; padding: 16px 18px; }
+#sheet .row { display: flex; align-items: center; padding: 8px 0; cursor: pointer; font-size: 15px; font-weight: 500; }
+#sheet .row .grow { flex: 1; }
+#sheet .hint { font-size: 12px; font-weight: 500; margin-top: 6px; }
+#sheet .para { font-size: 14px; font-weight: 500; line-height: 1.45; margin: 0 0 8px; }
+#sheet h2 { margin: 0 0 0 4px; font-size: 24px; font-weight: 700; }
+.sec { font-size: 15px; font-weight: 500; margin: 14px 0 8px; display: flex; justify-content: space-between; }
+.sec.first { margin-top: 0; }
 .sec span:last-child { opacity: .75; }
 .seg { display: flex; padding: 3px; border-radius: 20px; }
 .seg button { flex: 1; border: 0; background: transparent; font: 500 14px/1 inherit; font-family: inherit; padding: 9px 6px; border-radius: 17px; cursor: pointer; color: inherit; }
@@ -46,13 +53,10 @@ input[type=range] { width: 100%; margin: 6px 0 2px; }
 #tourCard .trow span { margin-left: auto; margin-right: 14px; font-size: 13px; font-weight: 500; }
 #tourCard button { border: 0; background: transparent; font: 700 15px inherit; font-family: inherit; cursor: pointer; padding: 12px 8px; margin-left: -8px; }
 #tourCard button.next { border-radius: 22px; padding: 12px 18px; margin: 0; }
-#replay { display: block; border: 0; background: transparent; padding: 0; margin-top: 18px; font: 500 15px inherit; font-family: inherit; cursor: pointer; }
-#done { display: block; width: 100%; margin-top: 22px; border: 0; border-radius: 22px; padding: 12px 0; font: 700 15px inherit; font-family: inherit; cursor: pointer; }
 </style>
 </head>
 <body>
 <canvas id="c" aria-label="Calculator"></canvas>
-<div id="dim"></div>
 <div id="sheet" role="dialog" aria-modal="true"></div>
 <div id="tour" role="dialog" aria-modal="true"><div id="tourHole"></div><div id="tourCard"></div></div>
 
@@ -264,6 +268,11 @@ const STR = {
   key_height: ["按鍵高度", "Key height"], theme: ["主題配色", "Colour theme"], done: ["完成", "Done"],
   cream: ["經典奶油", "Classic Cream"], obsidian: ["曜石黑", "Obsidian"], mint: ["薄荷綠", "Mint"],
   sakura: ["櫻花粉", "Sakura Pink"], sky: ["天空藍", "Sky Blue"],
+  lang_system: ["跟隨系統", "System default"], display: ["外觀", "Appearance"], about: ["關於", "About"], back: ["返回", "Back"],
+  web_edition: ["網頁版", "Web version"],
+  about_basis: ["介面與按鍵配置參考利百代 LB-5003CA 桌上型計算機。本 App 為個人作品，非官方產品，與利百代公司無關。", "The layout and keys are based on the LIBERTY LB-5003CA desk calculator. This is a personal project, not an official product, and is not affiliated with LIBERTY (利百代)."],
+  about_made: ["開發：tthomastsai（與 Claude 協作）", "Made by tthomastsai, with Claude"],
+  about_font: ["字型：Google Sans（SIL Open Font License 1.1）", "Font: Google Sans (SIL Open Font Licence 1.1)"],
   auto_dark: ["深色模式時自動切換為曜石黑", "Switch to Obsidian in dark mode"],
   auto_dark_on: ["目前是深色模式，正在使用曜石黑", "Dark mode is on, so Obsidian is in use"],
   theme_light: ["淺色模式下的主題配色", "Colour theme in light mode"],
@@ -287,7 +296,9 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
 };
-let lang = store.get("lang", (navigator.language || "").toLowerCase().startsWith("zh") ? "zh" : "en-GB");
+const sysLang = () => ((navigator.language || "").toLowerCase().startsWith("zh") ? "zh" : "en-GB");
+let langMode = store.get("lang", "system");                    // "system", "zh" or "en-GB"
+let lang = langMode === "system" ? sysLang() : langMode;
 const t = k => (STR[k] ? STR[k][lang === "zh" ? 0 : 1] : k);
 let chosen = THEMES.find(x => x.id === store.get("theme", "cream")) || THEMES[0];
 let autoDark = store.get("autoDark", "1") === "1";
@@ -617,7 +628,7 @@ document.addEventListener("keydown", e => {
 window.addEventListener("resize", () => { layout(); invalidate(); });
 
 /* ================= settings sheet ================= */
-const sheet = document.getElementById("sheet"), dim = document.getElementById("dim");
+const sheet = document.getElementById("sheet");
 function applyChrome() {
   document.documentElement.style.background = th.bg; document.body.style.background = th.bg;
   document.querySelector('meta[name="theme-color"]').content = th.bg;
@@ -650,28 +661,53 @@ function swatch(theme, sel) {
   g.beginPath(); g.arc(cx, cy + dd * .9, rr2, 0, 7); g.fillStyle = theme.acc[0]; g.fill();
   return c;
 }
+const APP_VERSION = "2.13";
+const svgChevron = (color, right) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="${right ? "M9 5l7 7-7 7" : "M15 5l-7 7 7 7"}"/></svg>`;
+const svgCheck = color => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>`;
 function buildSettings() {
-  const txt = th.fn[3];
-  sheet.innerHTML = "";
-  sheet.style.background = th.dark ? "#2A2C30" : th.bezelTop;
-  sheet.style.color = txt;
-  const h = document.createElement("h2"); h.textContent = t("settings"); sheet.appendChild(h);
-  const sec = (label, right) => {
-    const d = document.createElement("div"); d.className = "sec";
-    const a = document.createElement("span"); a.textContent = label; d.appendChild(a);
-    if (right !== undefined) { const b = document.createElement("span"); b.textContent = right; b.style.color = th.sub; d.appendChild(b); }
-    sheet.appendChild(d); return d;
+  const txt = th.fn[3], cardBg = th.dark ? "#2A2C30" : th.bezelTop, y = sheet.scrollTop;
+  sheet.innerHTML = ""; sheet.style.background = th.bg; sheet.style.color = txt;
+  const page = document.createElement("div"); page.className = "page"; sheet.appendChild(page);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+  const card = heading => {
+    if (heading) { const h = el("div", "head", heading); h.style.color = th.sub; page.appendChild(h); }
+    else page.appendChild(el("div")).style.height = "18px";
+    const c = el("div", "card"); c.style.background = cardBg; page.appendChild(c); return c;
   };
-  sec(t("language"));
-  sheet.appendChild(segmented(["正體中文", "English (UK)"], lang === "zh" ? 0 : 1, i => {
-    lang = i === 0 ? "zh" : "en-GB"; store.set("lang", lang); applyChrome(); buildSettings();
-  }));
-  sec(t("position"));
+  const sec = (parent, label, right, first) => {
+    const d = el("div", "sec" + (first ? " first" : ""));
+    d.appendChild(el("span", null, label));
+    if (right !== undefined) { const b = el("span", null, right); b.style.color = th.sub; d.appendChild(b); }
+    parent.appendChild(d); return d;
+  };
+  const linkRow = (parent, label, onClick) => {
+    const row = el("div", "row"); const l = el("span", "grow", label); l.style.color = th.label; row.appendChild(l);
+    row.insertAdjacentHTML("beforeend", svgChevron(th.sub, true)); row.addEventListener("click", onClick); parent.appendChild(row);
+  };
+
+  // top bar
+  const bar = el("div", "bar");
+  const back = el("button"); back.type = "button"; back.setAttribute("aria-label", t("back")); back.innerHTML = svgChevron(txt, false);
+  back.addEventListener("click", closeSettings);
+  bar.append(back, el("h2", null, t("settings"))); page.appendChild(bar);
+
+  // language
+  const lc = card(t("language"));
+  [["system", t("lang_system")], ["zh", "正體中文"], ["en-GB", "English (UK)"]].forEach(([m, name]) => {
+    const row = el("div", "row"); const l = el("span", "grow", name); if (m === langMode) l.style.fontWeight = "700";
+    row.appendChild(l); if (m === langMode) row.insertAdjacentHTML("beforeend", svgCheck(th.acc[1]));
+    row.addEventListener("click", () => { langMode = m; store.set("lang", m); lang = m === "system" ? sysLang() : m; applyChrome(); invalidate(); buildSettings(); });
+    lc.appendChild(row);
+  });
+
+  // appearance
+  const ac = card(t("display"));
+  sec(ac, t("position"), undefined, true);
   const aligns = [0, .5, 1], ai = align < .25 ? 0 : align > .75 ? 2 : 1;
-  sheet.appendChild(segmented([t("pos_top"), t("pos_centre"), t("pos_bottom")], ai, i => {
+  ac.appendChild(segmented([t("pos_top"), t("pos_centre"), t("pos_bottom")], ai, i => {
     align = aligns[i]; store.set("align", String(align)); layout(); invalidate(); buildSettings();
   }));
-  const khRow = sec(t("key_height"), Math.round(keyScale * 100) + "%");
+  const khRow = sec(ac, t("key_height"), Math.round(keyScale * 100) + "%");
   const range = document.createElement("input");
   range.type = "range"; range.min = 60; range.max = 100; range.value = Math.round(keyScale * 100);
   range.style.accentColor = th.acc[1];
@@ -679,40 +715,38 @@ function buildSettings() {
     keyScale = range.value / 100; store.set("keyScale", String(keyScale));
     khRow.lastChild.textContent = range.value + "%"; layout(); invalidate();
   });
-  sheet.appendChild(range);
-  sec(t(autoDark ? "theme_light" : "theme"));   // with dark mode on, the choice here only applies in light mode
-  const sw = document.createElement("div"); sw.className = "sw";
+  ac.appendChild(range);
+  sec(ac, t(autoDark ? "theme_light" : "theme"));   // with dark mode on, the choice here only applies in light mode
+  const sw = el("div", "sw");
   THEMES.forEach(opt => {
-    const b = document.createElement("button"); b.type = "button";
+    const b = el("button"); b.type = "button";
     b.appendChild(swatch(opt, opt.id === chosen.id));
-    const n = document.createElement("span"); n.textContent = t(opt.id); n.style.color = opt.id === chosen.id ? txt : th.sub;
-    b.appendChild(n);
+    const n = el("span", null, t(opt.id)); n.style.color = opt.id === chosen.id ? txt : th.sub; b.appendChild(n);
     b.addEventListener("click", () => { chosen = opt; store.set("theme", opt.id); th = effective(); applyChrome(); invalidate(); buildSettings(); });
     sw.appendChild(b);
   });
-  sheet.appendChild(sw);
-  // follow dark mode
-  const dr = document.createElement("label"); dr.className = "sec"; dr.style.alignItems = "center"; dr.style.cursor = "pointer";
-  const dl = document.createElement("span"); dl.textContent = t("auto_dark"); dr.appendChild(dl);
+  ac.appendChild(sw);
+  const dr = el("label", "sec"); dr.style.alignItems = "center"; dr.style.cursor = "pointer"; dr.style.marginTop = "18px";
+  dr.appendChild(el("span", null, t("auto_dark")));
   const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = autoDark; cb.className = "tg";
   cb.style.setProperty("--on", th.acc[1]); cb.style.setProperty("--off", th.sub);
   cb.addEventListener("change", () => { autoDark = cb.checked; store.set("autoDark", autoDark ? "1" : "0"); th = effective(); applyChrome(); invalidate(); buildSettings(); });
-  dr.appendChild(cb); sheet.appendChild(dr);
-  if (autoDark && systemDark()) {
-    const note = document.createElement("div"); note.textContent = t("auto_dark_on");
-    note.style.cssText = "font-size:12px;margin-top:-4px;color:" + th.sub; sheet.appendChild(note);
-  }
-  const rp = document.createElement("button"); rp.id = "replay"; rp.type = "button"; rp.textContent = t("tour_replay");
-  rp.style.color = th.label; rp.addEventListener("click", () => { closeSettings(); startTour(); });
-  sheet.appendChild(rp);
-  const done = document.createElement("button"); done.id = "done"; done.type = "button"; done.textContent = t("done");
-  done.style.background = th.acc[1]; done.style.color = th.acc[3];
-  done.addEventListener("click", closeSettings);
-  sheet.appendChild(done);
+  dr.appendChild(cb); ac.appendChild(dr);
+  if (autoDark && systemDark()) { const note = el("div", "hint", t("auto_dark_on")); note.style.color = th.sub; ac.appendChild(note); }
+
+  // tour
+  linkRow(card(null), t("tour_replay"), () => { closeSettings(); startTour(); });
+
+  // about
+  const ab = card(t("about"));
+  const nm = el("div", null, t("title")); nm.style.cssText = "font-size:17px;font-weight:700"; ab.appendChild(nm);
+  const ver = el("div", null, t("web_edition") + " " + APP_VERSION); ver.style.cssText = "font-size:13px;font-weight:500;margin:2px 0 12px;color:" + th.sub; ab.appendChild(ver);
+  ["about_basis", "about_made", "about_font"].forEach(k => ab.appendChild(el("p", "para", t(k))));
+
+  sheet.scrollTop = y;
 }
-function openSettings() { buildSettings(); sheet.classList.add("open"); dim.classList.add("open"); for (const k of keys) k.down = false; pointers.clear(); }
-function closeSettings() { sheet.classList.remove("open"); dim.classList.remove("open"); invalidate(); }
-dim.addEventListener("click", closeSettings);
+function openSettings() { for (const k of keys) k.down = false; pointers.clear(); sheet.classList.add("open"); buildSettings(); sheet.scrollTop = 0; }
+function closeSettings() { sheet.classList.remove("open"); invalidate(); }
 if (darkMq) {
   const onDark = () => { th = effective(); applyChrome(); invalidate(); if (sheet.classList.contains("open")) buildSettings(); };
   if (darkMq.addEventListener) darkMq.addEventListener("change", onDark); else if (darkMq.addListener) darkMq.addListener(onDark);
