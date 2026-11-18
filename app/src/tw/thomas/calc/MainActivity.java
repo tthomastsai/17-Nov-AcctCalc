@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -19,7 +20,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements CalcView.Host {
@@ -47,12 +50,34 @@ public class MainActivity extends Activity implements CalcView.Host {
 
         view = new CalcView(this, eng);
         view.setHost(this);
-        view.setThemeColors(Theme.byId(prefs.getString("theme", "cream")));
         view.setKeyScale(prefs.getFloat("keyScale", 1f));
-        view.setAlign(prefs.getFloat("align", .5f));
+        view.setAlign(prefs.getFloat("align", DEFAULT_ALIGN));
         I18n.lang = prefs.getString("lang", I18n.systemDefault());
         setContentView(view);
-        applySystemBars(view.getThemeColors());
+        applyTheme();
+    }
+
+    static final float DEFAULT_ALIGN = 1f;   // bottom
+
+    // ================================================================ theme / dark mode
+    private boolean autoDark() { return prefs.getBoolean("autoDark", true); }
+
+    private boolean systemDark() {
+        return (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+    }
+
+    /** the theme on screen: Obsidian while the system is in dark mode (if enabled), otherwise the chosen one */
+    private void applyTheme() {
+        Theme chosen = Theme.byId(prefs.getString("theme", "cream"));
+        Theme t = autoDark() && systemDark() ? Theme.byId("obsidian") : chosen;
+        view.setThemeColors(t);
+        applySystemBars(t);
+    }
+
+    @Override public void onConfigurationChanged(Configuration c) {
+        super.onConfigurationChanged(c);
+        applyTheme();                                       // dark mode switched while the app is open
+        if (dialog != null && dialog.isShowing()) buildSettings();
     }
 
     private static double parse(String s) { try { return Double.parseDouble(s); } catch (Exception e) { return 0; } }
@@ -120,7 +145,7 @@ public class MainActivity extends Activity implements CalcView.Host {
         // ---- body position
         root.addView(section(I18n.t("position"), txt));
         final float[] aligns = {0f, .5f, 1f};
-        float cur = prefs.getFloat("align", .5f);
+        float cur = prefs.getFloat("align", DEFAULT_ALIGN);
         int ai = cur < .25f ? 0 : cur > .75f ? 2 : 1;
         root.addView(segmented(new String[]{I18n.t("pos_top"), I18n.t("pos_centre"), I18n.t("pos_bottom")}, ai, t, new Pick() {
             @Override public void pick(int i) {
@@ -164,27 +189,53 @@ public class MainActivity extends Activity implements CalcView.Host {
         root.addView(th);
         LinearLayout sw = new LinearLayout(this);
         sw.setOrientation(LinearLayout.HORIZONTAL);
+        final String chosenId = prefs.getString("theme", "cream");
         for (final Theme opt : Theme.ALL) {
             LinearLayout cell = new LinearLayout(this);
             cell.setOrientation(LinearLayout.VERTICAL);
             cell.setGravity(Gravity.CENTER_HORIZONTAL);
-            Swatch s = new Swatch(opt, opt.id.equals(t.id), txt);
+            Swatch s = new Swatch(opt, opt.id.equals(chosenId), txt);
             cell.addView(s, new LinearLayout.LayoutParams(dp(48), dp(48)));
-            TextView n = label(I18n.t(opt.id), 11, t500, opt.id.equals(t.id) ? txt : sub);
+            TextView n = label(I18n.t(opt.id), 11, t500, opt.id.equals(chosenId) ? txt : sub);
             n.setPadding(0, dp(6), 0, 0);
             n.setGravity(Gravity.CENTER_HORIZONTAL);
             cell.addView(n);
             cell.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
-                    view.setThemeColors(opt);
-                    applySystemBars(opt);
                     prefs.edit().putString("theme", opt.id).apply();
+                    applyTheme();
                     buildSettings();
                 }
             });
             sw.addView(cell, new LinearLayout.LayoutParams(0, -2, 1));
         }
         root.addView(sw);
+
+        // ---- follow dark mode
+        LinearLayout dr = new LinearLayout(this);
+        dr.setOrientation(LinearLayout.HORIZONTAL);
+        dr.setGravity(Gravity.CENTER_VERTICAL);
+        dr.setPadding(0, dp(18), 0, 0);
+        dr.addView(label(I18n.t("auto_dark"), 15, t500, txt), new LinearLayout.LayoutParams(0, -2, 1));
+        Switch toggle = new Switch(this);
+        toggle.setChecked(autoDark());
+        int[][] states = {{android.R.attr.state_checked}, {}};
+        toggle.setThumbTintList(new ColorStateList(states, new int[]{t.acc[1], t.dark ? 0xFFB0B3B8 : 0xFFF5F5F5}));
+        toggle.setTrackTintList(new ColorStateList(states, new int[]{t.acc[1], sub}));
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override public void onCheckedChanged(CompoundButton b, boolean on) {
+                prefs.edit().putBoolean("autoDark", on).apply();
+                applyTheme();
+                buildSettings();
+            }
+        });
+        dr.addView(toggle);
+        root.addView(dr);
+        if (autoDark() && systemDark()) {
+            TextView note = label(I18n.t("auto_dark_on"), 12, t500, sub);
+            note.setPadding(0, dp(4), 0, 0);
+            root.addView(note);
+        }
 
         // ---- done
         TextView done = label(I18n.t("done"), 15, t700, t.acc[3]);
