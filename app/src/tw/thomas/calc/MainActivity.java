@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
@@ -53,8 +54,29 @@ public class MainActivity extends Activity implements CalcView.Host {
         view.setKeyScale(prefs.getFloat("keyScale", 1f));
         view.setAlign(prefs.getFloat("align", DEFAULT_ALIGN));
         I18n.lang = prefs.getString("lang", I18n.systemDefault());
-        setContentView(view);
+        stack = new FrameLayout(this);
+        stack.addView(view, new FrameLayout.LayoutParams(-1, -1));
+        setContentView(stack);
         applyTheme();
+        if (!prefs.getBoolean("tourDone", false)) {
+            view.post(new Runnable() { @Override public void run() { startTour(); } });
+        }
+    }
+
+    private FrameLayout stack;   // calculator, with the tour on top when it is showing
+    private TourView tour;
+
+    // ================================================================ first-run tour
+    void startTour() {
+        if (tour != null) stack.removeView(tour);
+        tour = new TourView(this, view, view.getThemeColors(), t500, t700, new TourView.Done() {
+            @Override public void done() {
+                prefs.edit().putBoolean("tourDone", true).apply();
+                stack.removeView(tour);
+                tour = null;
+            }
+        });
+        stack.addView(tour, new FrameLayout.LayoutParams(-1, -1));
     }
 
     static final float DEFAULT_ALIGN = 1f;   // bottom
@@ -184,7 +206,8 @@ public class MainActivity extends Activity implements CalcView.Host {
         root.addView(sb, new LinearLayout.LayoutParams(-1, -2));
 
         // ---- themes
-        TextView th = section(I18n.t("theme"), txt);
+        // while dark mode switches to Obsidian, the choice here only applies in light mode
+        TextView th = section(I18n.t(autoDark() ? "theme_light" : "theme"), txt);
         th.setPadding(0, dp(18), 0, dp(10));
         root.addView(th);
         LinearLayout sw = new LinearLayout(this);
@@ -236,6 +259,14 @@ public class MainActivity extends Activity implements CalcView.Host {
             note.setPadding(0, dp(4), 0, 0);
             root.addView(note);
         }
+
+        // ---- replay the tour
+        TextView replay = label(I18n.t("tour_replay"), 15, t500, t.label);
+        replay.setPadding(0, dp(18), 0, dp(2));
+        replay.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { dialog.dismiss(); startTour(); }
+        });
+        root.addView(replay);
 
         // ---- done
         TextView done = label(I18n.t("done"), 15, t700, t.acc[3]);

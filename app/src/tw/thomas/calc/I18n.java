@@ -20,6 +20,29 @@ public final class I18n {
         put("theme", "主題配色", "Colour theme");
         put("done", "完成", "Done");
         put("auto_dark", "深色模式時自動切換為曜石黑", "Switch to Obsidian in dark mode");
+        put("theme_light", "淺色模式下的主題配色", "Colour theme in light mode");
+        put("tour_replay", "重看導覽", "Replay the tour");
+        put("tour_skip", "跳過", "Skip");
+        put("tour_next", "下一步", "Next");
+        put("tour_start", "開始使用", "Get started");
+        put("tour1_t", "歡迎使用會計計算機", "Welcome to Accounting Calculator");
+        put("tour1_b", "按鍵配置和運算規則都照 12 位數的桌上型商用計算機設計，以下帶你看幾個重點。",
+            "The keys and calculation rules follow a real 12-digit desk calculator. Here are a few things worth knowing.");
+        put("tour2_t", "螢幕指示", "Display indicators");
+        put("tour2_b", "MINUS、MEMORY、ERROR、GRAND TOTAL 作用中時，下方的橫條會亮起；右上角會顯示目前的運算符號。",
+            "A bar lights up under MINUS, MEMORY, ERROR or GRAND TOTAL when it is active; the pending operator appears in the top-right corner.");
+        put("tour3_t", "GT 總計", "GT (grand total)");
+        put("tour3_b", "每次按 = 或 % 算出的結果都會累加。按一下叫出，連按第二下清空。",
+            "Every result from = or % is added up. Press once to recall it; press again to clear it.");
+        put("tour4_t", "常數計算", "Constant calculation");
+        put("tour4_b", "算完一次後，輸入新數字再按 =，會重複同樣的運算。例如 54 × 5 = 之後按 2 =，會得到 108。",
+            "After a calculation, enter a new number and press = to repeat it. For example, after 54 × 5 =, pressing 2 = gives 108.");
+        put("tour5_t", "清除", "Clearing");
+        put("tour5_b", "ON/C·CE 按一下清除剛輸入的數，按第二下清除算式；AC 會連 M 和 GT 一起清空。",
+            "ON/C·CE clears the number just entered, and the calculation on a second press. AC clears everything, including M and GT.");
+        put("tour6_t", "設定", "Settings");
+        put("tour6_b", "主題配色、深色模式、按鍵高度、機身位置和語言都在這裡，也可以重看這份導覽。",
+            "Colour theme, dark mode, key height, position and language are all here, and you can replay this tour.");
         put("auto_dark_on", "目前是深色模式，正在使用曜石黑", "Dark mode is on, so Obsidian is in use");
         put("cream", "經典奶油", "Classic Cream");
         put("obsidian", "曜石黑", "Obsidian");

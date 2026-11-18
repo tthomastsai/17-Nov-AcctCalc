@@ -115,6 +115,16 @@ public class CalcView extends View {
     public float getKeyScale() { return keyScale; }
     public void setAlign(float a) { align = a; layout(getWidth(), getHeight()); invalidate(); }
 
+    // ---- positions for the first-run tour (view coordinates)
+    public RectF keyRect(String id) {
+        for (Key k : keys) if (k.k.equals(id)) return new RectF(k.r);
+        return null;
+    }
+    /** the printed indicator labels and the operator corner along the top of the LCD */
+    public RectF indicatorRect() { return new RectF(lcd.left, lcd.top, lcd.right, lcd.top + 6f * u); }
+    public RectF lcdRect() { return new RectF(lcd); }
+    public float unit() { return u; }
+
     // ================================================================ layout
     @Override protected void onSizeChanged(int w, int h, int ow, int oh) { layout(w, h); }
 
