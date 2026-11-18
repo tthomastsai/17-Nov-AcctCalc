@@ -312,13 +312,13 @@ function layout() {
   W = cv.width; H = cv.height;
   u = Math.min(W / 100, H / 200);
   const chFull = Math.min(H - 8 * u, 205 * u);
-  const fixed = 6 * u + 17.9 * u + 27.9 * u + 6 * u + 7 * u;
+  const fixed = 6 * u + 15.3 * u + 27.9 * u + 6 * u + 7 * u;
   const hk = chFull - fixed, hkS = hk * keyScale, ch = fixed + hkS;
   const left0 = (W - 100 * u) / 2, top0 = 4 * u + Math.max(0, H - ch - 8 * u) * align;
   contentL = left0 + 6 * u; contentR = left0 + 94 * u;
   const keysBottom = top0 + ch - 7 * u;
   headTop = top0 + 6 * u;
-  Object.assign(bezel, { l: contentL, t: headTop + 17.9 * u, r: contentR, b: headTop + 45.8 * u });
+  Object.assign(bezel, { l: contentL, t: headTop + 15.3 * u, r: contentR, b: headTop + 43.2 * u });
   Object.assign(frame, inset(bezel, 1.6 * u));
   Object.assign(lcd, inset(frame, 1.1 * u));
   const keysTop = keysBottom - hkS, cg = 3.4 * u, rg = 3.6 * u;
@@ -352,11 +352,16 @@ function drawText(s, x, y) {
 }
 
 function drawHead() {
-  const x = contentL + 1.5 * u;
-  setText(700, 3.4 * u, hexA(th.label), .06); drawText("CALCULATOR", x, headTop + 5.2 * u);
-  setText(500, 2.5 * u, hexA(th.sub), .14); drawText("ELECTRONIC", x, headTop + 9.1 * u);
+  // the three elements share one centre line; the outer two line up with the LCD glass edges
+  const L = lcd.l, R = lcd.r, yc = headTop + 3.6 * u;
+  setText(700, 3.4 * u, hexA(th.label), .06); const labW = measure("CALCULATOR");
+  drawText("CALCULATOR", L, yc - .75 * u);
+  setText(500, 2.5 * u, hexA(th.sub), .14); drawText("ELECTRONIC", L, yc + 3.15 * u);
+  setText(700, 2.8 * u, hexA(th.label), 0); text.skew = -.22; const digW = measure("12 digits");
+  text.align = "right"; drawText("12 digits", R, yc + 1 * u);
 
-  const sl = (contentL + contentR) / 2 - 15 * u, sr = sl + 30 * u, st = headTop, sb = headTop + 7.2 * u;   // solar panel centred
+  const sw = 26 * u;   // solar panel, centred in the space between the two
+  const sl = (L + labW + R - digW) / 2 - sw / 2, sr = sl + sw, st = yc - 3.6 * u, sb = yc + 3.6 * u;
   fill.shader = grad(0, st, 0, sb, [argb(0xFF2A2423), argb(0xFF171313), argb(0xFF241E1D)], [0, .6, 1]);
   fillRR(sl, st, sr, sb, .6 * u);
   fill.shader = null;
@@ -366,11 +371,8 @@ function drawHead() {
   for (let lx = sl + 7.2 * u; lx < sr - u; lx += 7.5 * u) fillRect(lx, st + .35 * u, lx + .3 * u, sb - .35 * u);
   fill.c = th.dark ? argb(0x22FFFFFF) : argb(0xFFE2DED8);
   fillRect(sl + .6 * u, sb, sr - .6 * u, sb + .3 * u);
-
   setText(500, 1.9 * u, hexA(th.sub), .12); text.align = "center";
   drawText("TWO POWER", (sl + sr) / 2, sb + 3.1 * u);
-  setText(700, 2.8 * u, hexA(th.label), 0); text.skew = -.22; text.align = "center";
-  drawText("12 digits", (sr + contentR) / 2, headTop + 4.6 * u);   // centred between the panel and the edge
 }
 
 function drawLcd() {
