@@ -369,8 +369,8 @@ function drawHead() {
 
   setText(500, 1.9 * u, hexA(th.sub), .12); text.align = "center";
   drawText("TWO POWER", (sl + sr) / 2, sb + 3.1 * u);
-  setText(700, 2.8 * u, hexA(th.label), 0); text.skew = -.22; text.align = "right";
-  drawText("12 digits", contentR - 1.5 * u, headTop + 4.6 * u);   // right of the panel, same row
+  setText(700, 2.8 * u, hexA(th.label), 0); text.skew = -.22; text.align = "center";
+  drawText("12 digits", (sr + contentR) / 2, headTop + 4.6 * u);   // centred between the panel and the edge
 }
 
 function drawLcd() {
