@@ -59,14 +59,17 @@ Display:
 
 ### Settings
 
+The ⚙ key opens the settings page.
+
 | Option | Choices |
 |---|---|
-| Language | 正體中文 / English (UK); follows the system language on first launch |
+| Language | System default / 正體中文 / English (UK). On Android 13 and later this is the app's own language, so it can also be changed in the phone's *Settings › Apps › Accounting Calculator › Language* |
 | Position | Top / Centre / Bottom (default: Bottom) |
 | Key height | 60%–100% |
 | Colour theme | Classic Cream, Obsidian, Mint, Sakura Pink, Sky Blue |
 | Switch to Obsidian in dark mode | On by default: while the phone is in dark mode the calculator uses Obsidian, and goes back to the chosen theme afterwards (the theme setting is then labelled *Colour theme in light mode*) |
 | Replay the tour | A short guided tour opens the first time the app starts; it can be replayed from here |
+| About | Version, what the design is based on, credits, font licence and a link to the web version |
 
 ![](docs/screenshots/settings.png)
 
@@ -167,14 +170,17 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 
 ### 設定
 
+按 ⚙ 鍵會開啟設定頁。
+
 | 選項 | 內容 |
 |---|---|
-| 語言 | 正體中文／English (UK)，第一次開啟時依系統語言 |
+| 語言 | 跟隨系統／正體中文／English (UK)。Android 13 以上使用系統的「個別 App 語言」，所以也可以在手機的「設定 › 應用程式 › 會計計算機 › 語言」更改 |
 | 機身位置 | 偏上／置中／偏下（預設偏下） |
 | 按鍵高度 | 60%–100% |
 | 主題配色 | 經典奶油、曜石黑、薄荷綠、櫻花粉、天空藍 |
 | 深色模式時自動切換為曜石黑 | 預設開啟：手機切到深色模式時改用曜石黑，切回淺色模式就回到原本選的主題（此時主題選項會標示為「淺色模式下的主題配色」） |
 | 重看導覽 | 第一次開啟 App 會出現簡短的導覽，之後可以從這裡重看 |
+| 關於 | 版本、設計依據、開發者、字型授權和網頁版連結 |
 
 ### 建置與測試
 
