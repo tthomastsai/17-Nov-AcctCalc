@@ -80,3 +80,16 @@ dot 1 add dot 2 eq | 0.3
 2 5 mul 5 mplus 1 add 1 eq gt | 2   # GT 只有 1 + 1 = 的結果
 6 0 div 3 mminus 3 add 4 eq gt | 7
 1 0 add 5 eq mplus gt | 15   # 先按 = 進 GT，再 M+ 不會重複加
+# --- 邊界情況（程式碼審查建議） ---
+dot 1 add dot 2 eq sub dot 3 eq | 0   # 0.1 + 0.2 − 0.3 不會顯示浮點誤差
+1 div 3 eq mul 3 eq sub 1 eq | 0
+0 div 0 eq | 0   # 錯誤
+1 neg div 0 eq | 0   # 負數 ÷ 0 也是錯誤
+1 div 0 eq add 2 eq | 0   # 錯誤狀態下其他按鍵無效
+1 div 0 eq onc 5 | 5   # C 清除錯誤後可繼續
+1 div 0 eq ac 5 | 5
+4 neg sqrt onc 9 sqrt | 3   # 負數開根號錯誤，清除後可繼續
+4 neg neg neg | -4
+1 00 00 00 00 00 00 00 | 100000000000   # 00 不會超過 12 位
+9 9 9 9 9 9 9 9 9 9 9 9 mul 9 eq onc add 1 eq | 9.99999999999   # 溢位 → CE 保留數字 → 繼續計算
+5 add 5 eq mul 2 eq | 20   # 常數計算後換運算符
