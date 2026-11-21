@@ -16,7 +16,7 @@ An Android app modelled on the 12-digit business calculator on my desk. Its keys
 
 ### Installing
 
-Download [`dist/Calculator-v2.15.apk`](dist/Calculator-v2.15.apk), open it on your Android phone and allow *Install unknown apps* when asked. Android 6.0 or later is required.
+Download [`dist/Calculator-v2.16.apk`](dist/Calculator-v2.16.apk), open it on your Android phone and allow *Install unknown apps* when asked. Android 6.0 or later is required.
 
 ### Keys
 
@@ -80,7 +80,7 @@ You don't need Android Studio or Gradle, just JDK 17 or later and two parts of t
 BUILD_TOOLS=~/Android/Sdk/build-tools/35.0.1 ANDROID_JAR=~/Android/Sdk/platforms/android-34/android.jar ./build.sh
 ```
 
-Before it builds anything, `build.sh` runs the 79 test cases in `test/cases.txt` against the calculation engine, including every example from the function card. It only compiles and signs `build/Calculator.apk` if they all pass.
+Before it builds anything, `build.sh` runs the 91 test cases in `test/cases.txt` against the calculation engine, including every example from the function card, and then 20,000 random key sequences (`test/EngineFuzz.java`) that check the display never shows anything other than a number of up to 12 digits. It only compiles and signs `build/Calculator.apk` if all of these pass, and any compile error stops the build.
 
 ### Project structure
 
@@ -126,7 +126,7 @@ Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/O
 
 ### 安裝
 
-下載 [`dist/Calculator-v2.15.apk`](dist/Calculator-v2.15.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
+下載 [`dist/Calculator-v2.16.apk`](dist/Calculator-v2.16.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
 
 ### 按鍵與運算規則
 
@@ -188,7 +188,7 @@ Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/O
 BUILD_TOOLS=~/Android/Sdk/build-tools/35.0.1 ANDROID_JAR=~/Android/Sdk/platforms/android-34/android.jar ./build.sh
 ```
 
-`build.sh` 會先用 `test/cases.txt` 的 79 組案例測試運算邏輯（包含功能說明卡上的全部範例），全部通過才會編譯、簽章，輸出 `build/Calculator.apk`。
+`build.sh` 會先用 `test/cases.txt` 的 91 組案例測試運算邏輯（包含功能說明卡上的全部範例），再跑 20,000 組隨機按鍵序列（`test/EngineFuzz.java`），確認螢幕永遠只會顯示 12 位數以內的數字。全部通過才會編譯、簽章，輸出 `build/Calculator.apk`；任何編譯錯誤都會讓建置停下。
 
 ### 專案結構
 

@@ -228,6 +228,7 @@ public class CalcView extends View {
     }
 
     private final Path gear = new Path(), gearTmp = new Path();
+    private final android.graphics.Matrix gearMatrix = new android.graphics.Matrix();   // reused every frame
 
     private void drawGear(Canvas c, float cx, float cy, float r, int color) {
         gear.reset();
@@ -236,9 +237,8 @@ public class CalcView extends View {
             gearTmp.reset();
             tmp.set(cx - .2f * r, cy - r, cx + .2f * r, cy - .5f * r);
             gearTmp.addRoundRect(tmp, .07f * r, .07f * r, Path.Direction.CW);
-            android.graphics.Matrix m = new android.graphics.Matrix();
-            m.setRotate(i * 45f, cx, cy);
-            gearTmp.transform(m);
+            gearMatrix.setRotate(i * 45f, cx, cy);
+            gearTmp.transform(gearMatrix);
             gear.op(gearTmp, Path.Op.UNION);
         }
         gearTmp.reset();
