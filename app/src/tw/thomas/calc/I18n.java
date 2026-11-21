@@ -29,7 +29,9 @@ public final class I18n {
         put("about_basis", "介面與按鍵配置參考利百代 LB-5003CA 桌上型計算機。本 App 為個人作品，非官方產品，與利百代公司無關。",
             "The layout and keys are based on the LIBERTY LB-5003CA desk calculator. This is a personal project, not an official product, and is not affiliated with LIBERTY (利百代).");
         put("about_made", "開發：tthomastsai（與 Claude 協作）", "Made by tthomastsai, with Claude");
-        put("about_font", "字型：Google Sans（SIL Open Font License 1.1）", "Font: Google Sans (SIL Open Font Licence 1.1)");
+        put("about_font", "字型：Google Sans、AcctCalc Seven（本專案自製），皆為 SIL Open Font License 1.1", "Fonts: Google Sans and AcctCalc Seven (made for this app), both under the SIL Open Font Licence 1.1");
+        put("lcd_font", "螢幕數字字體", "Display digits");
+        put("font_seven", "七段顯示", "Seven-segment");
         put("about_web", "網頁版", "Web version");
         put("back", "返回", "Back");
         put("tour_replay", "重看導覽", "Replay the tour");

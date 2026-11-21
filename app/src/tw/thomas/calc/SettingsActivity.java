@@ -28,7 +28,7 @@ public class SettingsActivity extends Activity {
     static final String WEB_URL = "https://tthomastsai.github.io/17-Nov-AcctCalc/";
 
     private SharedPreferences prefs;
-    private Typeface t500, t700;
+    private Typeface t500, t700, tGs, tSeven;
     private Theme t;
     private int txt, sub, card;
     private ScrollView scroll;
@@ -39,7 +39,9 @@ public class SettingsActivity extends Activity {
         try {
             t500 = Typeface.createFromAsset(getAssets(), "fonts/GoogleSans-500.ttf");
             t700 = Typeface.createFromAsset(getAssets(), "fonts/GoogleSans-700.ttf");
-        } catch (Exception e) { t500 = Typeface.DEFAULT; t700 = Typeface.DEFAULT_BOLD; }
+            tGs = Typeface.createFromAsset(getAssets(), "fonts/GoogleSans-400.ttf");
+            tSeven = Typeface.createFromAsset(getAssets(), "fonts/AcctCalcSeven-Regular.ttf");
+        } catch (Exception e) { t500 = Typeface.DEFAULT; t700 = Typeface.DEFAULT_BOLD; tGs = Typeface.DEFAULT; tSeven = Typeface.MONOSPACE; }
         scroll = new ScrollView(this);
         scroll.setFillViewport(true);
         setContentView(scroll);
@@ -126,6 +128,22 @@ public class SettingsActivity extends Activity {
             @Override public void onStopTrackingTouch(SeekBar s) {}
         });
         look.addView(sb, new LinearLayout.LayoutParams(-1, -2));
+
+        look.addView(caption(I18n.t("lcd_font"), null));
+        final String[] fonts = {"sans", "seven"};
+        String curFont = prefs.getString("lcdFont", "sans");
+        String[] fontNames = {"Google Sans", I18n.t("font_seven")};
+        Typeface[] faces = {tGs, tSeven};
+        for (int i = 0; i < fonts.length; i++) {
+            final int idx = i;
+            LinearLayout row = choiceRow(fontNames[i], fonts[i].equals(curFont), new View.OnClickListener() {
+                @Override public void onClick(View v) { prefs.edit().putString("lcdFont", fonts[idx]).apply(); build(); }
+            });
+            TextView sample = label("1'234.5", 20, faces[i], sub);   // preview in that font
+            sample.setPadding(0, 0, dp(12), 0);
+            row.addView(sample, 1);
+            look.addView(row);
+        }
 
         // with dark mode following, the choice here only applies in light mode
         LinearLayout th = caption(I18n.t(Theme.autoDark(prefs) ? "theme_light" : "theme"), null);

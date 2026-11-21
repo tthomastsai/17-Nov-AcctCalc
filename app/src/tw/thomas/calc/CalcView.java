@@ -71,7 +71,8 @@ public class CalcView extends View {
     private float align = .5f;   // 0 = top, .5 = centre, 1 = bottom
     private Host host;
 
-    private final Typeface t400, t500, t700;
+    private final Typeface t400, t500, t700, tSeven;
+    private boolean sevenSeg = false;   // display digits: Google Sans (false) or AcctCalc Seven (true)
     private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint text = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
     private final Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -89,6 +90,7 @@ public class CalcView extends View {
         super(c);
         eng = engine;
         t400 = load(c, "fonts/GoogleSans-400.ttf", Typeface.NORMAL);
+        tSeven = load(c, "fonts/AcctCalcSeven-Regular.ttf", Typeface.NORMAL);
         t500 = load(c, "fonts/GoogleSans-500.ttf", Typeface.NORMAL);
         t700 = load(c, "fonts/GoogleSans-700.ttf", Typeface.BOLD);
         stroke.setStyle(Paint.Style.STROKE);
@@ -114,6 +116,7 @@ public class CalcView extends View {
     public void setKeyScale(float s) { keyScale = Math.max(0.6f, Math.min(1f, s)); layout(getWidth(), getHeight()); invalidate(); }
     public float getKeyScale() { return keyScale; }
     public void setAlign(float a) { align = a; layout(getWidth(), getHeight()); invalidate(); }
+    public void setSevenSegment(boolean on) { sevenSeg = on; invalidate(); }
 
     // ---- positions for the first-run tour (view coordinates)
     public RectF keyRect(String id) {
@@ -308,8 +311,13 @@ public class CalcView extends View {
         // number
         String s = (neg && !full12 ? "−" : "") + eng.displayDigits();
         float size = 10.5f * u;
-        setText(t400, size, ink, -0.01f);
-        text.setFontFeatureSettings("tnum");
+        if (sevenSeg) {
+            size *= 0.748f / 0.76f;            // same digit height as Google Sans
+            setText(tSeven, size, ink, 0);
+        } else {
+            setText(t400, size, ink, -0.01f);
+            text.setFontFeatureSettings("tnum");
+        }
         text.setAlpha(230);
         float avail = lcd.width() - 4.8f * u, w = text.measureText(s);
         if (w > avail) { size *= avail / w; text.setTextSize(size); }

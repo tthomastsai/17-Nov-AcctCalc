@@ -55,6 +55,7 @@ public class MainActivity extends Activity implements CalcView.Host {
         I18n.lang = Lang.effective(this, prefs);
         view.setKeyScale(prefs.getFloat("keyScale", 1f));
         view.setAlign(prefs.getFloat("align", DEFAULT_ALIGN));
+        view.setSevenSegment("seven".equals(prefs.getString("lcdFont", "sans")));
         Theme t = Theme.current(this, prefs);
         view.setThemeColors(t);
         Theme.applyBars(this, t);
