@@ -273,7 +273,7 @@ const STR = {
   web_edition: ["網頁版", "Web version"],
   about_basis: ["介面與按鍵配置參考利百代 LB-5003CA 桌上型計算機。本 App 為個人作品，非官方產品，與利百代公司無關。", "The layout and keys are based on the LIBERTY LB-5003CA desk calculator. This is a personal project, not an official product, and is not affiliated with LIBERTY (利百代)."],
   about_made: ["開發：tthomastsai（與 Claude 協作）", "Made by tthomastsai, with Claude"],
-  about_font: ["字型：Google Sans、AcctCalc Seven（本專案自製），皆為 SIL Open Font License 1.1", "Fonts: Google Sans and AcctCalc Seven (made for this app), both under the SIL Open Font Licence 1.1"],
+  about_font: ["字型：Google Sans、AcctCalc Seven（本專案自製），皆為 SIL Open Font License 1.1", "Fonts: Google Sans and AcctCalc Seven (made for this app), both under the SIL Open Font License 1.1"],
   auto_dark: ["深色模式時自動切換為曜石黑", "Switch to Obsidian in dark mode"],
   auto_dark_on: ["目前是深色模式，正在使用曜石黑", "Dark mode is on, so Obsidian is in use"],
   theme_light: ["淺色模式下的主題配色", "Colour theme in light mode"],
@@ -665,7 +665,7 @@ function swatch(theme, sel) {
   g.beginPath(); g.arc(cx, cy + dd * .9, rr2, 0, 7); g.fillStyle = theme.acc[0]; g.fill();
   return c;
 }
-const APP_VERSION = "2.14";
+const APP_VERSION = "2.15";
 const svgChevron = (color, right) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="${right ? "M9 5l7 7-7 7" : "M15 5l-7 7 7 7"}"/></svg>`;
 const svgCheck = color => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>`;
 function buildSettings() {
