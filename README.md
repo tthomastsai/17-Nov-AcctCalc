@@ -117,7 +117,14 @@ See [`docs/AI-使用證據卡.md`](docs/AI-使用證據卡.md) (in Chinese) for 
 
 ### Licences
 
-Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/OFL.txt`). AcctCalc Seven was made for this app with `tools/build_font.py` and is released under the same licence (`app/assets/fonts/OFL-AcctCalcSeven.txt`).
+Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/OFL.txt`). AcctCalc Seven was made for this app with `tools/build_font.py` and is released under the same licence (`app/assets/fonts/OFL-AcctCalcSeven.txt`). The About section shows both licences in full.
+
+### Acknowledgements
+
+- **Design reference:** the LIBERTY (利百代) LB-5003CA desk calculator and the function card on its packaging. LIBERTY is not involved with this project.
+- **Google Sans:** Copyright 2017 Google, Inc., SIL Open Font License 1.1, packaged by [Fontsource](https://fontsource.org).
+- **fontTools** and **skia-pathops:** used by `tools/build_font.py` to build AcctCalc Seven.
+- **Claude** (Anthropic): developed with Claude; see the AI usage evidence card for what was accepted, changed and rejected.
 
 ---
 
@@ -227,4 +234,11 @@ docs/                截圖、AI 使用證據卡
 
 ### 授權
 
-字型 Google Sans 依 SIL Open Font License 1.1 授權，見 `app/assets/fonts/OFL.txt`。
+字型 Google Sans 依 SIL Open Font License 1.1 授權，見 `app/assets/fonts/OFL.txt`。「關於」裡可以看到授權全文。
+
+### 致謝
+
+- **設計參考：** 利百代（LIBERTY）LB-5003CA 桌上型計算機，以及包裝背面的功能說明卡。本專案與利百代公司無關。
+- **Google Sans：** Copyright 2017 Google, Inc.，SIL Open Font License 1.1，由 [Fontsource](https://fontsource.org) 打包提供。
+- **fontTools** 與 **skia-pathops：** `tools/build_font.py` 用它們產生 AcctCalc Seven 字型。
+- **Claude**（Anthropic）：本專案與 Claude 協作開發，哪些建議採用、修改或退回，見 AI 使用證據卡。
