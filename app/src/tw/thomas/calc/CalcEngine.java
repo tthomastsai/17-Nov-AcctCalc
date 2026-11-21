@@ -126,7 +126,7 @@ public class CalcEngine {
         } else if (kOp != null) {
             double x = cur();
             r = kOp.equals("mul") ? kVal * x : calc(x, kOp, kVal);
-        } else { r = cur(); counted = false; }
+        } else { r = cur(); }                 // "5 =" with nothing pending still counts towards GT, as on the real calculator
         show(r);
         if (!err && counted) { gt = round(gt + cur()); save(); }
         acc = cur(); typed = false;

@@ -205,7 +205,14 @@ public class SettingsActivity extends Activity {
         about.addView(v);
         about.addView(para(I18n.t("about_basis")));
         about.addView(para(I18n.t("about_made")));
-        about.addView(para(I18n.t("about_font")));
+
+        TextView ack = label(I18n.t("ack"), 15, t700, txt);
+        ack.setPadding(0, dp(10), 0, dp(6));
+        about.addView(ack);
+        for (String k : new String[]{"ack_design", "ack_gs", "ack_seven", "ack_claude"}) about.addView(para("• " + I18n.t(k)));
+        about.addView(linkRow(I18n.t("licences"), new View.OnClickListener() {
+            @Override public void onClick(View v) { showLicences(); }
+        }));
         about.addView(linkRow(I18n.t("about_web"), new View.OnClickListener() {
             @Override public void onClick(View v) {
                 try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WEB_URL))); } catch (Exception e) {}
@@ -216,6 +223,30 @@ public class SettingsActivity extends Activity {
         scroll.addView(page);
         final int keep = y;
         scroll.post(new Runnable() { @Override public void run() { scroll.scrollTo(0, keep); } });
+    }
+
+    /** the full text of both font licences, as the OFL asks to ship with the fonts */
+    private void showLicences() {
+        StringBuilder sb = new StringBuilder();
+        for (String f : new String[]{"fonts/OFL.txt", "fonts/OFL-AcctCalcSeven.txt"}) {
+            try (java.io.InputStream in = getAssets().open(f)) {
+                java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+                byte[] buf = new byte[4096]; int n;
+                while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
+                if (sb.length() > 0) sb.append("\n\n────────────\n\n");
+                sb.append(out.toString("UTF-8").trim());
+            } catch (Exception e) { /* missing file: skip */ }
+        }
+        TextView body = label(sb.toString(), 12, Typeface.MONOSPACE, txt);
+        body.setPadding(dp(20), dp(12), dp(20), dp(12));
+        body.setTextIsSelectable(true);
+        ScrollView sv = new ScrollView(this);
+        sv.addView(body);
+        new android.app.AlertDialog.Builder(this)
+            .setTitle(I18n.t("licences"))
+            .setView(sv)
+            .setPositiveButton(I18n.t("done"), null)
+            .show();
     }
 
     // ================================================================ building blocks

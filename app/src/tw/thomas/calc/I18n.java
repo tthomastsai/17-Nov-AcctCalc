@@ -28,7 +28,13 @@ public final class I18n {
         put("version", "版本", "Version");
         put("about_basis", "介面與按鍵配置參考利百代 LB-5003CA 桌上型計算機。本 App 為個人作品，非官方產品，與利百代公司無關。",
             "The layout and keys are based on the LIBERTY LB-5003CA desk calculator. This is a personal project, not an official product, and is not affiliated with LIBERTY (利百代).");
-        put("about_made", "開發：tthomastsai（與 Claude 協作）", "Made by tthomastsai, with Claude");
+        put("about_made", "開發：tthomastsai", "Made by tthomastsai");
+        put("ack", "致謝", "Acknowledgements");
+        put("ack_design", "設計參考：利百代 LB-5003CA 桌上型計算機及其功能說明卡", "Design reference: the LIBERTY LB-5003CA desk calculator and its function card");
+        put("ack_gs", "Google Sans 字型：Copyright 2017 Google, Inc.，SIL Open Font License 1.1", "Google Sans font: Copyright 2017 Google, Inc., SIL Open Font License 1.1");
+        put("ack_seven", "AcctCalc Seven 字型：本 App 自製，SIL Open Font License 1.1", "AcctCalc Seven font: made for this app, SIL Open Font License 1.1");
+        put("ack_claude", "開發協作：Claude（Anthropic）", "Developed with Claude (Anthropic)");
+        put("licences", "字型授權全文", "Font licences (full text)");
         put("about_font", "字型：Google Sans、AcctCalc Seven（本專案自製），皆為 SIL Open Font License 1.1", "Fonts: Google Sans and AcctCalc Seven (made for this app), both under the SIL Open Font License 1.1");
         put("lcd_font", "螢幕數字字體", "Display digits");
         put("font_seven", "七段顯示", "Seven-segment");

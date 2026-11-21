@@ -16,7 +16,7 @@ An Android app modelled on the 12-digit business calculator on my desk. Its keys
 
 ### Installing
 
-Download [`dist/Calculator-v2.17.apk`](dist/Calculator-v2.17.apk), open it on your Android phone and allow *Install unknown apps* when asked. Android 6.0 or later is required.
+Download [`dist/Calculator-v2.18.apk`](dist/Calculator-v2.18.apk), open it on your Android phone and allow *Install unknown apps* when asked. Android 6.0 or later is required.
 
 ### Keys
 
@@ -27,7 +27,7 @@ Download [`dist/Calculator-v2.17.apk`](dist/Calculator-v2.17.apk), open it on yo
 | `%` | `3000 × 20 %` → 600; `3000 + 20 %` → 3'600 (mark-up); `3000 − 20 %` → 2'400 (discount); `20 ÷ 500 %` → 4 |
 | `√` | Square root of the number on the display. It works mid-calculation too: `9 √ × 6 =` → 18. |
 | `M+` `M−` `MR` `MC` | Memory. If a calculation is still pending, it is worked out first and the result is stored. |
-| `GT` | Grand total: every result of `=` or `%` is added to it (results finished with `M+` or `M−` are not). Press `GT` once to recall it; press it again to clear it, leaving the display as it is. |
+| `GT` | Grand total: every result of `=` or `%` is added to it, even when `=` follows a single number (`5 =` adds 5); results finished with `M+` or `M−` are not. Press `GT` once to recall it; press it again to clear it, leaving the display as it is. |
 | `ON/C·CE` | Press once to clear the number you have just entered (CE), twice to clear the whole calculation (C). Memory and GT are kept. |
 | `AC` | Clears everything, memory and GT included. |
 | `▶` | Deletes the last digit. |
@@ -80,7 +80,7 @@ You don't need Android Studio or Gradle, just JDK 17 or later and two parts of t
 BUILD_TOOLS=~/Android/Sdk/build-tools/35.0.1 ANDROID_JAR=~/Android/Sdk/platforms/android-34/android.jar ./build.sh
 ```
 
-Before it builds anything, `build.sh` runs the 99 test cases in `test/cases.txt` against the calculation engine, including every example from the function card, and then 21,000 random key sequences (`test/EngineFuzz.java`), 1,000 of them 100–500 keys long, that check the display never shows anything other than a number of up to 12 digits. It only compiles and signs `build/Calculator.apk` if all of these pass, and any compile error stops the build.
+Before it builds anything, `build.sh` runs the 102 test cases in `test/cases.txt` against the calculation engine, including every example from the function card, and then 21,000 random key sequences (`test/EngineFuzz.java`), 1,000 of them 100–500 keys long, that check the display never shows anything other than a number of up to 12 digits. It only compiles and signs `build/Calculator.apk` if all of these pass, and any compile error stops the build.
 
 ### Project structure
 
@@ -112,7 +112,14 @@ See [`docs/AI-使用證據卡.md`](docs/AI-使用證據卡.md) (in Chinese) for 
 
 ### Licences
 
-Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/OFL.txt`). AcctCalc Seven was made for this app with `tools/build_font.py` and is released under the same licence (`app/assets/fonts/OFL-AcctCalcSeven.txt`).
+Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/OFL.txt`). AcctCalc Seven was made for this app with `tools/build_font.py` and is released under the same licence (`app/assets/fonts/OFL-AcctCalcSeven.txt`). The app's About section shows both licences in full.
+
+### Acknowledgements
+
+- **Design reference:** the LIBERTY (利百代) LB-5003CA desk calculator and the function card on its packaging. LIBERTY is not involved with this project.
+- **Google Sans:** Copyright 2017 Google, Inc., SIL Open Font License 1.1, packaged by [Fontsource](https://fontsource.org).
+- **fontTools** and **skia-pathops:** used by `tools/build_font.py` to build AcctCalc Seven.
+- **Claude** (Anthropic): developed with Claude; see the AI usage evidence card for what was accepted, changed and rejected.
 
 ---
 
@@ -126,7 +133,7 @@ Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/O
 
 ### 安裝
 
-下載 [`dist/Calculator-v2.17.apk`](dist/Calculator-v2.17.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
+下載 [`dist/Calculator-v2.18.apk`](dist/Calculator-v2.18.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
 
 ### 按鍵與運算規則
 
@@ -137,7 +144,7 @@ Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/O
 | `%` | `3000 × 20 %` → 600；`3000 + 20 %` → 3'600（加成）；`3000 − 20 %` → 2'400（折扣）；`20 ÷ 500 %` → 4 |
 | `√` | 對螢幕上的數開根號，可以接在算式中（`9 √ × 6 =` → 18） |
 | `M+` `M−` `MR` `MC` | 記憶運算；有算式還沒算完時，會先算出結果再存入 |
-| `GT` | 每次按 `=` 或 `%` 的結果都會累加到 GT（用 `M+`／`M−` 算出的結果不會）。按一下叫出；連按第二下起清空 GT，螢幕數字不變 |
+| `GT` | 每次按 `=` 或 `%` 的結果都會累加到 GT，只輸入一個數字再按 `=` 也算（`5 =` 會加 5）；用 `M+`／`M−` 算出的結果不會。按一下叫出；連按第二下起清空 GT，螢幕數字不變 |
 | `ON/C·CE` | 第一下清除剛輸入的數（CE），第二下清除算式（C）；GT 與 M 保留 |
 | `AC` | 全部清除，包含 GT 與 M |
 | `▶` | 刪除最後一位 |
@@ -188,7 +195,7 @@ Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/O
 BUILD_TOOLS=~/Android/Sdk/build-tools/35.0.1 ANDROID_JAR=~/Android/Sdk/platforms/android-34/android.jar ./build.sh
 ```
 
-`build.sh` 會先用 `test/cases.txt` 的 99 組案例測試運算邏輯（包含功能說明卡上的全部範例），再跑 21,000 組隨機按鍵序列（`test/EngineFuzz.java`，其中 1,000 組長達 100–500 個按鍵），確認螢幕永遠只會顯示 12 位數以內的數字。全部通過才會編譯、簽章，輸出 `build/Calculator.apk`；任何編譯錯誤都會讓建置停下。
+`build.sh` 會先用 `test/cases.txt` 的 102 組案例測試運算邏輯（包含功能說明卡上的全部範例），再跑 21,000 組隨機按鍵序列（`test/EngineFuzz.java`，其中 1,000 組長達 100–500 個按鍵），確認螢幕永遠只會顯示 12 位數以內的數字。全部通過才會編譯、簽章，輸出 `build/Calculator.apk`；任何編譯錯誤都會讓建置停下。
 
 ### 專案結構
 
@@ -220,4 +227,11 @@ docs/                截圖、AI 使用證據卡
 
 ### 授權
 
-字型 Google Sans 依 SIL Open Font License 1.1 授權，見 `app/assets/fonts/OFL.txt`。AcctCalc Seven 是本專案自製的字型（`tools/build_font.py`），同樣採用 SIL Open Font License 1.1，見 `app/assets/fonts/OFL-AcctCalcSeven.txt`。
+字型 Google Sans 依 SIL Open Font License 1.1 授權，見 `app/assets/fonts/OFL.txt`。AcctCalc Seven 是本專案自製的字型（`tools/build_font.py`），同樣採用 SIL Open Font License 1.1，見 `app/assets/fonts/OFL-AcctCalcSeven.txt`。App 的「關於」裡可以看到兩份授權全文。
+
+### 致謝
+
+- **設計參考：** 利百代（LIBERTY）LB-5003CA 桌上型計算機，以及包裝背面的功能說明卡。本專案與利百代公司無關。
+- **Google Sans：** Copyright 2017 Google, Inc.，SIL Open Font License 1.1，由 [Fontsource](https://fontsource.org) 打包提供。
+- **fontTools** 與 **skia-pathops：** `tools/build_font.py` 用它們產生 AcctCalc Seven 字型。
+- **Claude**（Anthropic）：本專案與 Claude 協作開發，哪些建議採用、修改或退回，見 AI 使用證據卡。
