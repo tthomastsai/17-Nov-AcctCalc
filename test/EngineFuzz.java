@@ -4,6 +4,7 @@ import java.util.Random;
 /**
  * Random key sequences (fixed seed, so failures can be reproduced): after every key the engine must
  * show a plain number of at most 12 digits, never NaN or Infinity, and must not throw.
+ * Runs [count] short sequences (1–40 keys) and count/20 long ones (100–500 keys).
  * Usage: java EngineFuzz [count]
  */
 public class EngineFuzz {
@@ -11,12 +12,12 @@ public class EngineFuzz {
         "pct","sqrt","neg","back","mplus","mminus","mr","mc","gt","onc","ac"};
 
     public static void main(String[] args) {
-        int n = args.length > 0 ? Integer.parseInt(args[0]) : 20000, bad = 0;
+        int n = args.length > 0 ? Integer.parseInt(args[0]) : 20000, bad = 0, nLong = n / 20;
         Random rnd = new Random(20261122L);
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n + nLong; i++) {
             CalcEngine e = new CalcEngine();
             StringBuilder seq = new StringBuilder();
-            int len = 1 + rnd.nextInt(40);
+            int len = i < n ? 1 + rnd.nextInt(40) : 100 + rnd.nextInt(401);
             try {
                 for (int j = 0; j < len; j++) {
                     String k = KEYS[rnd.nextInt(KEYS.length)];
@@ -32,7 +33,7 @@ public class EngineFuzz {
                 if (bad++ < 10) System.out.println("FAIL  " + seq + "->  " + ex);
             }
         }
-        System.out.println(n + " random sequences, " + bad + " failed");
+        System.out.println(n + " short and " + nLong + " long random sequences, " + bad + " failed");
         if (bad > 0) System.exit(1);
     }
 
