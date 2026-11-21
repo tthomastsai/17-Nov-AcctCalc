@@ -10,109 +10,109 @@
 
 ## English (GB)
 
-An Android app modelled on the 12-digit business calculator on my desk. The key layout, colours and calculation rules follow the real device and the function card printed on the back of its packaging. The interface is redrawn natively with Android Canvas, keeping the depth of the keys, the soft shadows and the press-and-spring-back feel. On the home screen it appears as **Accounting Calculator** (or **會計計算機** when the phone is set to Chinese), so it is not confused with the phone's built-in calculator.
+An Android app modelled on the 12-digit business calculator on my desk. Its keys, colours and calculation rules follow the real device and the function card printed on the back of its packaging, and the face is redrawn natively with Android Canvas, down to the depth of the keys, their soft shadows and the way they spring back when pressed. On the home screen it is called **Accounting Calculator** (**會計計算機** on a phone set to Chinese), so it is not mistaken for the built-in calculator.
 
-> The layout and key arrangement are based on the LIBERTY LB-5003CA desk calculator. This is a personal project, not an official product, and is not affiliated with LIBERTY (利百代).
+> The layout and keys are based on the LIBERTY LB-5003CA desk calculator. This is a personal project, not an official product, and it is not affiliated with LIBERTY (利百代).
 
-### Installation
+### Installing
 
-Download [`dist/Calculator-v2.14.apk`](dist/Calculator-v2.14.apk), open it on an Android phone and allow *Install unknown apps*. Requires Android 6.0 or later.
+Download [`dist/Calculator-v2.15.apk`](dist/Calculator-v2.15.apk), open it on your Android phone and allow *Install unknown apps* when asked. Android 6.0 or later is required.
 
-### Keys and calculation rules
+### Keys
 
-| Key | Behaviour |
+| Key | What it does |
 |---|---|
-| `+ − × ÷` | Chain calculation; while the second number is being entered, the pending operator is shown in the top-right corner of the display |
-| `=` (constant calculation) | After a calculation, enter a new number and press `=` to repeat the same operation, or press `=` again to repeat it on the result; see below |
-| `%` | `3000 × 20 %` → 600; `3000 + 20 %` → 3'600 (add-on); `3000 − 20 %` → 2'400 (discount); `20 ÷ 500 %` → 4 |
-| `√` | Square root of the displayed number; can be used within a calculation (`9 √ × 6 =` → 18) |
-| `M+` `M−` `MR` `MC` | Memory; if a calculation is still pending, it is completed before the result is stored |
-| `GT` | Every result from `=` or `%` is added to the grand total (a result finished by `M+` / `M−` is not). Press once to recall it; pressing again (second press onwards) clears the grand total while the display stays as it is |
-| `ON/C·CE` | First press clears the number just entered (CE); second press clears the calculation (C). GT and memory are kept |
-| `AC` | Clears everything, including GT and memory |
-| `▶` | Deletes the last digit |
-| `⚙` | Settings (in place of the OFF key) |
+| `+ − × ÷` | Chain calculations. While you enter the second number, the pending operator is shown in the top-right corner of the display. |
+| `=` | Finishes the calculation. Afterwards, enter a new number and press `=` to repeat the same operation with it, or press `=` again to repeat it on the result (see *Constant calculation*). |
+| `%` | `3000 × 20 %` → 600; `3000 + 20 %` → 3'600 (mark-up); `3000 − 20 %` → 2'400 (discount); `20 ÷ 500 %` → 4 |
+| `√` | Square root of the number on the display. It works mid-calculation too: `9 √ × 6 =` → 18. |
+| `M+` `M−` `MR` `MC` | Memory. If a calculation is still pending, it is worked out first and the result is stored. |
+| `GT` | Grand total: every result of `=` or `%` is added to it (results finished with `M+` or `M−` are not). Press `GT` once to recall it; press it again to clear it, leaving the display as it is. |
+| `ON/C·CE` | Press once to clear the number you have just entered (CE), twice to clear the whole calculation (C). Memory and GT are kept. |
+| `AC` | Clears everything, memory and GT included. |
+| `▶` | Deletes the last digit. |
+| `⚙` | Opens the settings (where the OFF key is on the real calculator). |
 
-#### Constant calculation
+### Constant calculation
 
-Once a calculation is done, the calculator keeps one of its numbers as a constant. Enter a new number and press `=`, and the same operation is applied with that constant. For × the constant is the **first** number; for +, − and ÷ it is the **second**.
+After a calculation, the calculator remembers one of its numbers as a constant. Enter a new number and press `=`, and the same operation is applied to it. With × it keeps the **first** number; with +, − and ÷ it keeps the **second**.
 
-| Operation | Constant kept | Example | What is calculated |
+| Operation | Number kept | Example | Works out |
 |---|---|---|---|
-| × | first number | `54 × 5 =` → 270, then `2 =` → 108, `3 =` → 162 | 54 × 2, 54 × 3 |
-| ÷ | second number (divisor) | `240 ÷ =` → 0.00416666667, then `2 =` → 0.00833333333, `5 =` → 0.02083333333 | 1 ÷ 240, 2 ÷ 240, 5 ÷ 240 |
-| + | second number | `5 + 5 =` → 10, then `6 =` → 11, `7 =` → 12, `10 =` → 15 | 6 + 5, 7 + 5, 10 + 5 |
-| − | second number | `5 − 1 =` → 4, then `3 =` → 2 | 3 − 1 |
+| × | first | `54 × 5 =` → 270, then `2 =` → 108, `3 =` → 162 | 54 × 2, 54 × 3 |
+| ÷ | second (the divisor) | `240 ÷ =` → 0.00416666667, then `2 =` → 0.00833333333, `5 =` → 0.02083333333 | 1 ÷ 240, 2 ÷ 240, 5 ÷ 240 |
+| + | second | `5 + 5 =` → 10, then `6 =` → 11, `7 =` → 12, `10 =` → 15 | 6 + 5, 7 + 5, 10 + 5 |
+| − | second | `5 − 1 =` → 4, then `3 =` → 2 | 3 − 1 |
 
-- Pressing `=` straight after the operator uses the displayed number as the second operand: `20.5 × =` → 420.25 (square); `240 ÷ =` → 1 ÷ 240 (reciprocal), with 240 kept as the divisor.
-- Pressing `=` again repeats the operation on the result: `345 + 67 = =` → 479; `678 − 12 = = =` → 642; `5 ÷ = = = =` → 0.0016 (5⁻⁴).
-- Example — sharing $10 in proportion to $60, $30 and $10 (total $100): `10 ÷ 100 =` → 0.1, then `× 60 =` → 6; 0.1 is now the constant, so `30 =` → 3 and `10 =` → 1.
+- Pressing `=` straight after an operator uses the number on the display as the second number: `20.5 × =` → 420.25 (its square). With ÷ you get the reciprocal: `240 ÷ =` → 1 ÷ 240, and 240 is kept as the divisor.
+- Pressing `=` repeatedly keeps applying the operation to the result: `345 + 67 = =` → 479; `678 − 12 = = =` → 642; `5 ÷ = = = =` → 0.0016 (5⁻⁴).
+- Splitting $10 in proportion to $60, $30 and $10 (total $100): `10 ÷ 100 =` gives the ratio 0.1, then `× 60 =` gives 6. Because 0.1 is now the constant, `30 =` gives 3 and `10 =` gives 1.
 
-Display:
+### Display
 
-- Whole numbers always show a decimal point (`0.`, `190.`), and thousands are separated with `'` (`3'600.`).
-- MINUS, MEMORY, ERROR and GRAND TOTAL are printed along the top; a bar lights up beneath whichever is active.
-- For a negative number that fills all 12 digits, the sign is shown by the MINUS indicator; otherwise the minus sign sits in front of the number.
-- Results over 12 digits show ERROR with the first 12 significant digits (`123456789 × 8888 =` → `E 1.09728394063`). Pressing CE clears the error so you can carry on calculating.
+- Whole numbers always end with a decimal point (`0.`, `190.`), and thousands are separated by `'` (`3'600.`).
+- MINUS, MEMORY, ERROR and GRAND TOTAL are printed along the top of the display, and a bar lights up under whichever is active.
+- When a negative number fills all 12 digits there is no room for the minus sign, so the MINUS indicator shows it instead.
+- Results longer than 12 digits show ERROR with the first 12 significant digits (`123456789 × 8888 =` → `E 1.09728394063`). Press CE to clear the error and carry on with that number.
 
 ### Settings
 
-The ⚙ key opens the settings page.
+Tap ⚙ to open the settings page.
 
-| Option | Choices |
+| Setting | Options |
 |---|---|
-| Language | System default / 正體中文 / English (UK). On Android 13 and later this is the app's own language, so it can also be changed in the phone's *Settings › Apps › Accounting Calculator › Language* |
-| Position | Top / Centre / Bottom (default: Bottom) |
-| Key height | 60%–100% |
-| Display digits | Google Sans, or Seven-segment (AcctCalc Seven, an upright seven-segment font made for this app, with no gaps between segments) |
-| Colour theme | Classic Cream, Obsidian, Mint, Sakura Pink, Sky Blue |
-| Switch to Obsidian in dark mode | On by default: while the phone is in dark mode the calculator uses Obsidian, and goes back to the chosen theme afterwards (the theme setting is then labelled *Colour theme in light mode*) |
-| Replay the tour | A short guided tour opens the first time the app starts; it can be replayed from here |
-| About | Version, what the design is based on, credits, font licence and a link to the web version |
+| Language | System default, 正體中文 or English (UK). On Android 13 and later this is the app's own language setting, so you can also change it under *Settings › Apps › Accounting Calculator › Language*. |
+| Position | Top, Centre or Bottom (Bottom by default) |
+| Key height | 60% to 100% |
+| Display digits | Google Sans, or Seven-segment: AcctCalc Seven, an upright seven-segment font made for this app, whose segments join without gaps |
+| Colour theme | Classic Cream, Obsidian, Mint, Sakura Pink or Sky Blue |
+| Switch to Obsidian in dark mode | On by default. While the phone is in dark mode the calculator uses Obsidian, and it returns to your chosen theme in light mode; the theme setting is then labelled *Colour theme in light mode*. |
+| Replay the tour | A short guided tour runs the first time you open the app; you can watch it again from here. |
+| About | Version, what the design is based on, credits, font licences and a link to the web version |
 
 ![](docs/screenshots/settings.png)
 
 ### Building and testing
 
-No Android Studio or Gradle needed: JDK 17 or later, plus Android SDK **build-tools 35** and **platform 34** (unzipped from Google's SDK repository). By default `build.sh` looks for them under `/opt/asdk/bt35/*/` and `/opt/asdk/p34/*/`; otherwise set `BUILD_TOOLS` and `ANDROID_JAR`:
+You don't need Android Studio or Gradle, just JDK 17 or later and two parts of the Android SDK, **build-tools 35** and **platform 34**, unzipped from Google's SDK repository. `build.sh` looks for them in `/opt/asdk/bt35/*/` and `/opt/asdk/p34/*/` unless you point it elsewhere with `BUILD_TOOLS` and `ANDROID_JAR`:
 
 ```bash
 BUILD_TOOLS=~/Android/Sdk/build-tools/35.0.1 ANDROID_JAR=~/Android/Sdk/platforms/android-34/android.jar ./build.sh
 ```
 
-`build.sh` first runs the 79 test cases in `test/cases.txt` against the calculation engine (including every example on the function card). Only if they all pass does it compile and sign `build/Calculator.apk`.
+Before it builds anything, `build.sh` runs the 79 test cases in `test/cases.txt` against the calculation engine, including every example from the function card. It only compiles and signs `build/Calculator.apk` if they all pass.
 
 ### Project structure
 
 ```
 app/src/tw/thomas/calc/
-  CalcEngine.java    Calculation logic (plain Java, testable on a computer)
-  CalcView.java      Calculator face and key animation (drawn with Canvas)
-  MainActivity.java  Starts the calculator, applies the saved settings
-  SettingsActivity.java  The settings page
-  TourView.java      First-run tour
-  Lang.java          App language (Android 13+ per-app language)
-  Theme.java         The five colour themes
-  I18n.java          Chinese and English strings
-app/assets/fonts/    Google Sans and AcctCalc Seven (SIL Open Font Licence 1.1)
-tools/build_font.py  Builds the AcctCalc Seven font
-test/                Calculation tests
-web-prototype/       The first prototype, built as a web page (HTML/JS)
-docs/                Screenshots and the AI usage evidence card
+  CalcEngine.java        calculation logic (plain Java, so it can be tested on a computer)
+  CalcView.java          the calculator face and key animation, drawn with Canvas
+  MainActivity.java      starts the calculator and applies the saved settings
+  SettingsActivity.java  the settings page
+  TourView.java          the first-run tour
+  Lang.java              app language (per-app language on Android 13+)
+  Theme.java             the five colour themes
+  I18n.java              Chinese and English text
+app/assets/fonts/        Google Sans and AcctCalc Seven (SIL Open Font License 1.1)
+tools/build_font.py      builds the AcctCalc Seven font
+test/                    calculation tests
+web-prototype/           the first prototype, a web page (HTML/JS)
+docs/                    screenshots and the AI usage evidence card
 ```
 
 ### How it was made
 
-1. Built a web prototype first (`web-prototype/`) and tuned its appearance against photos of the real calculator.
-2. Corrected the display and calculation rules against the function card on the packaging.
-3. Rewrote it as a fully native Android app (Java + Canvas), without a WebView.
-4. Added settings for key height, colour theme, position and language, and turned the OFF key into a settings key.
+1. A web prototype came first (`web-prototype/`), tuned against photos of the real calculator.
+2. Its display and calculation rules were then checked against the function card on the packaging and corrected.
+3. It was rewritten as a fully native Android app in Java and Canvas, with no WebView.
+4. Settings followed (key height, colour theme, position, language), and the OFF key became the settings key.
 
-The record of how AI was used is in [`docs/AI-使用證據卡.md`](docs/AI-使用證據卡.md) (in Chinese).
+See [`docs/AI-使用證據卡.md`](docs/AI-使用證據卡.md) (in Chinese) for how AI was used.
 
-### Licence
+### Licences
 
-The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/assets/fonts/OFL.txt`. AcctCalc Seven was made for this app (`tools/build_font.py`) and is also under the SIL Open Font Licence 1.1; see `app/assets/fonts/OFL-AcctCalcSeven.txt`.
+Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/OFL.txt`). AcctCalc Seven was made for this app with `tools/build_font.py` and is released under the same licence (`app/assets/fonts/OFL-AcctCalcSeven.txt`).
 
 ---
 
@@ -126,7 +126,7 @@ The Google Sans font is licensed under the SIL Open Font Licence 1.1; see `app/a
 
 ### 安裝
 
-下載 [`dist/Calculator-v2.14.apk`](dist/Calculator-v2.14.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
+下載 [`dist/Calculator-v2.15.apk`](dist/Calculator-v2.15.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
 
 ### 按鍵與運算規則
 
