@@ -80,7 +80,7 @@ You don't need Android Studio or Gradle, just JDK 17 or later and two parts of t
 BUILD_TOOLS=~/Android/Sdk/build-tools/35.0.1 ANDROID_JAR=~/Android/Sdk/platforms/android-34/android.jar ./build.sh
 ```
 
-Before it builds anything, `build.sh` runs the 102 test cases in `test/cases.txt` against the calculation engine, including every example from the function card, and then 21,000 random key sequences (`test/EngineFuzz.java`), 1,000 of them 100–500 keys long, that check the display never shows anything other than a number of up to 12 digits. It only compiles and signs `build/Calculator.apk` if all of these pass, and any compile error stops the build.
+Before it builds anything, `build.sh` runs the 103 test cases in `test/cases.txt` against the calculation engine, including every example from the function card, and then 21,000 random key sequences (`test/EngineFuzz.java`), 1,000 of them 100–500 keys long, that check the display never shows anything other than a number of up to 12 digits. It only compiles and signs `build/Calculator.apk` if all of these pass, and any compile error stops the build.
 
 ### Project structure
 
@@ -195,7 +195,7 @@ Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/O
 BUILD_TOOLS=~/Android/Sdk/build-tools/35.0.1 ANDROID_JAR=~/Android/Sdk/platforms/android-34/android.jar ./build.sh
 ```
 
-`build.sh` 會先用 `test/cases.txt` 的 102 組案例測試運算邏輯（包含功能說明卡上的全部範例），再跑 21,000 組隨機按鍵序列（`test/EngineFuzz.java`，其中 1,000 組長達 100–500 個按鍵），確認螢幕永遠只會顯示 12 位數以內的數字。全部通過才會編譯、簽章，輸出 `build/Calculator.apk`；任何編譯錯誤都會讓建置停下。
+`build.sh` 會先用 `test/cases.txt` 的 103 組案例測試運算邏輯（包含功能說明卡上的全部範例），再跑 21,000 組隨機按鍵序列（`test/EngineFuzz.java`，其中 1,000 組長達 100–500 個按鍵），確認螢幕永遠只會顯示 12 位數以內的數字。全部通過才會編譯、簽章，輸出 `build/Calculator.apk`；任何編譯錯誤都會讓建置停下。
 
 ### 專案結構
 
