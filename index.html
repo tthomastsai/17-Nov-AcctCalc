@@ -572,7 +572,8 @@ function drawLabel(k, color) {
   setText(k.weight >= 700 ? 700 : k.weight >= 500 ? 500 : 400, k.sizeU * u * fs, color, k.weight >= 500 ? -.02 : 0);
   text.align = "center";
   const b = bounds(k.label);
-  drawText(k.label, cx, cy - (b.top + b.bottom) / 2);
+  const drop = k.k === "dot" ? .5 * u : 0;   // a centred dot reads as sitting high; nudge it down a little
+  drawText(k.label, cx, cy - (b.top + b.bottom) / 2 + drop);
 }
 
 let lastFrame = 0, raf = 0;
@@ -671,7 +672,7 @@ function swatch(theme, sel) {
   g.beginPath(); g.arc(cx, cy + dd * .9, rr2, 0, 7); g.fillStyle = theme.acc[0]; g.fill();
   return c;
 }
-const APP_VERSION = "2.15";
+const APP_VERSION = "2.19";
 const svgChevron = (color, right) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="${right ? "M9 5l7 7-7 7" : "M15 5l-7 7 7 7"}"/></svg>`;
 const svgCheck = color => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>`;
 function buildSettings() {
@@ -762,13 +763,15 @@ function buildSettings() {
   const nm = el("div", null, t("title")); nm.style.cssText = "font-size:17px;font-weight:700"; ab.appendChild(nm);
   const ver = el("div", null, t("web_edition") + " " + APP_VERSION); ver.style.cssText = "font-size:13px;font-weight:500;margin:2px 0 12px;color:" + th.sub; ab.appendChild(ver);
   ["about_basis", "about_made"].forEach(k => ab.appendChild(el("p", "para", t(k))));
-  const ah = el("div", null, t("ack")); ah.style.cssText = "font-size:15px;font-weight:700;margin:10px 0 6px"; ab.appendChild(ah);
-  ["ack_design", "ack_gs", "ack_seven", "ack_claude"].forEach(k => ab.appendChild(el("p", "para", "• " + t(k))));
+
+  // acknowledgements: a card of its own under About
+  const ak = card(t("ack"));
+  ["ack_design", "ack_gs", "ack_seven", "ack_claude"].forEach(k => ak.appendChild(el("p", "para", "• " + t(k))));
   const det = el("details"); const sum = el("summary", null, t("licences"));
   sum.style.cssText = "cursor:pointer;font-size:15px;font-weight:500;padding:8px 0;color:" + th.label; det.appendChild(sum);
   const pre = el("pre", null, document.getElementById("licence-text").textContent.trim());
   pre.style.cssText = "white-space:pre-wrap;font:12px/1.4 monospace;margin:4px 0 0;user-select:text;-webkit-user-select:text"; det.appendChild(pre);
-  ab.appendChild(det);
+  ak.appendChild(det);
 
   sheet.scrollTop = y;
 }
