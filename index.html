@@ -521,7 +521,7 @@ function drawKey(k) {
   fill.shader = null;
   ctx.restore();
   if (!th.dark) {                                                  // hairline rim: keeps light keys from melting into the body along the top
-    rr(r.l + .11 * u, r.t + .11 * u, r.r - .11 * u, r.b - .11 * u, rad);
+    rr(r.l + .11 * u, r.t + .11 * u, r.r - .11 * u, r.b + side - .11 * u, rad);   // around the whole key, thickness included
     ctx.strokeStyle = "rgba(0,0,0,0.10)"; ctx.lineWidth = .22 * u; ctx.stroke();
   }
   drawLabel(k, col[3]);
@@ -677,7 +677,7 @@ function swatch(theme, sel) {
   g.beginPath(); g.arc(cx, cy + dd * .9, rr2, 0, 7); g.fillStyle = theme.acc[0]; g.fill();
   return c;
 }
-const APP_VERSION = "2.20";
+const APP_VERSION = "2.21";
 const svgChevron = (color, right) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="${right ? "M9 5l7 7-7 7" : "M15 5l-7 7 7 7"}"/></svg>`;
 const svgCheck = color => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>`;
 function buildSettings() {
