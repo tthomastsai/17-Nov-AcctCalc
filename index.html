@@ -541,24 +541,22 @@ function drawLabel(k, color) {
     const pts = [[2, 11], [5.5, 9.5], [9.5, 17.5], [14.5, 2.5], [23, 2.5]];
     ctx.beginPath();
     pts.forEach((p, i) => { const px = cx + (p[0] - 12) * s, py = cy + (p[1] - 10) * s; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
-    ctx.strokeStyle = css(color); ctx.lineWidth = 2.2 * s; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.stroke();
+    ctx.strokeStyle = css(color); ctx.lineWidth = 1.8 * s; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.stroke();
     return;
   }
-  if (k.k === "set") {
-    const gr = Math.min(w, h) * .22;
+  if (k.k === "set") {                    // outlined gear, stroked at the same weight as the √
+    const s = Math.min(w * .42 / 24, h * .42 / 20), gr = Math.min(w, h) * .22 * .92;
+    const R = .74, d = Math.asin(.2 / R), yb = -Math.sqrt(R * R - .04);
+    const P = (x, y, a) => [cx + (x * Math.cos(a) - y * Math.sin(a)) * gr, cy + (x * Math.sin(a) + y * Math.cos(a)) * gr];
     ctx.beginPath();
-    ctx.arc(cx, cy, .74 * gr, 0, Math.PI * 2);
     for (let i = 0; i < 8; i++) {
-      const a = i * Math.PI / 4, ca = Math.cos(a), sa = Math.sin(a);
-      // tooth: rounded rect from radius .5 to 1, width .4 (rotated)
-      const pts = [[-.2, -1], [.2, -1], [.2, -.5], [-.2, -.5]].map(([x, y]) => [cx + (x * ca - y * sa) * gr, cy + (x * sa + y * ca) * gr]);
-      ctx.moveTo(pts[0][0], pts[0][1]);
-      for (let j = 1; j < 4; j++) ctx.lineTo(pts[j][0], pts[j][1]);
-      ctx.closePath();
+      const a = i * Math.PI / 4;
+      [[-.2, yb], [-.2, -1], [.2, -1], [.2, yb]].forEach(([x, y], j) => { const q = P(x, y, a); (i === 0 && j === 0) ? ctx.moveTo(q[0], q[1]) : ctx.lineTo(q[0], q[1]); });
+      ctx.arc(cx, cy, R * gr, -Math.PI / 2 + a + d, -Math.PI / 2 + a + Math.PI / 4 - d);
     }
-    ctx.moveTo(cx + .32 * gr, cy);
-    ctx.arc(cx, cy, .32 * gr, 0, Math.PI * 2, true);
-    fill.c = color; fill.shader = null; applyFill(); ctx.fill("nonzero");
+    ctx.closePath();
+    ctx.moveTo(cx + .32 * gr, cy); ctx.arc(cx, cy, .32 * gr, 0, Math.PI * 2);
+    ctx.strokeStyle = css(color); ctx.lineWidth = 1.8 * s; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.stroke();
     return;
   }
   if (k.k === "onc") {
@@ -677,7 +675,7 @@ function swatch(theme, sel) {
   g.beginPath(); g.arc(cx, cy + dd * .9, rr2, 0, 7); g.fillStyle = theme.acc[0]; g.fill();
   return c;
 }
-const APP_VERSION = "2.21";
+const APP_VERSION = "2.22";
 const svgChevron = (color, right) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="${right ? "M9 5l7 7-7 7" : "M15 5l-7 7 7 7"}"/></svg>`;
 const svgCheck = color => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>`;
 function buildSettings() {
