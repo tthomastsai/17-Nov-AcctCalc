@@ -22,7 +22,7 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
-/** Settings as a page of its own: language, appearance, tour and about. */
+/** Settings as a page of its own: language, appearance, tour, about and acknowledgements. */
 public class SettingsActivity extends Activity {
     public static final String EXTRA_TOUR = "replayTour";
     static final String WEB_URL = "https://tthomastsai.github.io/17-Nov-AcctCalc/";
@@ -205,18 +205,17 @@ public class SettingsActivity extends Activity {
         about.addView(v);
         about.addView(para(I18n.t("about_basis")));
         about.addView(para(I18n.t("about_made")));
-
-        TextView ack = label(I18n.t("ack"), 15, t700, txt);
-        ack.setPadding(0, dp(10), 0, dp(6));
-        about.addView(ack);
-        for (String k : new String[]{"ack_design", "ack_gs", "ack_seven", "ack_claude"}) about.addView(para("• " + I18n.t(k)));
-        about.addView(linkRow(I18n.t("licences"), new View.OnClickListener() {
-            @Override public void onClick(View v) { showLicences(); }
-        }));
         about.addView(linkRow(I18n.t("about_web"), new View.OnClickListener() {
             @Override public void onClick(View v) {
                 try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WEB_URL))); } catch (Exception e) {}
             }
+        }));
+
+        // ---- acknowledgements: a card of its own under About
+        LinearLayout ack = section(page, I18n.t("ack"));
+        for (String k : new String[]{"ack_design", "ack_gs", "ack_seven", "ack_claude"}) ack.addView(para("• " + I18n.t(k)));
+        ack.addView(linkRow(I18n.t("licences"), new View.OnClickListener() {
+            @Override public void onClick(View v) { showLicences(); }
         }));
 
         scroll.removeAllViews();

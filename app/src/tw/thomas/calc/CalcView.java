@@ -421,7 +421,8 @@ public class CalcView extends View {
         setText(tf, k.sizeU * u * fs, color, k.weight >= 500 ? -0.02f : 0);
         text.setTextAlign(Paint.Align.CENTER);
         text.getTextBounds(k.label, 0, k.label.length(), bounds);
-        c.drawText(k.label, cx, cy - bounds.exactCenterY(), text);
+        float drop = k.k.equals("dot") ? .5f * u : 0;   // a centred dot reads as sitting high; nudge it down a little
+        c.drawText(k.label, cx, cy - bounds.exactCenterY() + drop, text);
     }
 
     // ================================================================ touch
