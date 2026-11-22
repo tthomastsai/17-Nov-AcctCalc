@@ -367,7 +367,7 @@ public class CalcView extends View {
 
         if (!th.dark) {                                              // hairline rim: keeps light keys from melting into the body along the top
             stroke.setColor(alpha(Color.BLACK, .10f)); stroke.setStrokeWidth(.22f * u);
-            tmp.set(r); tmp.inset(.11f * u, .11f * u);
+            tmp.set(r.left, r.top, r.right, r.bottom + side); tmp.inset(.11f * u, .11f * u);   // around the whole key, thickness included
             c.drawRoundRect(tmp, rad, rad, stroke);
         }
         drawLabel(c, k, col[3]);
