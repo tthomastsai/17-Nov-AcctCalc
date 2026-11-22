@@ -356,6 +356,7 @@ public class CalcView extends View {
         c.clipPath(path);
         fill.setColor(alpha(Color.WHITE, th.dark ? .14f : .55f));
         c.drawRect(r, fill);                                         // top highlight edge
+        fill.setAlpha(255);                                          // opaque face (it used to keep the highlight's 55%)
         fill.setShader(new LinearGradient(0, r.top, 0, r.bottom, col[0], col[1], Shader.TileMode.CLAMP));
         tmp.set(r); tmp.offset(0, .4f * u);
         c.drawRoundRect(tmp, rad, rad, fill);
@@ -364,6 +365,11 @@ public class CalcView extends View {
         fill.setShader(null);
         c.restore();
 
+        if (!th.dark) {                                              // hairline rim: keeps light keys from melting into the body along the top
+            stroke.setColor(alpha(Color.BLACK, .10f)); stroke.setStrokeWidth(.22f * u);
+            tmp.set(r); tmp.inset(.11f * u, .11f * u);
+            c.drawRoundRect(tmp, rad, rad, stroke);
+        }
         drawLabel(c, k, col[3]);
         c.restore();
     }

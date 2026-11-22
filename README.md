@@ -16,7 +16,7 @@ An Android app modelled on the 12-digit business calculator on my desk. Its keys
 
 ### Installing
 
-Download [`dist/Calculator-v2.19.apk`](dist/Calculator-v2.19.apk), open it on your Android phone and allow *Install unknown apps* when asked. Android 6.0 or later is required.
+Download [`dist/Calculator-v2.20.apk`](dist/Calculator-v2.20.apk), open it on your Android phone and allow *Install unknown apps* when asked. Android 6.0 or later is required.
 
 ### Keys
 
@@ -133,7 +133,7 @@ Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/O
 
 ### 安裝
 
-下載 [`dist/Calculator-v2.19.apk`](dist/Calculator-v2.19.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
+下載 [`dist/Calculator-v2.20.apk`](dist/Calculator-v2.20.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
 
 ### 按鍵與運算規則
 
