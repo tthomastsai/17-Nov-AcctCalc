@@ -102,7 +102,7 @@ public class CalcView extends View {
     /** test hook: load fonts from a folder instead of the APK assets */
     static String fontDir = null;
 
-    private static Typeface load(Context c, String path, int fallbackStyle) {
+    static Typeface load(Context c, String path, int fallbackStyle) {
         try {
             if (fontDir != null) return Typeface.createFromFile(fontDir + "/" + path.substring(path.indexOf('/') + 1));
             return Typeface.createFromAsset(c.getAssets(), path);

@@ -36,12 +36,10 @@ public class SettingsActivity extends Activity {
     @Override protected void onCreate(Bundle b) {
         super.onCreate(b);
         prefs = getSharedPreferences("calc", MODE_PRIVATE);
-        try {
-            t500 = Typeface.createFromAsset(getAssets(), "fonts/GoogleSans-500.ttf");
-            t700 = Typeface.createFromAsset(getAssets(), "fonts/GoogleSans-700.ttf");
-            tGs = Typeface.createFromAsset(getAssets(), "fonts/GoogleSans-400.ttf");
-            tSeven = Typeface.createFromAsset(getAssets(), "fonts/AcctCalcSeven-Regular.ttf");
-        } catch (Exception e) { t500 = Typeface.DEFAULT; t700 = Typeface.DEFAULT_BOLD; tGs = Typeface.DEFAULT; tSeven = Typeface.MONOSPACE; }
+        t500 = CalcView.load(this, "fonts/GoogleSans-500.ttf", Typeface.NORMAL);
+        t700 = CalcView.load(this, "fonts/GoogleSans-700.ttf", Typeface.BOLD);
+        tGs = CalcView.load(this, "fonts/GoogleSans-400.ttf", Typeface.NORMAL);
+        tSeven = CalcView.load(this, "fonts/AcctCalcSeven-Regular.ttf", Typeface.NORMAL);
         scroll = new ScrollView(this);
         scroll.setFillViewport(true);
         setContentView(scroll);

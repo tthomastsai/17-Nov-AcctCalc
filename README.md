@@ -70,7 +70,7 @@ Tap ⚙ to open the settings page.
 | Replay the tour | A short guided tour runs the first time you open the app; you can watch it again from here. |
 | About | Version, what the design is based on, credits, font licences and a link to the web version |
 
-![](docs/screenshots/settings.png)
+<img src="docs/screenshots/settings.png" width="600" alt="Settings / 設定">
 
 ### Building and testing
 
