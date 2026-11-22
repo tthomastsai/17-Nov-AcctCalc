@@ -230,7 +230,8 @@ public class CalcView extends View {
     private final Path gear = new Path(), gearTmp = new Path();
     private final android.graphics.Matrix gearMatrix = new android.graphics.Matrix();   // reused every frame
 
-    private void drawGear(Canvas c, float cx, float cy, float r, int color) {
+    /** Outlined gear, stroked at the same weight as the √ so the top row reads as one family. */
+    private void drawGear(Canvas c, float cx, float cy, float r, float sw, int color) {
         gear.reset();
         gear.addCircle(cx, cy, .74f * r, Path.Direction.CW);
         for (int i = 0; i < 8; i++) {
@@ -244,8 +245,8 @@ public class CalcView extends View {
         gearTmp.reset();
         gearTmp.addCircle(cx, cy, .32f * r, Path.Direction.CW);
         gear.op(gearTmp, Path.Op.DIFFERENCE);
-        fill.setShader(null); fill.setColor(color);
-        c.drawPath(gear, fill);
+        stroke.setColor(color); stroke.setStrokeWidth(sw);
+        c.drawPath(gear, stroke);
     }
 
     private void drawLcd(Canvas c) {
@@ -395,12 +396,13 @@ public class CalcView extends View {
                 float px = cx + (pts[i][0] - 12) * s, py = cy + (pts[i][1] - 10) * s;
                 if (i == 0) path.moveTo(px, py); else path.lineTo(px, py);
             }
-            stroke.setColor(color); stroke.setStrokeWidth(2.2f * s);
+            stroke.setColor(color); stroke.setStrokeWidth(1.8f * s);
             c.drawPath(path, stroke);
             return;
         }
         if (k.k.equals("set")) {
-            drawGear(c, cx, cy, Math.min(r.width(), r.height()) * .22f, color);
+            float s = Math.min(r.width() * .42f / 24f, r.height() * .42f / 20f);   // same scale as the √
+            drawGear(c, cx, cy, Math.min(r.width(), r.height()) * .22f * .92f, 1.8f * s, color);
             return;
         }
         if (k.k.equals("onc")) {
