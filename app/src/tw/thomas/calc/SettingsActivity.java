@@ -202,7 +202,9 @@ public class SettingsActivity extends Activity {
         v.setPadding(0, dp(2), 0, dp(12));
         about.addView(v);
         about.addView(para(I18n.t("about_basis")));
-        about.addView(para(I18n.t("about_made")));
+        TextView made = para(I18n.t("about_made"));
+        made.setText(bold(I18n.t("about_made"), AUTHOR));
+        about.addView(made);
         about.addView(linkRow(I18n.t("about_web"), new View.OnClickListener() {
             @Override public void onClick(View v) {
                 try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WEB_URL))); } catch (Exception e) {}
@@ -253,6 +255,18 @@ public class SettingsActivity extends Activity {
         TextView v = new TextView(this);
         v.setText(s); v.setTextSize(sp); v.setTypeface(tf); v.setTextColor(color);
         return v;
+    }
+
+    private static final String AUTHOR = "tthomastsai";
+
+    /** s with the first occurrence of part set in Google Sans Bold. */
+    private CharSequence bold(String s, String part) {
+        android.text.SpannableString sp = new android.text.SpannableString(s);
+        int i = s.indexOf(part);
+        Object span = android.os.Build.VERSION.SDK_INT >= 28 ? new android.text.style.TypefaceSpan(t700)
+                : new android.text.style.StyleSpan(Typeface.BOLD);   // Android 6–8: synthetic bold
+        if (i >= 0) sp.setSpan(span, i, i + part.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return sp;
     }
 
     private TextView para(String s) {
