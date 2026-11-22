@@ -1,8 +1,8 @@
 # Changelog / 版本紀錄
 
-Versions follow **major.feature.fix**: the middle number goes up for a new feature or a visible change, the last for small fixes and tweaks. Releases before 3.0.0 were first numbered 2.1 to 2.23; the old number is shown in brackets.
+Versions follow **major.feature.fix**: the middle number goes up for a new feature or a visible change, the last for small fixes and tweaks. Releases before 3.0.0 were first numbered 2.1 to 2.23; the old number is shown in brackets. Each version has a git tag (`v2.1.0` … `v3.0.0`); see the repository's Tags page.
 
-版本號採用「**主版本.功能.小修**」：新增功能或明顯改變時加中間的數字，小修正、微調時加最後一碼。3.0.0 之前的版本原本編為 2.1 到 2.23，括號內是舊編號。
+版本號採用「**主版本.功能.小修**」：新增功能或明顯改變時加中間的數字，小修正、微調時加最後一碼。3.0.0 之前的版本原本編為 2.1 到 2.23，括號內是舊編號。每個版本都有對應的 git tag（`v2.1.0` … `v3.0.0`），可在 repository 的 Tags 頁面查看。
 
 ---
 
