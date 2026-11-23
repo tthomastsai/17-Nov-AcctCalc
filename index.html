@@ -511,9 +511,9 @@ function drawKey(k) {
   ctx.translate(0, dy);
   ctx.save();
   rr(r.l, r.t, r.r, r.b, rad); ctx.clip();
-  fill.c = { r: 255, g: 255, b: 255, a: th.dark ? .14 : .55 };
+  const lt = th.dark ? .14 : .45;                                  // top highlight edge: a lighter shade of the key, so it reads as part of it
+  fill.c = { r: Math.round(col[0].r + (255 - col[0].r) * lt), g: Math.round(col[0].g + (255 - col[0].g) * lt), b: Math.round(col[0].b + (255 - col[0].b) * lt), a: 1 };
   fillRect(r.l, r.t, r.r, r.b);
-  fill.c = { ...fill.c, a: 1 };                                   // opaque face (it used to keep the highlight's 55%)
   fill.shader = grad(0, r.t, 0, r.b, [col[0], col[1]]);
   fillRR(r.l, r.t + .4 * u, r.r, r.b + .4 * u, rad);
   fill.shader = grad(0, r.b - 1.2 * u, 0, r.b, [argb(0x00000000), argb(0x12000000)]);
@@ -522,7 +522,9 @@ function drawKey(k) {
   ctx.restore();
   if (!th.dark) {                                                  // hairline rim: keeps light keys from melting into the body along the top
     rr(r.l + .11 * u, r.t + .11 * u, r.r - .11 * u, r.b + side - .11 * u, rad);   // around the whole key, thickness included
-    ctx.strokeStyle = "rgba(0,0,0,0.10)"; ctx.lineWidth = .22 * u; ctx.stroke();
+    const rg = ctx.createLinearGradient(0, r.t, 0, r.b);           // fades out downwards: crisp along the top, no line along the bottom
+    rg.addColorStop(0, "rgba(0,0,0,0.10)"); rg.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.strokeStyle = rg; ctx.lineWidth = .22 * u; ctx.stroke();
   }
   drawLabel(k, col[3]);
   ctx.restore();
