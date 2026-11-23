@@ -15,32 +15,45 @@ body { font-family: "Google Sans", Roboto, system-ui, sans-serif; }
 #c { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; display: block; touch-action: none; }
 
 /* ---------- settings sheet ---------- */
-#sheet { position: fixed; inset: 0; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; z-index: 5; }
-#sheet .page { max-width: 560px; margin: 0 auto; padding: 8px 16px 28px; box-sizing: border-box; }
+#sheet { position: fixed; inset: 0; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; z-index: 5; transform: translateX(100%); transition: transform .32s cubic-bezier(.2,.7,.3,1); }
+#sheet.in { transform: none; }
+#c { transition: transform .32s cubic-bezier(.2,.7,.3,1); }
+#c.under { transform: translateX(-30%); }
+@media (prefers-reduced-motion: reduce) { #sheet, #c { transition: none; } }
+#sheet .page { max-width: 560px; margin: 0 auto; padding: 8px 12px 28px; box-sizing: border-box; }
 #sheet.open { display: block; }
 #sheet .bar { display: flex; align-items: center; padding: 4px 0 12px; }
-#sheet .bar button { width: 44px; height: 44px; border: 0; background: transparent; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-#sheet .head { font-size: 13px; font-weight: 700; margin: 18px 6px 8px; }
-#sheet .card { border-radius: 20px; padding: 16px 18px; }
+#sheet .bar button { width: 40px; height: 40px; border: 0; padding: 0; margin: 2px 4px 6px 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+#sheet .head { font-size: 13px; font-weight: 700; margin: 16px 10px 8px; }
+#sheet .card { border-radius: 20px; padding: 16px 18px; margin: 0 4px 9px; border: .9px solid transparent; }
 #sheet .row { display: flex; align-items: center; padding: 8px 0; cursor: pointer; font-size: 15px; font-weight: 500; }
 #sheet .row .grow { flex: 1; }
 #sheet .hint { font-size: 12px; font-weight: 500; margin-top: 6px; }
 #sheet .para { font-size: 14px; font-weight: 500; line-height: 1.45; margin: 0 0 8px; }
-#sheet h2 { margin: 0 0 0 4px; font-size: 24px; font-weight: 700; }
+#sheet h2 { margin: 0 0 4px 8px; font-size: 24px; font-weight: 700; }
 .sec { font-size: 15px; font-weight: 500; margin: 14px 0 8px; display: flex; justify-content: space-between; }
 .sec.first { margin-top: 0; }
 .sec span:last-child { opacity: .75; }
-.seg { display: flex; padding: 3px; border-radius: 20px; }
-.seg button { flex: 1; border: 0; background: transparent; font: 500 14px/1 inherit; font-family: inherit; padding: 9px 6px; border-radius: 17px; cursor: pointer; color: inherit; }
-input[type=range] { width: 100%; margin: 6px 0 2px; }
+.seg { display: flex; padding: 3px 3px 5px; border-radius: 22px; }
+.seg button { flex: 1; border: 0; background: transparent; font: 500 14px/1 inherit; font-family: inherit; padding: 9px 6px; border-radius: 17px; cursor: pointer; color: inherit; margin-bottom: 2.5px; }
+input[type=range] { width: 100%; margin: 4px 0 2px; -webkit-appearance: none; appearance: none; background: transparent; height: 32px; }
+input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(to right, var(--on) var(--p), var(--off) var(--p)); }
+input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--off); }
+input[type=range]::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--on); }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -10px; border-radius: 50%; border: 0; background: var(--knob); box-shadow: var(--knobsh); }
+input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; border: 0; background: var(--knob); box-shadow: var(--knobsh); }
 .sw { display: flex; }
 .sw button { flex: 1; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; font: 500 11px inherit; font-family: inherit; cursor: pointer; color: inherit; }
 .sw canvas { width: 48px; height: 48px; }
 .sw span { margin-top: 6px; }
-.tg { -webkit-appearance: none; appearance: none; width: 40px; height: 24px; border-radius: 12px; background: var(--off); position: relative; cursor: pointer; flex: none; margin: 0 0 0 12px; transition: background .15s; opacity: .9; }
-.tg::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left .15s; box-shadow: 0 1px 2px rgba(0,0,0,.25); }
-.tg:checked { background: var(--on); }
-.tg:checked::after { left: 19px; }
+/* Material 3 switch: 52x32 track, 2px outline when off; thumb 16px off, 24px on (with a check), 28px pressed */
+.tg { -webkit-appearance: none; appearance: none; box-sizing: border-box; width: 52px; height: 32px; border-radius: 16px; border: 2px solid var(--outline); background: var(--offtrack); position: relative; cursor: pointer; flex: none; margin: 0 0 0 12px; transition: background-color .15s, border-color .15s; }
+.tg::after { content: ""; position: absolute; left: 6px; top: 6px; width: 16px; height: 16px; border-radius: 50%; background: var(--outline) no-repeat center / 16px 16px; transition: all .15s cubic-bezier(.2,0,0,1); }
+.tg:checked { background: var(--on); border-color: var(--on); }
+.tg:checked::after { left: 22px; top: 2px; width: 24px; height: 24px; background-color: var(--thumb); background-image: var(--tick); }
+.tg:active::after { left: 0; top: 0; width: 28px; height: 28px; }
+.tg:checked:active::after { left: 20px; top: 0; }
+.tg:focus-visible { outline: 2px solid var(--on); outline-offset: 2px; }
 #tour { position: fixed; inset: 0; display: none; z-index: 10; }
 #tour.open { display: block; }
 #tour.nohole { background: rgba(0,0,0,.6); }
@@ -651,12 +664,26 @@ function applyChrome() {
   document.title = t("title");
   document.documentElement.lang = lang === "zh" ? "zh-Hant" : "en-GB";
 }
+const mixHex = (a, b, f) => { const A = argb(parseInt(a.slice(1), 16)), B = argb(parseInt(b.slice(1), 16)); const h = v => Math.round(v).toString(16).padStart(2, "0"); return "#" + h(A.r + (B.r - A.r) * f) + h(A.g + (B.g - A.g) * f) + h(A.b + (B.b - A.b) * f); };
+/* the keys' look in CSS (as Raised.java on Android): gradient face, lighter lip, thickness, soft shadow, rim fading out downwards */
+function raised(elm, top, bot, side, o) {
+  const { thick = 3, off = 4, blur = 6, rim = true } = o || {};
+  const lip = mixHex(top, "#ffffff", th.dark ? .14 : .45), sh = th.dark ? .42 : .18;
+  elm.style.background = (rim && !th.dark)
+    ? `linear-gradient(${top}, ${bot}) padding-box, linear-gradient(rgba(0,0,0,.10), rgba(0,0,0,0) 44px) border-box`
+    : `linear-gradient(${top}, ${bot})`;
+  elm.style.boxShadow = `inset 0 1.6px 0 ${lip}, 0 ${thick}px 0 ${side}, 0 ${thick + off}px ${blur * 1.6}px rgba(0,0,0,${sh})`;
+}
+function well(elm) {
+  elm.style.background = th.dark ? "rgba(0,0,0,.25)" : "rgba(0,0,0,.08)";
+  elm.style.boxShadow = th.dark ? "inset 0 2px 4px rgba(0,0,0,.35)" : "inset 0 2px 4px rgba(0,0,0,.14), 0 1px 0 rgba(255,255,255,.7)";
+}
 function segmented(items, selected, onPick) {
   const seg = document.createElement("div"); seg.className = "seg";
-  seg.style.background = th.dark ? "rgba(255,255,255,.12)" : "rgba(0,0,0,.07)";
+  well(seg);
   items.forEach((label, i) => {
     const b = document.createElement("button"); b.type = "button"; b.textContent = label;
-    if (i === selected) { b.style.background = th.acc[1]; b.style.color = th.acc[3]; } else b.style.color = th.fn[3];
+    if (i === selected) { raised(b, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false }); b.style.color = th.acc[3]; } else b.style.color = th.fn[3];
     b.addEventListener("click", () => onPick(i));
     seg.appendChild(b);
   });
@@ -668,8 +695,13 @@ function swatch(theme, sel) {
   const g = c.getContext("2d"); g.scale(d, d);
   const cx = 24, cy = 24, r = 20;
   if (sel) { g.beginPath(); g.arc(cx, cy, r + 2.5, 0, 7); g.lineWidth = 2; g.strokeStyle = th.fn[3]; g.stroke(); }
-  g.beginPath(); g.arc(cx, cy, r, 0, 7); g.fillStyle = theme.bg; g.fill();
-  g.lineWidth = 1; g.strokeStyle = "rgba(0,0,0,.13)"; g.stroke();
+  const side = theme.dark ? mixHex(theme.bg, "#000000", .4) : theme.bezelLine;   // raised disc, as on Android
+  g.save(); g.shadowColor = theme.dark || th.dark ? "rgba(0,0,0,.42)" : "rgba(0,0,0,.18)"; g.shadowBlur = 3; g.shadowOffsetY = 3;
+  g.beginPath(); g.arc(cx, cy + 2, r, 0, 7); g.fillStyle = side; g.fill(); g.restore();
+  const fg = g.createLinearGradient(0, cy - r, 0, cy + r); fg.addColorStop(0, theme.bg); fg.addColorStop(1, mixHex(theme.bg, theme.dark ? "#000000" : theme.bezelBot, .5));
+  g.beginPath(); g.arc(cx, cy, r, 0, 7); g.fillStyle = mixHex(theme.bg, "#ffffff", theme.dark ? .14 : .45); g.fill();
+  g.beginPath(); g.arc(cx, cy + 1.2, r - .4, 0, 7); g.save(); g.beginPath(); g.arc(cx, cy, r, 0, 7); g.clip();
+  g.beginPath(); g.arc(cx, cy + 1.6, r, 0, 7); g.fillStyle = fg; g.fill(); g.restore();
   const dd = r * .34, rr2 = r * .3;
   g.beginPath(); g.arc(cx - dd, cy - dd * .6, rr2, 0, 7); g.fillStyle = theme.num[0]; g.fill();
   g.beginPath(); g.arc(cx + dd, cy - dd * .6, rr2, 0, 7); g.fillStyle = theme.fn[0]; g.fill();
@@ -677,18 +709,20 @@ function swatch(theme, sel) {
   g.beginPath(); g.arc(cx, cy + dd * .9, rr2, 0, 7); g.fillStyle = theme.acc[0]; g.fill();
   return c;
 }
-const APP_VERSION = "3.0.0";
+const APP_VERSION = "3.0.1";
 const svgChevron = (color, right) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="${right ? "M9 5l7 7-7 7" : "M15 5l-7 7 7 7"}"/></svg>`;
 const svgCheck = color => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>`;
 function buildSettings() {
-  const txt = th.fn[3], cardBg = th.dark ? "#2A2C30" : th.bezelTop, y = sheet.scrollTop;
+  const txt = th.fn[3], y = sheet.scrollTop;
   sheet.innerHTML = ""; sheet.style.background = th.bg; sheet.style.color = txt;
   const page = document.createElement("div"); page.className = "page"; sheet.appendChild(page);
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
   const card = heading => {
     if (heading) { const h = el("div", "head", heading); h.style.color = th.sub; page.appendChild(h); }
     else page.appendChild(el("div")).style.height = "18px";
-    const c = el("div", "card"); c.style.background = cardBg; page.appendChild(c); return c;
+    const c = el("div", "card");
+    raised(c, th.dark ? "#2D2F33" : th.bezelTop, th.dark ? "#27292D" : mixHex(th.bezelTop, th.bezelBot, .55), th.dark ? "#18191C" : th.bezelLine);
+    page.appendChild(c); return c;
   };
   const sec = (parent, label, right, first) => {
     const d = el("div", "sec" + (first ? " first" : ""));
@@ -704,6 +738,7 @@ function buildSettings() {
   // top bar
   const bar = el("div", "bar");
   const back = el("button"); back.type = "button"; back.setAttribute("aria-label", t("back")); back.innerHTML = svgChevron(txt, false);
+  raised(back, th.fn[0], th.fn[1], th.fn[2], { thick: 2.5, off: 2, blur: 3 });
   back.addEventListener("click", closeSettings);
   bar.append(back, el("h2", null, t("settings"))); page.appendChild(bar);
 
@@ -726,8 +761,12 @@ function buildSettings() {
   const khRow = sec(ac, t("key_height"), Math.round(keyScale * 100) + "%");
   const range = document.createElement("input");
   range.type = "range"; range.min = 60; range.max = 100; range.value = Math.round(keyScale * 100);
-  range.style.accentColor = th.acc[1];
+  const setP = () => range.style.setProperty("--p", ((range.value - 60) / 40 * 100) + "%");
+  range.style.setProperty("--on", th.acc[1]); range.style.setProperty("--off", th.sub); setP();
+  range.style.setProperty("--knob", `linear-gradient(${th.acc[0]}, ${th.acc[1]})`);
+  range.style.setProperty("--knobsh", `inset 0 1.6px 0 ${mixHex(th.acc[0], "#ffffff", th.dark ? .14 : .45)}, 0 2.5px 0 ${th.acc[2]}, 0 4px 5px rgba(0,0,0,${th.dark ? .42 : .18})`);
   range.addEventListener("input", () => {
+    setP();
     keyScale = range.value / 100; store.set("keyScale", String(keyScale));
     khRow.lastChild.textContent = range.value + "%"; layout(); invalidate();
   });
@@ -755,8 +794,13 @@ function buildSettings() {
   const dr = el("label", "sec"); dr.style.alignItems = "center"; dr.style.cursor = "pointer"; dr.style.marginTop = "18px";
   dr.appendChild(el("span", null, t("auto_dark")));
   const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = autoDark; cb.className = "tg";
-  cb.style.setProperty("--on", th.acc[1]); cb.style.setProperty("--off", th.sub);
-  cb.addEventListener("change", () => { autoDark = cb.checked; store.set("autoDark", autoDark ? "1" : "0"); th = effective(); applyChrome(); invalidate(); buildSettings(); });
+  const icon = th.dark ? th.acc[1] : th.acc[2];
+  cb.style.setProperty("--on", th.acc[1]); cb.style.setProperty("--outline", th.sub);
+  cb.style.setProperty("--offtrack", th.dark ? "#36383D" : mixHex(th.bg, "#000000", .06));
+  cb.style.setProperty("--thumb", th.dark ? th.acc[3] : "#ffffff");
+  cb.style.setProperty("--tick", `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M3.6 8.1l3.2 3.3 5.6-6.2' fill='none' stroke='${icon}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>`)}")`);
+  cb.setAttribute("role", "switch");
+  cb.addEventListener("change", () => { autoDark = cb.checked; store.set("autoDark", autoDark ? "1" : "0"); setTimeout(() => { th = effective(); applyChrome(); invalidate(); buildSettings(); }, 160); });   // let the thumb slide first
   dr.appendChild(cb); ac.appendChild(dr);
   if (autoDark && systemDark()) { const note = el("div", "hint", t("auto_dark_on")); note.style.color = th.sub; ac.appendChild(note); }
 
@@ -782,8 +826,17 @@ function buildSettings() {
 
   sheet.scrollTop = y;
 }
-function openSettings() { for (const k of keys) k.down = false; pointers.clear(); sheet.classList.add("open"); buildSettings(); sheet.scrollTop = 0; }
-function closeSettings() { sheet.classList.remove("open"); invalidate(); }
+/* Settings slide in from the right and back out to the right; the calculator moves a little to the left underneath */
+function openSettings() {
+  for (const k of keys) k.down = false; pointers.clear();
+  sheet.classList.add("open"); buildSettings(); sheet.scrollTop = 0;
+  void sheet.offsetWidth; sheet.classList.add("in"); cv.classList.add("under");
+}
+function closeSettings() {
+  sheet.classList.remove("in"); cv.classList.remove("under"); invalidate();
+  const done = () => { if (!sheet.classList.contains("in")) sheet.classList.remove("open"); };
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) done(); else setTimeout(done, 340);
+}
 if (darkMq) {
   const onDark = () => { th = effective(); applyChrome(); invalidate(); if (sheet.classList.contains("open")) buildSettings(); };
   if (darkMq.addEventListener) darkMq.addEventListener("change", onDark); else if (darkMq.addListener) darkMq.addListener(onDark);
