@@ -16,7 +16,7 @@ An Android app modelled on the 12-digit business calculator on my desk. Its keys
 
 ### Installing
 
-**Web version (any phone or computer):** open [`index.html`](index.html) in a browser. What changed in each version is in [`CHANGELOG.md`](CHANGELOG.md). It is a single, self-contained file that also works offline, with the same calculation engine, look and settings as the Android app. It can be published with GitHub Pages; on an iPhone or iPad, *Share › Add to Home Screen* in Safari gives it a home-screen icon (`apple-touch-icon.png`).
+**Web version (any phone or computer):** open [`index.html`](index.html) in a browser. What changed in each version is in [`CHANGELOG.md`](CHANGELOG.md); settled decisions and things deliberately left out are in [`docs/DESIGN.md`](docs/DESIGN.md). It is a single, self-contained file that also works offline, with the same calculation engine, look and settings as the Android app. It can be published with GitHub Pages; on an iPhone or iPad, *Share › Add to Home Screen* in Safari gives it a home-screen icon (`apple-touch-icon.png`).
 
 **Android app:** see the `main` branch, where the APK is in the `dist/` folder.
 
@@ -138,7 +138,7 @@ Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/O
 
 ### 安裝
 
-**網頁版（任何手機或電腦）：** 用瀏覽器打開 [`index.html`](index.html)。各版本改了什麼，見 [`CHANGELOG.md`](CHANGELOG.md)。它是單一檔案、可離線使用，運算邏輯、外觀和設定都跟 Android 版相同，也可以用 GitHub Pages 發布成網址；在 iPhone／iPad 上用 Safari 的「分享 → 加入主畫面」，就會有主畫面圖示（`apple-touch-icon.png`）。
+**網頁版（任何手機或電腦）：** 用瀏覽器打開 [`index.html`](index.html)。各版本改了什麼，見 [`CHANGELOG.md`](CHANGELOG.md)；已定案的決定和刻意不做的事，見 [`docs/DESIGN.md`](docs/DESIGN.md)。它是單一檔案、可離線使用，運算邏輯、外觀和設定都跟 Android 版相同，也可以用 GitHub Pages 發布成網址；在 iPhone／iPad 上用 Safari 的「分享 → 加入主畫面」，就會有主畫面圖示（`apple-touch-icon.png`）。
 
 **Android 版：** 下載 [`dist/Calculator-v2.5.apk`](dist/Calculator-v2.5.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。
 

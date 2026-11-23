@@ -1,12 +1,15 @@
 # Changelog / 版本紀錄
 
-Versions follow **major.feature.fix**: the middle number goes up for a new feature or a visible change, the last for small fixes and tweaks. Releases before 3.0.0 were first numbered 2.1 to 2.23; the old number is shown in brackets. Each version has a git tag (`v2.1.0` … `v3.0.0`); see the repository's Tags page.
+Changes are listed under *Unreleased* until a batch is released; see [`docs/DESIGN.md`](docs/DESIGN.md). Versions follow **major.feature.fix**: the middle number goes up for a new feature or a visible change, the last for small fixes and tweaks. Releases before 3.0.0 were first numbered 2.1 to 2.23; the old number is shown in brackets. Each version has a git tag (`v2.1.0` … `v3.0.0`); see the repository's Tags page.
 
-版本號採用「**主版本.功能.小修**」：新增功能或明顯改變時加中間的數字，小修正、微調時加最後一碼。3.0.0 之前的版本原本編為 2.1 到 2.23，括號內是舊編號。每個版本都有對應的 git tag（`v2.1.0` … `v3.0.0`），可在 repository 的 Tags 頁面查看。
+改動在發版前先記在「尚未發布」，見 [`docs/DESIGN.md`](docs/DESIGN.md)。版本號採用「**主版本.功能.小修**」：新增功能或明顯改變時加中間的數字，小修正、微調時加最後一碼。3.0.0 之前的版本原本編為 2.1 到 2.23，括號內是舊編號。每個版本都有對應的 git tag（`v2.1.0` … `v3.0.0`），可在 repository 的 Tags 頁面查看。
 
 ---
 
 ## English
+
+### Unreleased
+- (nothing yet)
 
 ### 3.0.1
 - The settings page shares the calculator's look: raised cards with soft shadows and a little thickness, a round back key, a raised accent pill in a recessed groove for the position choice, a raised slider knob and raised theme swatches.
@@ -61,6 +64,9 @@ Versions follow **major.feature.fix**: the middle number goes up for a new featu
 ---
 
 ## 正體中文
+
+### 尚未發布
+- （目前沒有）
 
 ### 3.0.1
 - 設定頁改成和計算機一致的質感：卡片浮起、有柔和陰影和一點厚度；返回鍵是圓形按鍵；機身位置的選項是凹槽裡浮起的強調色按鍵；滑桿的圓鈕和主題色票也是浮起的。
