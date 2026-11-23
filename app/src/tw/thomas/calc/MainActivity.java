@@ -75,7 +75,7 @@ public class MainActivity extends Activity implements CalcView.Host {
     // ================================================================ settings page
     @Override public void openSettings() {
         startActivityForResult(new Intent(this, SettingsActivity.class), REQ_SETTINGS);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        SettingsActivity.slideIn(this);
     }
 
     @Override protected void onActivityResult(int req, int res, Intent data) {

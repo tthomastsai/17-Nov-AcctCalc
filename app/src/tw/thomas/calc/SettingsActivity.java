@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Typeface;
@@ -33,8 +34,25 @@ public class SettingsActivity extends Activity {
     private int txt, sub, card;
     private ScrollView scroll;
 
+    /** id of one of the slide animations in res/anim (looked up by name so the render tests need no R class) */
+    static int anim(Activity a, String name) { return a.getResources().getIdentifier(name, "anim", a.getPackageName()); }
+
+    /** Settings slides in from the right and back out to the right; the calculator moves a little to the left underneath. */
+    static void slideIn(Activity from) {
+        if (Build.VERSION.SDK_INT < 34) from.overridePendingTransition(anim(from, "slide_in_right"), anim(from, "slide_out_left"));
+    }
+
+    @Override public void finish() {
+        super.finish();
+        if (Build.VERSION.SDK_INT < 34) overridePendingTransition(anim(this, "slide_in_left"), anim(this, "slide_out_right"));
+    }
+
     @Override protected void onCreate(Bundle b) {
         super.onCreate(b);
+        if (Build.VERSION.SDK_INT >= 34) {   // also covers the predictive back gesture
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, anim(this, "slide_in_right"), anim(this, "slide_out_left"));
+            overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, anim(this, "slide_in_left"), anim(this, "slide_out_right"));
+        }
         prefs = getSharedPreferences("calc", MODE_PRIVATE);
         t500 = CalcView.load(this, "fonts/GoogleSans-500.ttf", Typeface.NORMAL);
         t700 = CalcView.load(this, "fonts/GoogleSans-700.ttf", Typeface.BOLD);
@@ -44,6 +62,24 @@ public class SettingsActivity extends Activity {
         scroll.setFillViewport(true);
         setContentView(scroll);
         build();
+    }
+
+    private float den() { return getResources().getDisplayMetrics().density; }
+
+    /** a card in the keys' style: raised, with a soft shadow and a little thickness */
+    private Raised cardBg() {
+        int top = t.dark ? 0xFF2D2F33 : t.bezelTop;
+        int bot = t.dark ? 0xFF27292D : Raised.mix(t.bezelTop, t.bezelBot, .55f);
+        int side = t.dark ? 0xFF18191C : t.bezelLine;
+        return new Raised(top, bot, side, t.dark, den(), 20, 3, 4, 6);
+    }
+
+    /** a small round key: back button, switch and slider thumbs */
+    private Raised knob(int[] col, float sizeDp) {
+        Raised k = new Raised(col[0], col[1], col[2], t.dark, den(), -1, 2.5f, 2, 3);
+        k.centred = true;
+        k.iw = dp(sizeDp) + 2 * k.padL(); k.ih = dp(sizeDp) + k.padT() + k.padB();
+        return k;
     }
 
     private int dp(float v) { return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, v, getResources().getDisplayMetrics())); }
@@ -57,7 +93,7 @@ public class SettingsActivity extends Activity {
 
         LinearLayout page = new LinearLayout(this);
         page.setOrientation(LinearLayout.VERTICAL);
-        page.setPadding(dp(16), dp(8), dp(16), dp(24));
+        page.setPadding(dp(12), dp(8), dp(12), dp(24));
         page.setBackgroundColor(t.bg);
 
         // ---- top bar
@@ -66,11 +102,13 @@ public class SettingsActivity extends Activity {
         bar.setGravity(Gravity.CENTER_VERTICAL);
         bar.setPadding(0, dp(4), 0, dp(12));
         View back = new Chevron(txt);
+        Raised backKey = knob(t.fn, 40);
+        back.setBackground(backKey);
         back.setContentDescription(I18n.t("back"));
         back.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { finish(); } });
-        bar.addView(back, new LinearLayout.LayoutParams(dp(44), dp(44)));
+        bar.addView(back, new LinearLayout.LayoutParams(backKey.iw, backKey.ih));
         TextView title = label(I18n.t("settings"), 24, t700, txt);
-        title.setPadding(dp(4), 0, 0, 0);
+        title.setPadding(dp(10), 0, 0, 0);
         bar.addView(title);
         page.addView(bar);
 
@@ -113,10 +151,12 @@ public class SettingsActivity extends Activity {
         SeekBar sb = new SeekBar(this);
         sb.setMax(40);
         sb.setProgress(Math.round(ks * 100) - 60);
-        ColorStateList tint = ColorStateList.valueOf(t.acc[1]);
-        sb.setProgressTintList(tint); sb.setThumbTintList(tint);
+        sb.setProgressTintList(ColorStateList.valueOf(t.acc[1]));
         sb.setProgressBackgroundTintList(ColorStateList.valueOf(sub));
-        sb.setPadding(dp(4), dp(10), dp(4), dp(4));
+        Raised thumb = knob(t.acc, 22);
+        sb.setThumb(thumb);
+        sb.setSplitTrack(false);
+        sb.setPadding(thumb.iw / 2, dp(4), thumb.iw / 2, 0);   // room for the whole thumb at either end
         sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override public void onProgressChanged(SeekBar s, int p, boolean user) {
                 prefs.edit().putFloat("keyScale", (60 + p) / 100f).apply();
@@ -171,15 +211,11 @@ public class SettingsActivity extends Activity {
         dr.setGravity(Gravity.CENTER_VERTICAL);
         dr.setPadding(0, dp(18), 0, 0);
         dr.addView(label(I18n.t("auto_dark"), 15, t500, txt), new LinearLayout.LayoutParams(0, -2, 1));
-        Switch toggle = new Switch(this);
-        toggle.setChecked(Theme.autoDark(prefs));
-        int[][] states = {{android.R.attr.state_checked}, {}};
-        toggle.setThumbTintList(new ColorStateList(states, new int[]{t.acc[1], t.dark ? 0xFFB0B3B8 : 0xFFF5F5F5}));
-        toggle.setTrackTintList(new ColorStateList(states, new int[]{t.acc[1], sub}));
-        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override public void onCheckedChanged(CompoundButton b, boolean on) { prefs.edit().putBoolean("autoDark", on).apply(); build(); }
-        });
-        dr.addView(toggle);
+        final Toggle toggle = new Toggle(Theme.autoDark(prefs), I18n.t("auto_dark"));
+        toggle.onChange = new Runnable() {
+            @Override public void run() { prefs.edit().putBoolean("autoDark", toggle.on).apply(); build(); }
+        };
+        dr.addView(toggle, new LinearLayout.LayoutParams(dp(56), dp(48)));
         look.addView(dr);
         if (Theme.autoDark(prefs) && Theme.systemDark(this)) {
             TextView note = label(I18n.t("auto_dark_on"), 12, t500, sub);
@@ -280,19 +316,18 @@ public class SettingsActivity extends Activity {
     private LinearLayout section(LinearLayout page, String heading) {
         if (heading != null) {
             TextView h = label(heading, 13, t700, sub);
-            h.setPadding(dp(6), dp(18), 0, dp(8));
+            h.setPadding(dp(10), dp(14), 0, dp(6));
             h.setAllCaps(false);
             page.addView(h);
         } else {
             View gap = new View(this);
-            page.addView(gap, new LinearLayout.LayoutParams(-1, dp(18)));
+            page.addView(gap, new LinearLayout.LayoutParams(-1, dp(12)));
         }
         LinearLayout c = new LinearLayout(this);
         c.setOrientation(LinearLayout.VERTICAL);
-        c.setPadding(dp(18), dp(16), dp(18), dp(16));
-        GradientDrawable bg = new GradientDrawable();
-        bg.setColor(card); bg.setCornerRadius(dp(20));
+        Raised bg = cardBg();
         c.setBackground(bg);
+        c.setPadding(dp(18) + bg.padL(), dp(16), dp(18) + bg.padL(), dp(16) + bg.padB());
         page.addView(c, new LinearLayout.LayoutParams(-1, -2));
         return c;
     }
@@ -351,23 +386,17 @@ public class SettingsActivity extends Activity {
     private LinearLayout segmented(String[] items, int selected, final Pick cb) {
         LinearLayout seg = new LinearLayout(this);
         seg.setOrientation(LinearLayout.HORIZONTAL);
-        seg.setPadding(dp(3), dp(3), dp(3), dp(3));
-        GradientDrawable track = new GradientDrawable();
-        track.setColor(t.dark ? 0x1FFFFFFF : 0x12000000);
-        track.setCornerRadius(dp(20));
-        seg.setBackground(track);
+        seg.setBackground(new Well(t.dark, den(), -1));
+        seg.setPadding(dp(3), dp(3), dp(3), dp(2));
         for (int i = 0; i < items.length; i++) {
             final int idx = i;
             boolean sel = i == selected;
             TextView v = label(items[i], 14, t500, sel ? t.acc[3] : t.fn[3]);
             v.setGravity(Gravity.CENTER);
-            v.setPadding(dp(4), dp(9), dp(4), dp(9));
             v.setSingleLine(true);
-            if (sel) {
-                GradientDrawable pill = new GradientDrawable();
-                pill.setColor(t.acc[1]); pill.setCornerRadius(dp(17));
-                v.setBackground(pill);
-            }
+            Raised pill = new Raised(t.acc[0], t.acc[1], t.acc[2], t.dark, den(), -1, 2.5f, 1.5f, 2.5f);
+            if (sel) v.setBackground(pill);
+            v.setPadding(dp(4) + pill.padL(), dp(8), dp(4) + pill.padL(), dp(8) + pill.padB());
             v.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View view) { cb.pick(idx); } });
             seg.addView(v, new LinearLayout.LayoutParams(0, -2, 1));
         }
@@ -391,21 +420,89 @@ public class SettingsActivity extends Activity {
         }
     }
 
+    /**
+     * Material 3 switch, drawn by hand (the app has no Material library): a 52×32 dp track with a
+     * 2 dp outline when off; the thumb grows from 16 dp (off) to 24 dp (on, with a check mark) and to
+     * 28 dp while pressed, and slides across in 150 ms before the setting is saved.
+     */
+    private final class Toggle extends View {
+        boolean on; float pos, press;                       // pos: 0 off .. 1 on
+        final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG); final Path tick = new Path();
+        final int primary = t.acc[1], onPrimary = t.dark ? t.acc[3] : 0xFFFFFFFF, icon = t.dark ? t.acc[1] : t.acc[2];
+        final int outline = t.sub, offTrack = t.dark ? 0xFF36383D : Raised.mix(t.bg, 0xFF000000, .06f);
+        Runnable onChange;
+        Toggle(boolean on, String desc) {
+            super(SettingsActivity.this); this.on = on; pos = on ? 1 : 0;
+            setContentDescription(desc); setFocusable(true); setClickable(true);
+        }
+        private int blend(int a, int b, float f) {
+            return (Math.round(Color.alpha(a) + (Color.alpha(b) - Color.alpha(a)) * f) << 24) | (Raised.mix(a, b, f) & 0xFFFFFF);
+        }
+        @Override public boolean onTouchEvent(android.view.MotionEvent e) {
+            if (e.getAction() == android.view.MotionEvent.ACTION_DOWN) { press = 1; invalidate(); }
+            else if (e.getAction() == android.view.MotionEvent.ACTION_UP || e.getAction() == android.view.MotionEvent.ACTION_CANCEL) { press = 0; invalidate(); }
+            return super.onTouchEvent(e);
+        }
+        @Override public boolean performClick() {
+            super.performClick();
+            on = !on;
+            android.animation.ValueAnimator va = android.animation.ValueAnimator.ofFloat(pos, on ? 1 : 0);
+            va.setDuration(150);
+            va.addUpdateListener(new android.animation.ValueAnimator.AnimatorUpdateListener() {
+                boolean done;
+                @Override public void onAnimationUpdate(android.animation.ValueAnimator a) {
+                    pos = (Float) a.getAnimatedValue(); invalidate();
+                    if (!done && a.getAnimatedFraction() >= 1f) { done = true; if (onChange != null) onChange.run(); }
+                }
+            });
+            va.start();
+            return true;
+        }
+        @Override protected void onDraw(Canvas c) {
+            float tw = dp(52), th = dp(32), x0 = getWidth() - tw, y0 = (getHeight() - th) / 2, r = th / 2;
+            // track: outlined surface when off, filled primary when on
+            p.setStyle(Paint.Style.FILL); p.setColor(blend(offTrack, primary, pos));
+            c.drawRoundRect(x0, y0, x0 + tw, y0 + th, r, r, p);
+            if (pos < 1) {
+                p.setStyle(Paint.Style.STROKE); p.setStrokeWidth(dp(2)); p.setColor(blend(outline, primary, pos));
+                c.drawRoundRect(x0 + dp(1), y0 + dp(1), x0 + tw - dp(1), y0 + th - dp(1), r - dp(1), r - dp(1), p);
+            }
+            // thumb
+            float d = press > 0 ? dp(28) : dp(16) + dp(8) * pos;
+            float cx = x0 + r + (tw - th) * pos, cy = y0 + r;
+            p.setStyle(Paint.Style.FILL); p.setColor(blend(outline, onPrimary, pos));
+            c.drawCircle(cx, cy, d / 2, p);
+            if (pos > .5f) {                                     // check mark on the selected thumb
+                float s = dp(16) / 2f * (pos - .5f) * 2;
+                tick.reset(); tick.moveTo(cx - s * .55f, cy + s * .02f); tick.lineTo(cx - s * .15f, cy + s * .42f); tick.lineTo(cx + s * .6f, cy - s * .38f);
+                p.setStyle(Paint.Style.STROKE); p.setStrokeWidth(dp(2)); p.setStrokeCap(Paint.Cap.ROUND); p.setStrokeJoin(Paint.Join.ROUND);
+                p.setColor(icon); c.drawPath(tick, p);
+            }
+        }
+        @Override public void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo info) {
+            super.onInitializeAccessibilityNodeInfo(info);
+            info.setClassName(Switch.class.getName()); info.setCheckable(true); info.setChecked(on);
+        }
+    }
+
     /** round preview of a theme: number key / function key / accent key colours */
     private final class Swatch extends View {
         final Theme th; final boolean sel; final int ring;
         final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
-        Swatch(Theme th, boolean sel, int ring) { super(SettingsActivity.this); this.th = th; this.sel = sel; this.ring = ring; }
+        final Raised disc;
+        Swatch(Theme th, boolean sel, int ring) {
+            super(SettingsActivity.this); this.th = th; this.sel = sel; this.ring = ring;
+            disc = new Raised(th.bg, Raised.mix(th.bg, th.dark ? 0xFF000000 : th.bezelBot, .5f), th.dark ? Raised.mix(th.bg, 0xFF000000, .4f) : th.bezelLine, th.dark, den(), -1, 2, 1.5f, 2);
+            disc.centred = true;
+        }
         @Override protected void onDraw(Canvas c) {
             float w = getWidth(), h = getHeight(), cx = w / 2, cy = h / 2, r = Math.min(w, h) / 2 - dp(4);
             if (sel) {
                 p.setStyle(Paint.Style.STROKE); p.setStrokeWidth(dp(2)); p.setColor(ring);
                 c.drawCircle(cx, cy, r + dp(2.5f), p);
             }
-            p.setStyle(Paint.Style.FILL);
-            p.setColor(th.bg); c.drawCircle(cx, cy, r, p);
-            p.setStyle(Paint.Style.STROKE); p.setStrokeWidth(dp(1)); p.setColor(0x22000000);
-            c.drawCircle(cx, cy, r, p);
+            disc.setBounds(Math.round(cx - r - disc.padL()), Math.round(cy - r - disc.padT()), Math.round(cx + r + disc.padL()), Math.round(cy + r + disc.padB()));
+            disc.draw(c);                                      // the theme's body colour as a raised disc
             p.setStyle(Paint.Style.FILL);
             float d = r * .34f;
             p.setColor(th.num[0]); c.drawCircle(cx - d, cy - d * .6f, r * .3f, p);

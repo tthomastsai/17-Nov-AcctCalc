@@ -8,6 +8,11 @@ Versions follow **major.feature.fix**: the middle number goes up for a new featu
 
 ## English
 
+### 3.0.1
+- The settings page shares the calculator's look: raised cards with soft shadows and a little thickness, a round back key, a raised accent pill in a recessed groove for the position choice, a raised slider knob and raised theme swatches.
+- The dark-mode switch is a Material 3 switch.
+- Settings slide in from the right and slide back out the same way.
+
 ### 3.0.0
 - Version numbers tidied into major.feature.fix; this changelog added.
 - Softer key edges: the rim fades out downwards, so there is no line along the bottom, and the top highlight is a lighter shade of the key rather than white, so it no longer looks like a gap.
@@ -56,6 +61,11 @@ Versions follow **major.feature.fix**: the middle number goes up for a new featu
 ---
 
 ## 正體中文
+
+### 3.0.1
+- 設定頁改成和計算機一致的質感：卡片浮起、有柔和陰影和一點厚度；返回鍵是圓形按鍵；機身位置的選項是凹槽裡浮起的強調色按鍵；滑桿的圓鈕和主題色票也是浮起的。
+- 深色模式開關改成 Material 3 樣式。
+- 設定頁從右邊滑入，離開時同樣滑出。
 
 ### 3.0.0
 - 版本號整理成「主版本.功能.小修」，並新增這份版本紀錄。
