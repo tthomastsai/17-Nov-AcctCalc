@@ -8,11 +8,10 @@ Versions follow **major.feature.fix**: the middle number goes up for a new featu
 
 ## English
 
-### 3.0.1
-- Softer key edges: the rim fades out downwards, so there is no line along the bottom, and the top highlight is a lighter shade of the key rather than white, so it no longer looks like a gap.
-
 ### 3.0.0
-- Version numbers tidied into major.feature.fix; this changelog added. About reads “由 tthomastsai 開發” in Chinese. Otherwise the same as 2.9.3.
+- Version numbers tidied into major.feature.fix; this changelog added.
+- Softer key edges: the rim fades out downwards, so there is no line along the bottom, and the top highlight is a lighter shade of the key rather than white, so it no longer looks like a gap.
+- About reads “由 tthomastsai 開發” in Chinese.
 
 ### 2.9 — opaque keys
 - **2.9.0** (2.20) Key faces are fully opaque; light themes get a hairline rim.
@@ -58,11 +57,10 @@ Versions follow **major.feature.fix**: the middle number goes up for a new featu
 
 ## 正體中文
 
-### 3.0.1
-- 按鍵邊緣更柔和：邊線往下淡出，下緣不再有一圈線；頂端高光改成按鍵本身顏色再亮一點，不再像一條縫。
-
 ### 3.0.0
-- 版本號整理成「主版本.功能.小修」，並新增這份版本紀錄。「關於」改成「由 tthomastsai 開發」。其餘與 2.9.3 相同。
+- 版本號整理成「主版本.功能.小修」，並新增這份版本紀錄。
+- 按鍵邊緣更柔和：邊線往下淡出，下緣不再有一圈線；頂端高光改成按鍵本身顏色再亮一點，不再像一條縫。
+- 「關於」改成「由 tthomastsai 開發」。
 
 ### 2.9：不透明按鍵
 - **2.9.0**（2.20）按鍵表面改成完全不透明，淺色主題加上細邊線。
