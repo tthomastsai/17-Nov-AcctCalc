@@ -326,6 +326,13 @@ public class CalcView extends View {
         c.drawText(s, lcd.right - 2.4f * u, lcd.bottom - 2.4f * u - 0.2f * 10.5f * u, text);
     }
 
+    /** opaque blend of a towards b by t */
+    private static int mix(int a, int b, float t) {
+        return Color.rgb(Math.round(Color.red(a) + (Color.red(b) - Color.red(a)) * t),
+                Math.round(Color.green(a) + (Color.green(b) - Color.green(a)) * t),
+                Math.round(Color.blue(a) + (Color.blue(b) - Color.blue(a)) * t));
+    }
+
     private static int alpha(int color, float a) { return (color & 0x00FFFFFF) | (Math.round(a * 255) << 24); }
 
     private void drawKey(Canvas c, Key k) {
@@ -355,9 +362,8 @@ public class CalcView extends View {
         path.reset(); path.addRoundRect(r, rad, rad, Path.Direction.CW);
         c.save();
         c.clipPath(path);
-        fill.setColor(alpha(Color.WHITE, th.dark ? .14f : .55f));
-        c.drawRect(r, fill);                                         // top highlight edge
-        fill.setAlpha(255);                                          // opaque face (it used to keep the highlight's 55%)
+        fill.setColor(mix(col[0], Color.WHITE, th.dark ? .14f : .45f));
+        c.drawRect(r, fill);                                         // top highlight edge: a lighter shade of the key, so it reads as part of it
         fill.setShader(new LinearGradient(0, r.top, 0, r.bottom, col[0], col[1], Shader.TileMode.CLAMP));
         tmp.set(r); tmp.offset(0, .4f * u);
         c.drawRoundRect(tmp, rad, rad, fill);
@@ -367,9 +373,12 @@ public class CalcView extends View {
         c.restore();
 
         if (!th.dark) {                                              // hairline rim: keeps light keys from melting into the body along the top
-            stroke.setColor(alpha(Color.BLACK, .10f)); stroke.setStrokeWidth(.22f * u);
+            stroke.setStrokeWidth(.22f * u);
             tmp.set(r.left, r.top, r.right, r.bottom + side); tmp.inset(.11f * u, .11f * u);   // around the whole key, thickness included
+            stroke.setColor(Color.BLACK);                            // fades out downwards: crisp along the top, no line along the bottom
+            stroke.setShader(new LinearGradient(0, r.top, 0, r.bottom, alpha(Color.BLACK, .10f), 0x00000000, Shader.TileMode.CLAMP));
             c.drawRoundRect(tmp, rad, rad, stroke);
+            stroke.setShader(null);
         }
         drawLabel(c, k, col[3]);
         c.restore();
