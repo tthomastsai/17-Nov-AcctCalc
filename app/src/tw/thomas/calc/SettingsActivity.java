@@ -241,6 +241,11 @@ public class SettingsActivity extends Activity {
         help.addView(linkRow(I18n.t("tour_replay"), new View.OnClickListener() {
             @Override public void onClick(View v) { setResult(RESULT_OK, new Intent().putExtra(EXTRA_TOUR, true)); finish(); }
         }));
+        help.addView(linkRow(I18n.t("tour_more"), new View.OnClickListener() {   // same link as the tour's last step
+            @Override public void onClick(View v) {
+                try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(TourView.README_URL))); } catch (Exception e) {}
+            }
+        }));
 
         // ---- other devices: a card of its own before About (as the web version has "Use it on your phone")
         LinearLayout other = section(page, I18n.t("other_devices"));
