@@ -16,7 +16,7 @@ An Android app modelled on the 12-digit business calculator on my desk. Its keys
 
 ### Installing
 
-Download [`dist/Calculator-v3.0.1.apk`](dist/Calculator-v3.0.1.apk), open it on your Android phone and allow *Install unknown apps* when asked. Android 6.0 or later is required. What changed in each version is in [`CHANGELOG.md`](CHANGELOG.md); settled decisions and things deliberately left out are in [`docs/DESIGN.md`](docs/DESIGN.md).
+Download [`dist/Calculator-v3.1.0.apk`](dist/Calculator-v3.1.0.apk), open it on your Android phone and allow *Install unknown apps* when asked. Android 6.0 or later is required. What changed in each version is in [`CHANGELOG.md`](CHANGELOG.md); settled decisions and things deliberately left out are in [`docs/DESIGN.md`](docs/DESIGN.md).
 
 ### Keys
 
@@ -135,7 +135,7 @@ Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/O
 
 ### 安裝
 
-下載 [`dist/Calculator-v3.0.1.apk`](dist/Calculator-v3.0.1.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。各版本改了什麼，見 [`CHANGELOG.md`](CHANGELOG.md)；已定案的決定和刻意不做的事，見 [`docs/DESIGN.md`](docs/DESIGN.md)。
+下載 [`dist/Calculator-v3.1.0.apk`](dist/Calculator-v3.1.0.apk)，在 Android 手機上開啟並允許「安裝不明來源的應用程式」。需要 Android 6.0 以上。各版本改了什麼，見 [`CHANGELOG.md`](CHANGELOG.md)；已定案的決定和刻意不做的事，見 [`docs/DESIGN.md`](docs/DESIGN.md)。
 
 ### 按鍵與運算規則
 
