@@ -23,7 +23,9 @@ import android.graphics.drawable.ColorDrawable;
 final class Raised extends ColorDrawable {   // ColorDrawable only as a concrete base; it draws nothing of its own
     final int top, bot, side; final boolean dark;
     final float radius, thick, lip, shOff, shBlur, shA, rim;
-    float pressed;                               // 0..1, sinks the face like a pressed key
+    float pressed;                               // 0..1, how far the face has sunk (animated)
+    private boolean down;                        // held right now
+    private long downAt, last;                   // press start, last frame (ms)
     boolean pressable = true;                    // false for a chosen option, which is a position, not a key
     boolean centred;                             // keep as much room above the face as below, so it centres on its view
     int iw = -1, ih = -1;                        // intrinsic size, for thumbs
@@ -53,24 +55,50 @@ final class Raised extends ColorDrawable {   // ColorDrawable only as a concrete
 
     @Override public boolean getPadding(Rect p) { p.set(padL(), padT(), padL(), padB()); return true; }
 
+    /** press or release, animated exactly like a calculator key (CalcView): a quick press, a soft creamy release */
+    void press(boolean on) {
+        if (on == down) return;
+        down = on;
+        if (on) downAt = android.os.SystemClock.uptimeMillis();
+        invalidateSelf();
+    }
+
+    /** advance the press animation; true while it is still moving */
+    private boolean step() {
+        long now = android.os.SystemClock.uptimeMillis();
+        float dt = last == 0 ? 16 : Math.max(0, Math.min(50, now - last));
+        last = now;
+        float target = (down || now < downAt + 70) ? 1f : 0f;      // a quick tap still shows, as on the keys
+        float tau = target > pressed ? 18f : 75f;
+        pressed += (target - pressed) * (1f - (float) Math.exp(-dt / tau));
+        if (Math.abs(target - pressed) < 0.003f) pressed = target;
+        boolean moving = pressed != target || now < downAt + 70;
+        if (!moving) last = 0;
+        return moving;
+    }
+
     @Override public void draw(Canvas c) {
+        boolean moving = step();
         Rect b = getBounds();
-        float dy = pressed * thick * .8f, th = thick - dy;
+        // the same proportions as a pressed key: the face sinks 9/11 of the thickness, the side shrinks to about a fifth,
+        // the shadow comes in and tightens
+        float pr = pressed, dy = pr * thick * (.9f / 1.1f), th = thick * (1f - (.85f / 1.1f) * pr);
+        float so = shOff * (1f - (1.1f / 1.6f) * pr), sb = shBlur * (1f - .5f * pr);
         f.set(b.left + padL(), b.top + padT(), b.right - padL(), b.bottom - padB());
         float r = radius < 0 ? Math.min(f.width(), f.height()) / 2 : Math.min(radius, Math.min(f.width(), f.height()) / 2);
 
         // soft shadow: stacked translucent layers, as on the keys
         fill.setShader(null);
-        int n = 5; float a = 1f - (float) Math.pow(1f - shA * (1 - .3f * pressed), 1f / n);
+        int n = 5; float a = 1f - (float) Math.pow(1f - shA * (1 - .18f * pr), 1f / n);
         fill.setColor(alpha(Color.BLACK, a));
         for (int i = 0; i < n; i++) {
-            float e = shBlur * (1f - i / (float) (n - 1));
-            tmp.set(f.left - e * .6f, f.top + shOff * (1 - .5f * pressed) - e * .3f, f.right + e * .6f, f.bottom + thick + shOff * (1 - .5f * pressed) + e * .6f);
+            float e = sb * (1f - i / (float) (n - 1));
+            tmp.set(f.left - e * .6f, f.top + dy + so - e * .3f, f.right + e * .6f, f.bottom + dy + th + so + e * .6f);
             c.drawRoundRect(tmp, r + e, r + e, fill);
         }
-        // thickness
+        // thickness, under the sunken face
         fill.setColor(side);
-        tmp.set(f); tmp.offset(0, thick);
+        tmp.set(f); tmp.offset(0, dy + th);
         c.drawRoundRect(tmp, r, r, fill);
 
         // face (sinks by dy when pressed)
@@ -93,16 +121,17 @@ final class Raised extends ColorDrawable {   // ColorDrawable only as a concrete
             stroke.setShader(null);
         }
         c.restore();
+        if (moving) invalidateSelf();
     }
 
     /** a view that is pressed sinks its face, like a key */
     @Override public boolean isStateful() { return true; }
     @Override protected boolean onStateChange(int[] state) {
         if (!pressable) return false;
-        float p = 0;
-        for (int st : state) if (st == android.R.attr.state_pressed) p = 1;
-        if (p == pressed) return false;
-        pressed = p; invalidateSelf(); return true;
+        boolean p = false;
+        for (int st : state) if (st == android.R.attr.state_pressed) p = true;
+        if (p == down) return false;
+        press(p); return true;
     }
 
     @Override public int getIntrinsicWidth() { return iw; }

@@ -27,6 +27,9 @@ public class TourView extends View {
     private final Done onDone;
     private int step = 0;
     private boolean downNext, downLink;   // which button is being held, for the pressed look
+    private Raised pill;                  // the Next button; kept so its press animates like a key
+
+    @Override protected boolean verifyDrawable(android.graphics.drawable.Drawable d) { return d == pill || super.verifyDrawable(d); }
 
     private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint ring = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -117,8 +120,8 @@ public class TourView extends View {
         String nextLabel = I18n.t(last ? "tour_start" : "tour_next");
         float nw = button.measureText(nextLabel) + dp(36);
         next.set(card.right - pad - nw, by, card.right - pad, by + btnH);
-        Raised pill = new Raised(th.acc[0], th.acc[1], th.acc[2], th.dark, d, -1, 2.5f, 1.5f, 2.5f);
-        pill.pressed = downNext ? 1 : 0;
+        if (pill == null) { pill = new Raised(th.acc[0], th.acc[1], th.acc[2], th.dark, d, -1, 2.5f, 1.5f, 2.5f); pill.setCallback(this); }
+        pill.press(downNext);
         pill.setBounds(Math.round(next.left - pill.padL()), Math.round(next.top), Math.round(next.right + pill.padL()), Math.round(next.bottom + pill.padB()));
         pill.draw(c);
         button.setColor(th.acc[3]);

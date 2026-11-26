@@ -461,11 +461,12 @@ public class SettingsActivity extends Activity {
         Toggle(boolean on, String desc) {
             super(SettingsActivity.this); this.on = on; pos = on ? 1 : 0;
             setContentDescription(desc); setFocusable(true); setClickable(true);
+            thumb.setCallback(this);                               // so its press animation redraws this view
         }
         @Override public boolean onTouchEvent(android.view.MotionEvent e) {
             int a = e.getActionMasked();
-            if (a == android.view.MotionEvent.ACTION_DOWN) { thumb.pressed = 1; invalidate(); }
-            else if (a == android.view.MotionEvent.ACTION_UP || a == android.view.MotionEvent.ACTION_CANCEL) { thumb.pressed = 0; invalidate(); }
+            if (a == android.view.MotionEvent.ACTION_DOWN) thumb.press(true);
+            else if (a == android.view.MotionEvent.ACTION_UP || a == android.view.MotionEvent.ACTION_CANCEL) thumb.press(false);
             return super.onTouchEvent(e);
         }
         @Override public boolean performClick() {
@@ -483,6 +484,7 @@ public class SettingsActivity extends Activity {
             va.start();
             return true;
         }
+        @Override protected boolean verifyDrawable(android.graphics.drawable.Drawable d) { return d == thumb || super.verifyDrawable(d); }
         @Override protected void onDraw(Canvas c) {
             float tw = dp(52), th = dp(32), x0 = getWidth() - tw, y0 = (getHeight() - th) / 2;
             groove.setBounds(Math.round(x0), Math.round(y0), Math.round(x0 + tw), Math.round(y0 + th));
@@ -523,6 +525,7 @@ public class SettingsActivity extends Activity {
         Slider(int v, String desc) {
             super(SettingsActivity.this); value = Math.max(min, Math.min(max, v));
             setContentDescription(desc); setFocusable(true);
+            knob.setCallback(this);
         }
         private float left() { return knob.iw / 2f; }
         private float right() { return getWidth() - knob.iw / 2f; }
@@ -533,8 +536,8 @@ public class SettingsActivity extends Activity {
         }
         @Override public boolean onTouchEvent(android.view.MotionEvent e) {
             int a = e.getActionMasked();
-            if (a == android.view.MotionEvent.ACTION_DOWN) { getParent().requestDisallowInterceptTouchEvent(true); knob.pressed = 1; }
-            if (a == android.view.MotionEvent.ACTION_UP || a == android.view.MotionEvent.ACTION_CANCEL) { knob.pressed = 0; invalidate(); }
+            if (a == android.view.MotionEvent.ACTION_DOWN) { getParent().requestDisallowInterceptTouchEvent(true); knob.press(true); }
+            if (a == android.view.MotionEvent.ACTION_UP || a == android.view.MotionEvent.ACTION_CANCEL) knob.press(false);
             if (a == android.view.MotionEvent.ACTION_DOWN || a == android.view.MotionEvent.ACTION_MOVE || a == android.view.MotionEvent.ACTION_UP) {
                 set(Math.round(min + (e.getX() - left()) / (right() - left()) * (max - min)));
                 return true;
@@ -546,6 +549,7 @@ public class SettingsActivity extends Activity {
             if (code == android.view.KeyEvent.KEYCODE_DPAD_RIGHT) { set(value + 1); return true; }
             return super.onKeyDown(code, e);
         }
+        @Override protected boolean verifyDrawable(android.graphics.drawable.Drawable d) { return d == knob || super.verifyDrawable(d); }
         @Override protected void onDraw(Canvas c) {
             float gh = dp(16), cy = getHeight() / 2f, x = xOf(value);
             groove.setBounds(Math.round(left() - gh / 2), Math.round(cy - gh / 2), Math.round(right() + gh / 2), Math.round(cy + gh / 2));
