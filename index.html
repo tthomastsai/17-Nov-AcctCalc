@@ -26,7 +26,14 @@ body { font-family: "Google Sans", Roboto, system-ui, sans-serif; }
 #sheet .bar button { width: 44px; height: 44px; border: 0; padding: 0; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
 #sheet .head { font-size: 13px; font-weight: 700; margin: 16px 10px 8px; }
 #sheet .card { border-radius: 20px; padding: 16px 18px; margin: 0 4px 9px; border: .9px solid transparent; }
-#sheet .row { display: flex; align-items: center; padding: 8px 0; cursor: pointer; font-size: 15px; font-weight: 500; }
+#sheet .row { display: flex; align-items: center; padding: 8px 10px; margin: 0 -10px; border-radius: 12px; cursor: pointer; font-size: 15px; font-weight: 500; }
+.rz { transition: transform .06s, box-shadow .06s; }
+.rz:active { transform: translateY(var(--pY)); box-shadow: var(--shP) !important; }
+#sheet .row:active, #sheet .xrow:active, .seg button:active, .tiles button:active, .sw button:active { background-color: var(--press); }
+#tourCard button:not(.next):active { opacity: .5; }
+.tg:active::after { transform: translateY(1.5px); box-shadow: var(--knobshP); }
+input[type=range]:active::-webkit-slider-thumb { transform: translateY(1.2px); box-shadow: var(--knobshP); }
+input[type=range]:active::-moz-range-thumb { transform: translateY(0); box-shadow: var(--knobshP); }
 #sheet .row .grow { flex: 1; }
 #sheet .hint { font-size: 12px; font-weight: 500; margin-top: 6px; }
 #sheet .para { font-size: 14px; font-weight: 500; line-height: 1.45; margin: 0 0 8px; }
@@ -43,7 +50,7 @@ input[type=range]::-moz-range-track { height: 16px; border-radius: 8px; backgrou
 input[type=range]::-moz-range-progress { height: 16px; border-radius: 8px; background: var(--on); }
 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; margin-top: -1.5px; border-radius: 50%; border: 0; background: var(--knob); box-shadow: var(--knobsh); }
 input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; border: 0; background: var(--knob); box-shadow: var(--knobsh); transform: translateY(-1.5px); }
-.xrow { list-style: none; display: flex; align-items: center; padding: 10px 0; cursor: pointer; font-size: 15px; font-weight: 500; }
+.xrow { list-style: none; display: flex; align-items: center; padding: 10px; margin: 0 -10px; border-radius: 12px; cursor: pointer; font-size: 15px; font-weight: 500; }
 .xrow::-webkit-details-marker { display: none; }
 .xrow .chev { margin-left: auto; display: inline-flex; transition: transform .15s; }
 details[open] > .xrow .chev { transform: rotate(90deg); }
@@ -53,7 +60,7 @@ details[open] > .xrow .chev { transform: rotate(90deg); }
 .tiles .smp { font-size: 26px; line-height: 1.2; }
 .tiles .nm { font-size: 12px; font-weight: 500; margin-top: 2px; }
 .sw { display: flex; }
-.sw button { flex: 1; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; font: 500 11px inherit; font-family: inherit; cursor: pointer; color: inherit; }
+.sw button { flex: 1; border: 0; background: transparent; padding: 4px 0; border-radius: 14px; display: flex; flex-direction: column; align-items: center; font: 500 11px inherit; font-family: inherit; cursor: pointer; color: inherit; }
 .sw canvas { width: 48px; height: 48px; }
 .sw span { margin-top: 6px; }
 /* switch: the Material 3 shape (a 52x32 pill holding a round thumb) in the calculator's materials:
@@ -706,6 +713,11 @@ function raised(elm, top, bot, side, o) {
     ? `linear-gradient(${top}, ${bot}) padding-box, linear-gradient(rgba(0,0,0,.10), rgba(0,0,0,0) 44px) border-box`
     : `linear-gradient(${top}, ${bot})`;
   elm.style.boxShadow = `inset 0 1.6px 0 ${lip}, 0 ${thick}px 0 ${side}, 0 ${thick + off}px ${blur * 1.6}px rgba(0,0,0,${sh})`;
+  if (o && o.press) {                                   // sinks like a key while held (see .rz:active)
+    elm.classList.add("rz");
+    elm.style.setProperty("--pY", (thick * .8) + "px");
+    elm.style.setProperty("--shP", `inset 0 1.6px 0 ${lip}, 0 ${thick * .2}px 0 ${side}, 0 ${thick * .2 + off * .5}px ${blur * 1.6}px rgba(0,0,0,${sh * .7})`);
+  }
 }
 function well(elm) {
   elm.style.background = th.dark ? "rgba(0,0,0,.25)" : "rgba(0,0,0,.08)";
@@ -716,7 +728,7 @@ function segmented(items, selected, onPick) {
   well(seg);
   items.forEach((label, i) => {
     const b = document.createElement("button"); b.type = "button"; b.textContent = label;
-    if (i === selected) { raised(b, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false }); b.style.color = th.acc[3]; } else b.style.color = th.fn[3];
+    if (i === selected) { raised(b, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false, press: true }); b.style.color = th.acc[3]; } else b.style.color = th.fn[3];
     b.addEventListener("click", () => onPick(i));
     seg.appendChild(b);
   });
@@ -748,6 +760,7 @@ const svgCheck = color => `<svg width="22" height="22" viewBox="0 0 24 24" fill=
 function buildSettings() {
   const txt = th.fn[3], y = sheet.scrollTop;
   sheet.innerHTML = ""; sheet.style.background = th.bg; sheet.style.color = txt;
+  sheet.style.setProperty("--press", th.dark ? "rgba(255,255,255,.08)" : "rgba(0,0,0,.06)");
   const page = document.createElement("div"); page.className = "page"; sheet.appendChild(page);
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
   const card = heading => {
@@ -771,7 +784,7 @@ function buildSettings() {
   // top bar
   const bar = el("div", "bar");
   const back = el("button"); back.type = "button"; back.setAttribute("aria-label", t("back")); back.innerHTML = svgChevron(txt, false);
-  raised(bar, th.dark ? "#2D2F33" : th.bezelTop, th.dark ? "#27292D" : mixHex(th.bezelTop, th.bezelBot, .55), th.dark ? "#18191C" : th.bezelLine);
+  raised(bar, th.dark ? "#2D2F33" : th.bezelTop, th.dark ? "#27292D" : mixHex(th.bezelTop, th.bezelBot, .55), th.dark ? "#18191C" : th.bezelLine, { thick: 2.5, off: 2, blur: 3, press: true });
   bar.addEventListener("click", closeSettings);                    // the whole block goes back
   bar.append(back, el("h2", null, t("settings"))); page.appendChild(bar);
 
@@ -799,6 +812,7 @@ function buildSettings() {
   range.style.setProperty("--groove", th.dark ? "#1E1F22" : mixHex(th.bezelTop, "#000000", .08));
   range.style.setProperty("--groovesh", th.dark ? "inset 0 2px 4px rgba(0,0,0,.35)" : "inset 0 2px 4px rgba(0,0,0,.14), 0 1px 0 rgba(255,255,255,.7)");
   range.style.setProperty("--knob", `linear-gradient(${th.acc[0]}, ${th.acc[1]})`);
+  range.style.setProperty("--knobshP", `inset 0 1.6px 0 ${mixHex(th.acc[0], "#ffffff", th.dark ? .14 : .45)}, 0 .5px 0 ${th.acc[2]}, 0 1.5px 3px rgba(0,0,0,${th.dark ? .3 : .13})`);
   range.style.setProperty("--knobsh", `inset 0 1.6px 0 ${mixHex(th.acc[0], "#ffffff", th.dark ? .14 : .45)}, 0 2.5px 0 ${th.acc[2]}, 0 4px 5px rgba(0,0,0,${th.dark ? .42 : .18})`);
   range.addEventListener("input", () => {
     setP();
@@ -812,7 +826,7 @@ function buildSettings() {
   [["sans", "Google Sans", FONT], ["seven", t("font_seven"), "'AcctCalc Seven', monospace"]].forEach(([id, name, fam]) => {
     const on = (id === "seven") === sevenSeg;
     const b = el("button"); b.type = "button"; b.setAttribute("aria-pressed", on ? "true" : "false");
-    if (on) raised(b, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false });
+    if (on) raised(b, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false, press: true });
     b.style.color = on ? th.acc[3] : th.fn[3];
     const smp = el("span", "smp", "1'234.5"); smp.style.fontFamily = fam;
     b.append(smp, el("span", "nm", name));
@@ -838,6 +852,7 @@ function buildSettings() {
   cb.style.setProperty("--groove", th.dark ? "#1E1F22" : mixHex(th.bezelTop, "#000000", .08));
   cb.style.setProperty("--groovesh", th.dark ? "inset 0 2px 4px rgba(0,0,0,.35)" : "inset 0 2px 4px rgba(0,0,0,.14), 0 1px 0 rgba(255,255,255,.7)");
   cb.style.setProperty("--knob", `linear-gradient(${th.fn[0]}, ${th.fn[1]})`);
+  cb.style.setProperty("--knobshP", `inset 0 1.6px 0 ${mixHex(th.fn[0], "#ffffff", th.dark ? .14 : .45)}, 0 .5px 0 ${th.fn[2]}, 0 1.5px 3px rgba(0,0,0,${th.dark ? .3 : .13})`);
   cb.style.setProperty("--knobsh", `inset 0 1.6px 0 ${mixHex(th.fn[0], "#ffffff", th.dark ? .14 : .45)}, 0 2.5px 0 ${th.fn[2]}, 0 4px 5px rgba(0,0,0,${th.dark ? .42 : .18})`);
   cb.style.setProperty("--tick", `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M3.6 8.1l3.2 3.3 5.6-6.2' fill='none' stroke='${icon}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>`)}")`);
   cb.setAttribute("role", "switch");
@@ -861,7 +876,7 @@ function buildSettings() {
   expand(gp, t("get_android"), d => {
     d.appendChild(el("p", "para", "1. " + t("get_android_step")));
     const dl = el("button", "dl", t("get_android_btn")); dl.type = "button";
-    raised(dl, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false }); dl.style.color = th.acc[3];
+    raised(dl, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false, press: true }); dl.style.color = th.acc[3];
     dl.addEventListener("click", () => window.open("https://github.com/tthomastsai/17-Nov-AcctCalc/tree/main/dist", "_blank", "noopener"));
     d.appendChild(dl);
     d.appendChild(el("p", "para", "2. " + t("get_android_note")));
@@ -935,7 +950,7 @@ function renderTour() {
   row.appendChild(sk);
   const ct = document.createElement("span"); ct.textContent = n + " / " + TOUR.length; ct.style.color = th.sub; row.appendChild(ct);
   const nx = document.createElement("button"); nx.type = "button"; nx.className = "next"; nx.textContent = t(last ? "tour_start" : "tour_next");
-  raised(nx, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false }); nx.style.color = th.acc[3];
+  raised(nx, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false, press: true }); nx.style.color = th.acc[3];
   nx.addEventListener("click", tourNext); row.appendChild(nx);
   tourCard.append(h, p, row);
   const vh = window.innerHeight, m = 16;
