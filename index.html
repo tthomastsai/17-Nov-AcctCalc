@@ -324,10 +324,10 @@ const STR = {
   get_android: ["Android：安裝 App", "Android: install the app"],
   get_android_step: ["下載最新版的 APK 檔：", "Download the latest APK:"], get_android_btn: ["下載 APK", "Download APK"],
   get_android_note: ["開啟下載的檔案，依提示允許「安裝不明來源的應用程式」即可安裝。之後有新版時，用同樣方式覆蓋安裝就好。", "Open the downloaded file and allow “Install unknown apps” when asked. Install a newer version the same way, over the old one."],
-  get_home: ["iPhone、iPad 及其他裝置：加到主畫面", "iPhone, iPad and others: add to the Home Screen"],
-  get_home_ios: ["iPhone／iPad（Safari）：點「分享」→「加入主畫面」。", "iPhone / iPad (Safari): tap Share → Add to Home Screen."],
-  get_home_other: ["Android（Chrome）：點右上角 ⋮ →「加到主畫面」。電腦版 Chrome／Edge：網址列右側的「安裝」圖示。", "Android (Chrome): tap ⋮ → Add to Home screen. Chrome / Edge on a computer: the Install icon in the address bar."],
-  get_home_note: ["加到主畫面後會像 App 一樣全螢幕開啟，離線時也能使用。", "It then opens full screen like an app, and works offline too."],
+  get_home: ["iPhone、iPad：加到主畫面", "iPhone, iPad: add to the Home Screen"],
+  get_home_intro: ["目前沒有 iOS 版 App，可以把這個網頁版加到主畫面，當作 App 使用：", "There is no iOS app, but you can add this web version to the Home Screen and use it as one:"],
+  get_home_ios: ["在 Safari 開啟這個網頁，點「分享」→「加入主畫面」。", "Open this page in Safari, then tap Share → Add to Home Screen."],
+  get_home_note: ["之後從主畫面開啟，會像 App 一樣全螢幕顯示，離線也能使用。", "It then opens full screen from the Home Screen, like an app, and works offline too."],
   tour1_t: ["歡迎使用會計計算機", "Welcome to Accounting Calculator"],
   tour1_b: ["按鍵配置和運算規則都照 12 位數的桌上型商用計算機設計，以下帶你看幾個重點。", "The keys and calculation rules follow a real 12-digit desk calculator. Here are a few things worth knowing."],
   tour2_t: ["螢幕指示", "Display indicators"],
@@ -846,7 +846,9 @@ function buildSettings() {
   if (autoDark && systemDark()) { const note = el("div", "hint", t("auto_dark_on")); note.style.color = th.sub; ac.appendChild(note); }
 
   // tour
-  linkRow(card(null), t("tour_replay"), () => { closeSettings(); startTour(); });
+  const help = card(null);
+  linkRow(help, t("tour_replay"), () => { closeSettings(); startTour(); });
+  linkRow(help, t("tour_more"), () => window.open("https://github.com/tthomastsai/17-Nov-AcctCalc#readme", "_blank", "noopener"));   // same link as the tour's last step
 
   // getting it on a phone: a card of its own, before About. Both ways are rows of the same kind that open
   // to show their steps (Android has a file to download, the others only steps to follow)
@@ -865,7 +867,8 @@ function buildSettings() {
     d.appendChild(el("p", "para", "2. " + t("get_android_note")));
   });
   expand(gp, t("get_home"), d => {
-    ["get_home_ios", "get_home_other"].forEach(k => d.appendChild(el("p", "para", "• " + t(k))));
+    d.appendChild(el("p", "para", t("get_home_intro")));
+    d.appendChild(el("p", "para", "• " + t("get_home_ios")));
     d.appendChild(el("p", "para", t("get_home_note")));
   });
 

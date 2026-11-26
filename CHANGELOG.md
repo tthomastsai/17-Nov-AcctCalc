@@ -12,8 +12,8 @@ Changes are listed under *Unreleased* until a batch is released; see [`docs/DESI
 - Results are cut off, not rounded, to 12 digits at every step, and the next step uses the displayed number, as on the LIBERTY / emore exam calculators (1.06⁻¹⁰ now gives 0.55839477687, 1 ÷ 3 × 3 = gives 0.99999999999). The engine now uses decimal arithmetic.
 - + − × ÷ have fixed places in the top-right corner of the display; the pending one lights up.
 - Settings: the back arrow and title share one raised block; the display-digit choice is two tiles with a large sample; the key-height slider has a smaller knob in a groove as thick as it; the dark-mode switch keeps the Material 3 pill shape in the calculator's materials; the font-licence window follows the dark theme.
-- Tour: the card and its button are raised like the keys; the last step links to the README for more tips.
-- Web version: a "Use it on your phone" card before About (APK for Android, Add to Home Screen elsewhere).
+- Tour: the card and its button are raised like the keys; the last step links to the README for more tips, and so does a new row under Replay the tour in Settings.
+- Web version: a "Use it on your phone" card before About: installing the Android app, and adding the web version to the Home Screen on iPhone / iPad, as there is no iOS app.
 - Android: the web-version link moves out of About into a "Use it on other devices" card before it.
 
 ### 3.0.1
@@ -74,8 +74,8 @@ Changes are listed under *Unreleased* until a batch is released; see [`docs/DESI
 - 每一步的結果改成無條件捨去到 12 位數，下一步用螢幕上的數字繼續算，與利百代、emore 等國考計算機相同（1.06⁻¹⁰ 現在是 0.55839477687，1 ÷ 3 × 3 = 是 0.99999999999）。運算改用十進位計算。
 - 螢幕右上角的 + − × ÷ 改成各有固定位置，作用中的那個亮起。
 - 設定頁：返回箭頭和標題合成一塊浮起的區塊；螢幕數字字體改成兩張並排、附大範例的選項卡；按鍵高度滑桿的圓鈕縮小，凹槽和圓鈕一樣粗；深色模式開關維持 Material 3 的膠囊形狀，但改用計算機的質感；字型授權視窗跟著深色主題。
-- 導覽：卡片和按鈕改成和按鍵一樣浮起；最後一步可連到 README 看更多操作技巧。
-- 網頁版：「關於」前面新增「在手機上使用」卡片（Android 下載 APK，其他裝置加到主畫面）。
+- 導覽：卡片和按鈕改成和按鍵一樣浮起；最後一步可連到 README 看更多操作技巧，設定頁「重看導覽」下面也新增同樣的連結。
+- 網頁版：「關於」前面新增「在手機上使用」卡片：Android 安裝 App 的步驟；iPhone／iPad 沒有 App，說明如何把網頁版加到主畫面。
 - Android 版：網頁版連結從「關於」移出，改成「關於」前面的「在其他裝置上使用」卡片。
 
 ### 3.0.1
