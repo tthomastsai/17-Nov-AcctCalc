@@ -9,6 +9,9 @@ Changes are listed under *Unreleased* until a batch is released; see [`docs/DESI
 ## English
 
 ### Unreleased
+- (nothing yet)
+
+### 3.1.0
 - Results are cut off, not rounded, to 12 digits at every step, and the next step uses the displayed number, as on the LIBERTY / emore exam calculators (1.06⁻¹⁰ now gives 0.55839477687, 1 ÷ 3 × 3 = gives 0.99999999999). The engine now uses decimal arithmetic.
 - + − × ÷ have fixed places in the top-right corner of the display; the pending one lights up.
 - Settings: the back arrow and title share one raised block; the display-digit choice is two tiles with a large sample; the key-height slider has a smaller knob in a groove as thick as it; the dark-mode switch keeps the Material 3 pill shape in the calculator's materials; the font-licence window follows the dark theme.
@@ -72,6 +75,9 @@ Changes are listed under *Unreleased* until a batch is released; see [`docs/DESI
 ## 正體中文
 
 ### 尚未發布
+- （目前沒有）
+
+### 3.1.0
 - 每一步的結果改成無條件捨去到 12 位數，下一步用螢幕上的數字繼續算，與利百代、emore 等國考計算機相同（1.06⁻¹⁰ 現在是 0.55839477687，1 ÷ 3 × 3 = 是 0.99999999999）。運算改用十進位計算。
 - 螢幕右上角的 + − × ÷ 改成各有固定位置，作用中的那個亮起。
 - 設定頁：返回箭頭和標題合成一塊浮起的區塊；螢幕數字字體改成兩張並排、附大範例的選項卡；按鍵高度滑桿的圓鈕縮小，凹槽和圓鈕一樣粗；深色模式開關維持 Material 3 的膠囊形狀，但改用計算機的質感；字型授權視窗跟著深色主題。
