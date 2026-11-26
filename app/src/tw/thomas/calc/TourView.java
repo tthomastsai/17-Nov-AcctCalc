@@ -19,6 +19,7 @@ public class TourView extends View {
     public interface Done { void done(); }
 
     private static final String[] TARGETS = {null, "indicators", "gt", "eq", "clear", "set"};
+    static final String README_URL = "https://github.com/tthomastsai/17-Nov-AcctCalc#readme";
 
     private final CalcView calc;
     private final Theme th;
@@ -96,8 +97,11 @@ public class TourView extends View {
         else if (t.centerY() < h / 2f) cy = Math.min(t.bottom + margin, h - ch - margin);
         else cy = Math.max(t.top - margin - ch, margin);
         card.set(cx, cy, cx + cw, cy + ch);
-        fill.setColor(th.dark ? 0xFF2A2C30 : th.bezelTop);
-        c.drawRoundRect(card, dp(22), dp(22), fill);
+        float d = getResources().getDisplayMetrics().density;   // the card is raised like the keys and the settings cards
+        Raised cardBg = new Raised(th.dark ? 0xFF2D2F33 : th.bezelTop, th.dark ? 0xFF27292D : Raised.mix(th.bezelTop, th.bezelBot, .55f),
+                th.dark ? 0xFF18191C : th.bezelLine, th.dark, d, 22, 3, 4, 6);
+        cardBg.setBounds(Math.round(card.left - cardBg.padL()), Math.round(card.top), Math.round(card.right + cardBg.padL()), Math.round(card.bottom + cardBg.padB()));
+        cardBg.draw(c);
 
         c.save();
         c.translate(cx + pad, cy + pad);
@@ -112,8 +116,9 @@ public class TourView extends View {
         String nextLabel = I18n.t(last ? "tour_start" : "tour_next");
         float nw = button.measureText(nextLabel) + dp(36);
         next.set(card.right - pad - nw, by, card.right - pad, by + btnH);
-        fill.setColor(th.acc[1]);
-        c.drawRoundRect(next, btnH / 2, btnH / 2, fill);
+        Raised pill = new Raised(th.acc[0], th.acc[1], th.acc[2], th.dark, d, -1, 2.5f, 1.5f, 2.5f);
+        pill.setBounds(Math.round(next.left - pill.padL()), Math.round(next.top), Math.round(next.right + pill.padL()), Math.round(next.bottom + pill.padB()));
+        pill.draw(c);
         button.setColor(th.acc[3]);
         button.setTextAlign(Paint.Align.CENTER);
         c.drawText(nextLabel, next.centerX(), next.centerY() - (button.descent() + button.ascent()) / 2, button);
@@ -122,14 +127,14 @@ public class TourView extends View {
         small.setTextAlign(Paint.Align.RIGHT);
         c.drawText(counter, next.left - dp(14), next.centerY() - (small.descent() + small.ascent()) / 2, small);
 
-        if (!last) {
-            String sk = I18n.t("tour_skip");
-            button.setColor(th.sub);
+        String sk = I18n.t(last ? "tour_more" : "tour_skip");   // last step: a link to the README for more tips
+        {
+            button.setColor(last ? th.label : th.sub);
             button.setTextAlign(Paint.Align.LEFT);
             float sw = button.measureText(sk);
             skip.set(card.left + pad - dp(8), by, card.left + pad + sw + dp(8), by + btnH);
             c.drawText(sk, card.left + pad, next.centerY() - (button.descent() + button.ascent()) / 2, button);
-        } else skip.setEmpty();
+        }
     }
 
     @Override public boolean onTouchEvent(MotionEvent e) {
@@ -138,7 +143,11 @@ public class TourView extends View {
             tmp.set(next); tmp.inset(-dp(6), -dp(6));
             if (tmp.contains(x, y)) {
                 if (step == TARGETS.length - 1) finish(); else { step++; invalidate(); }
-            } else if (!skip.isEmpty() && skip.contains(x, y)) finish();
+            } else if (skip.contains(x, y)) {
+                if (step == TARGETS.length - 1) {
+                    try { getContext().startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(README_URL))); } catch (Exception ex) {}
+                } else finish();
+            }
         }
         return true;   // the calculator underneath does not react while the tour is open
     }

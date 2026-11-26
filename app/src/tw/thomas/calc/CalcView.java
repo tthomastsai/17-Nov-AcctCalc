@@ -295,19 +295,22 @@ public class CalcView extends View {
             c.drawRoundRect(tmp, .2f * u, .2f * u, fill);
             x += w + 2.2f * u;
         }
+
+        // + − × ÷ each in a fixed place at the top right; the one pending lights up, the others stay as faint segments
+        String[] ops = {"add", "sub", "mul", "div"}, glyph = {"+", "−", "×", "÷"};
+        setText(t500, 3f * u, ink, 0);
+        text.setTextAlign(Paint.Align.CENTER);
+        float slot = 3.4f * u, oc = lcd.top + 1.3f * u + 1.35f * u;
+        for (int i = 0; i < 4; i++) {
+            boolean lit = on && !eng.err && ops[i].equals(eng.op);
+            text.setAlpha(lit ? 230 : 13);
+            text.getTextBounds(glyph[i], 0, 1, bounds);
+            c.drawText(glyph[i], lcd.right - 2.4f * u - slot * (3.5f - i), oc - bounds.exactCenterY(), text);
+        }
+        text.setTextAlign(Paint.Align.LEFT);
         fill.setAlpha(255);
 
         if (!on) return;
-
-        // pending operator, top-right
-        if (eng.op != null && !eng.err) {
-            String o = eng.op.equals("add") ? "+" : eng.op.equals("sub") ? "−" : eng.op.equals("mul") ? "×" : "÷";
-            setText(t500, 5f * u, ink, 0);
-            text.setAlpha(230);
-            text.setTextAlign(Paint.Align.RIGHT);
-            text.getTextBounds(o, 0, o.length(), bounds);
-            c.drawText(o, lcd.right - 2.4f * u, lcd.top + 3.3f * u - bounds.exactCenterY(), text);
-        }
 
         // number
         String s = (neg && !full12 ? "−" : "") + eng.displayDigits();

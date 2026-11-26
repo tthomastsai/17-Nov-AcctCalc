@@ -20,9 +20,11 @@ Download [`dist/Calculator-v3.0.1.apk`](dist/Calculator-v3.0.1.apk), open it on 
 
 ### Keys
 
+Results work the way they do on the LIBERTY and emore calculators approved for Taiwan's national exams (Casio models work differently): every result is cut off, not rounded, to the 12 digits on the display, and the next step works with that displayed number. So `1 ÷ 3 × 3 =` gives 0.99999999999, as on the real calculator.
+
 | Key | What it does |
 |---|---|
-| `+ − × ÷` | Chain calculations. While you enter the second number, the pending operator is shown in the top-right corner of the display. |
+| `+ − × ÷` | Chain calculations. The four signs have fixed places in the top-right corner of the display; the pending one lights up. |
 | `=` | Finishes the calculation. Afterwards, enter a new number and press `=` to repeat the same operation with it, or press `=` again to repeat it on the result (see *Constant calculation*). |
 | `%` | `3000 × 20 %` → 600; `3000 + 20 %` → 3'600 (mark-up); `3000 − 20 %` → 2'400 (discount); `20 ÷ 500 %` → 4 |
 | `√` | Square root of the number on the display. It works mid-calculation too: `9 √ × 6 =` → 18. |
@@ -80,7 +82,7 @@ You don't need Android Studio or Gradle, just JDK 17 or later and two parts of t
 BUILD_TOOLS=~/Android/Sdk/build-tools/35.0.1 ANDROID_JAR=~/Android/Sdk/platforms/android-34/android.jar ./build.sh
 ```
 
-Before it builds anything, `build.sh` runs the 103 test cases in `test/cases.txt` against the calculation engine, including every example from the function card, and then 21,000 random key sequences (`test/EngineFuzz.java`), 1,000 of them 100–500 keys long, that check the display never shows anything other than a number of up to 12 digits. It only compiles and signs `build/Calculator.apk` if all of these pass, and any compile error stops the build.
+Before it builds anything, `build.sh` runs the 110 test cases in `test/cases.txt` against the calculation engine, including every example from the function card, and then 21,000 random key sequences (`test/EngineFuzz.java`), 1,000 of them 100–500 keys long, that check the display never shows anything other than a number of up to 12 digits. It only compiles and signs `build/Calculator.apk` if all of these pass, and any compile error stops the build.
 
 ### Project structure
 
@@ -137,9 +139,11 @@ Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/O
 
 ### 按鍵與運算規則
 
+運算方式和利百代、emore 等國考第一類計算機相同（Casio 的邏輯不同）：每一步的結果都無條件捨去到螢幕上的 12 位數，下一步就用這個顯示出來的數字繼續算。所以 `1 ÷ 3 × 3 =` 會得到 0.99999999999，與實機一致。
+
 | 按鍵 | 行為 |
 |---|---|
-| `+ − × ÷` | 連續計算；輸入第二個數時，螢幕右上會顯示目前的運算符號 |
+| `+ − × ÷` | 連續計算；四個符號固定在螢幕右上角，作用中的那個會亮起 |
 | `=`（常數計算） | 算完一次後，輸入新數字再按 `=` 會重複同樣的運算；直接再按 `=` 則對結果重複運算，見下方說明 |
 | `%` | `3000 × 20 %` → 600；`3000 + 20 %` → 3'600（加成）；`3000 − 20 %` → 2'400（折扣）；`20 ÷ 500 %` → 4 |
 | `√` | 對螢幕上的數開根號，可以接在算式中（`9 √ × 6 =` → 18） |
@@ -195,7 +199,7 @@ Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/O
 BUILD_TOOLS=~/Android/Sdk/build-tools/35.0.1 ANDROID_JAR=~/Android/Sdk/platforms/android-34/android.jar ./build.sh
 ```
 
-`build.sh` 會先用 `test/cases.txt` 的 103 組案例測試運算邏輯（包含功能說明卡上的全部範例），再跑 21,000 組隨機按鍵序列（`test/EngineFuzz.java`，其中 1,000 組長達 100–500 個按鍵），確認螢幕永遠只會顯示 12 位數以內的數字。全部通過才會編譯、簽章，輸出 `build/Calculator.apk`；任何編譯錯誤都會讓建置停下。
+`build.sh` 會先用 `test/cases.txt` 的 110 組案例測試運算邏輯（包含功能說明卡上的全部範例），再跑 21,000 組隨機按鍵序列（`test/EngineFuzz.java`，其中 1,000 組長達 100–500 個按鍵），確認螢幕永遠只會顯示 12 位數以內的數字。全部通過才會編譯、簽章，輸出 `build/Calculator.apk`；任何編譯錯誤都會讓建置停下。
 
 ### 專案結構
 

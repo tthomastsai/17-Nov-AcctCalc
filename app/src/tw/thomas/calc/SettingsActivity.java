@@ -100,17 +100,20 @@ public class SettingsActivity extends Activity {
         LinearLayout bar = new LinearLayout(this);
         bar.setOrientation(LinearLayout.HORIZONTAL);
         bar.setGravity(Gravity.CENTER_VERTICAL);
-        bar.setPadding(0, dp(4), 0, dp(12));
+        Raised barBg = cardBg();                                   // back arrow and title share one raised block, sized to them
+        bar.setBackground(barBg);
+        bar.setPadding(dp(4) + barBg.padL(), dp(4), dp(16) + barBg.padL(), dp(4) + barBg.padB());
         View back = new Chevron(txt);
-        Raised backKey = knob(t.fn, 40);
-        back.setBackground(backKey);
         back.setContentDescription(I18n.t("back"));
         back.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { finish(); } });
-        bar.addView(back, new LinearLayout.LayoutParams(backKey.iw, backKey.ih));
-        TextView title = label(I18n.t("settings"), 24, t700, txt);
-        title.setPadding(dp(10), 0, 0, 0);
+        bar.addView(back, new LinearLayout.LayoutParams(dp(48), dp(48)));
+        TextView title = label(I18n.t("settings"), 22, t700, txt);
+        title.setPadding(dp(2), 0, 0, 0);
         bar.addView(title);
-        page.addView(bar);
+        bar.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { finish(); } });   // the whole block goes back
+        LinearLayout.LayoutParams barLp = new LinearLayout.LayoutParams(-2, -2);   // only as wide as the arrow and title
+        barLp.setMargins(0, dp(4), 0, dp(4));
+        page.addView(bar, barLp);
 
         // ---- language
         LinearLayout lang = section(page, I18n.t("language"));
@@ -148,40 +151,49 @@ public class SettingsActivity extends Activity {
         float ks = prefs.getFloat("keyScale", 1f);
         final LinearLayout khRow = caption(I18n.t("key_height"), Math.round(ks * 100) + "%");
         look.addView(khRow);
-        SeekBar sb = new SeekBar(this);
-        sb.setMax(40);
-        sb.setProgress(Math.round(ks * 100) - 60);
-        sb.setProgressTintList(ColorStateList.valueOf(t.acc[1]));
-        sb.setProgressBackgroundTintList(ColorStateList.valueOf(sub));
-        Raised thumb = knob(t.acc, 22);
-        sb.setThumb(thumb);
-        sb.setSplitTrack(false);
-        sb.setPadding(thumb.iw / 2, dp(4), thumb.iw / 2, 0);   // room for the whole thumb at either end
-        sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override public void onProgressChanged(SeekBar s, int p, boolean user) {
-                prefs.edit().putFloat("keyScale", (60 + p) / 100f).apply();
-                ((TextView) khRow.getChildAt(1)).setText((60 + p) + "%");
+        Slider sb = new Slider(Math.round(ks * 100), I18n.t("key_height"));
+        sb.onChange = new Pick() {
+            @Override public void pick(int v) {
+                prefs.edit().putFloat("keyScale", v / 100f).apply();
+                ((TextView) khRow.getChildAt(1)).setText(v + "%");
             }
-            @Override public void onStartTrackingTouch(SeekBar s) {}
-            @Override public void onStopTrackingTouch(SeekBar s) {}
-        });
-        look.addView(sb, new LinearLayout.LayoutParams(-1, -2));
+        };
+        look.addView(sb, new LinearLayout.LayoutParams(-1, dp(40)));
 
         look.addView(caption(I18n.t("lcd_font"), null));
         final String[] fonts = {"sans", "seven"};
         String curFont = prefs.getString("lcdFont", "sans");
         String[] fontNames = {"Google Sans", I18n.t("font_seven")};
         Typeface[] faces = {tGs, tSeven};
+        // two tiles side by side in a groove, the chosen one raised: a large sample with the font's name under it
+        LinearLayout tiles = new LinearLayout(this);
+        tiles.setOrientation(LinearLayout.HORIZONTAL);
+        tiles.setBackground(new Well(t.dark, den(), 18));
+        tiles.setPadding(dp(4), dp(4), dp(4), dp(3));
         for (int i = 0; i < fonts.length; i++) {
             final int idx = i;
-            LinearLayout row = choiceRow(fontNames[i], fonts[i].equals(curFont), new View.OnClickListener() {
+            boolean sel = fonts[i].equals(curFont);
+            LinearLayout tile = new LinearLayout(this);
+            tile.setOrientation(LinearLayout.VERTICAL);
+            tile.setGravity(Gravity.CENTER_HORIZONTAL);
+            Raised face = new Raised(t.acc[0], t.acc[1], t.acc[2], t.dark, den(), 14, 2.5f, 1.5f, 2.5f);
+            if (sel) tile.setBackground(face);
+            tile.setPadding(face.padL(), dp(10), face.padL(), dp(8) + face.padB());
+            int fg = sel ? t.acc[3] : t.fn[3];
+            TextView sample = label("1'234.5", 26, faces[i], fg);
+            sample.setGravity(Gravity.CENTER);
+            tile.addView(sample);
+            TextView nm = label(fontNames[i], 12, t500, fg);
+            nm.setGravity(Gravity.CENTER); nm.setPadding(0, dp(2), 0, 0);
+            tile.addView(nm);
+            tile.setContentDescription(fontNames[i]);
+            tile.setSelected(sel);
+            tile.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) { prefs.edit().putString("lcdFont", fonts[idx]).apply(); build(); }
             });
-            TextView sample = label("1'234.5", 20, faces[i], sub);   // preview in that font
-            sample.setPadding(0, 0, dp(12), 0);
-            row.addView(sample, 1);
-            look.addView(row);
+            tiles.addView(tile, new LinearLayout.LayoutParams(0, -2, 1));
         }
+        look.addView(tiles);
 
         // with dark mode following, the choice here only applies in light mode
         LinearLayout th = caption(I18n.t(Theme.autoDark(prefs) ? "theme_light" : "theme"), null);
@@ -277,7 +289,8 @@ public class SettingsActivity extends Activity {
         body.setTextIsSelectable(true);
         ScrollView sv = new ScrollView(this);
         sv.addView(body);
-        new android.app.AlertDialog.Builder(this)
+        int dlgTheme = t.dark ? android.R.style.Theme_DeviceDefault_Dialog_Alert : android.R.style.Theme_DeviceDefault_Light_Dialog_Alert;
+        new android.app.AlertDialog.Builder(this, dlgTheme)   // follow the app's theme, not the system's
             .setTitle(I18n.t("licences"))
             .setView(sv)
             .setPositiveButton(I18n.t("done"), null)
@@ -421,27 +434,19 @@ public class SettingsActivity extends Activity {
     }
 
     /**
-     * Material 3 switch, drawn by hand (the app has no Material library): a 52×32 dp track with a
-     * 2 dp outline when off; the thumb grows from 16 dp (off) to 24 dp (on, with a check mark) and to
-     * 28 dp while pressed, and slides across in 150 ms before the setting is saved.
+     * On/off switch: the Material 3 shape (a 52×32 dp pill holding a round thumb) in the calculator's
+     * materials: the pill is a recessed groove, tinted with the accent when on, and the thumb is a
+     * raised round key that slides across in 150 ms before the setting is saved.
      */
     private final class Toggle extends View {
-        boolean on; float pos, press;                       // pos: 0 off .. 1 on
+        boolean on; float pos;                               // pos: 0 off .. 1 on
+        final Well groove = new Well(t.dark, den(), -1);
+        final Raised thumb = knob(t.fn, 24);
         final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG); final Path tick = new Path();
-        final int primary = t.acc[1], onPrimary = t.dark ? t.acc[3] : 0xFFFFFFFF, icon = t.dark ? t.acc[1] : t.acc[2];
-        final int outline = t.sub, offTrack = t.dark ? 0xFF36383D : Raised.mix(t.bg, 0xFF000000, .06f);
         Runnable onChange;
         Toggle(boolean on, String desc) {
             super(SettingsActivity.this); this.on = on; pos = on ? 1 : 0;
             setContentDescription(desc); setFocusable(true); setClickable(true);
-        }
-        private int blend(int a, int b, float f) {
-            return (Math.round(Color.alpha(a) + (Color.alpha(b) - Color.alpha(a)) * f) << 24) | (Raised.mix(a, b, f) & 0xFFFFFF);
-        }
-        @Override public boolean onTouchEvent(android.view.MotionEvent e) {
-            if (e.getAction() == android.view.MotionEvent.ACTION_DOWN) { press = 1; invalidate(); }
-            else if (e.getAction() == android.view.MotionEvent.ACTION_UP || e.getAction() == android.view.MotionEvent.ACTION_CANCEL) { press = 0; invalidate(); }
-            return super.onTouchEvent(e);
         }
         @Override public boolean performClick() {
             super.performClick();
@@ -459,29 +464,90 @@ public class SettingsActivity extends Activity {
             return true;
         }
         @Override protected void onDraw(Canvas c) {
-            float tw = dp(52), th = dp(32), x0 = getWidth() - tw, y0 = (getHeight() - th) / 2, r = th / 2;
-            // track: outlined surface when off, filled primary when on
-            p.setStyle(Paint.Style.FILL); p.setColor(blend(offTrack, primary, pos));
-            c.drawRoundRect(x0, y0, x0 + tw, y0 + th, r, r, p);
-            if (pos < 1) {
-                p.setStyle(Paint.Style.STROKE); p.setStrokeWidth(dp(2)); p.setColor(blend(outline, primary, pos));
-                c.drawRoundRect(x0 + dp(1), y0 + dp(1), x0 + tw - dp(1), y0 + th - dp(1), r - dp(1), r - dp(1), p);
+            float tw = dp(52), th = dp(32), x0 = getWidth() - tw, y0 = (getHeight() - th) / 2;
+            groove.setBounds(Math.round(x0), Math.round(y0), Math.round(x0 + tw), Math.round(y0 + th));
+            groove.draw(c);
+            if (pos > 0) {                                      // accent fill inside the groove
+                p.setStyle(Paint.Style.FILL);
+                p.setColor((Math.round(pos * 0xE6) << 24) | (t.acc[1] & 0xFFFFFF));
+                float in = dp(2.5f);
+                c.drawRoundRect(x0 + in, y0 + in, x0 + tw - in, y0 + th - in - dp(1), th / 2 - in, th / 2 - in, p);
             }
-            // thumb
-            float d = press > 0 ? dp(28) : dp(16) + dp(8) * pos;
-            float cx = x0 + r + (tw - th) * pos, cy = y0 + r;
-            p.setStyle(Paint.Style.FILL); p.setColor(blend(outline, onPrimary, pos));
-            c.drawCircle(cx, cy, d / 2, p);
-            if (pos > .5f) {                                     // check mark on the selected thumb
-                float s = dp(16) / 2f * (pos - .5f) * 2;
+            float d = dp(24), cx = x0 + dp(4) + d / 2 + (tw - d - dp(8)) * pos, cy = y0 + th / 2 - dp(1.5f);
+            int x = Math.round(cx - thumb.iw / 2f), y = Math.round(cy - thumb.ih / 2f);
+            thumb.setBounds(x, y, x + thumb.iw, y + thumb.ih);
+            thumb.draw(c);
+            if (pos > .5f) {                                     // check mark on the thumb when on
+                float s = d / 2 * .55f * (pos - .5f) * 2;
                 tick.reset(); tick.moveTo(cx - s * .55f, cy + s * .02f); tick.lineTo(cx - s * .15f, cy + s * .42f); tick.lineTo(cx + s * .6f, cy - s * .38f);
                 p.setStyle(Paint.Style.STROKE); p.setStrokeWidth(dp(2)); p.setStrokeCap(Paint.Cap.ROUND); p.setStrokeJoin(Paint.Join.ROUND);
-                p.setColor(icon); c.drawPath(tick, p);
+                p.setColor(t.acc[2]); c.drawPath(tick, p);
             }
         }
         @Override public void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo info) {
             super.onInitializeAccessibilityNodeInfo(info);
             info.setClassName(Switch.class.getName()); info.setCheckable(true); info.setChecked(on);
+        }
+    }
+
+    /**
+     * Key height slider: a groove as thick as its knob, filled with the accent up to the knob, which is
+     * a small raised round key. 60–100 %, in steps of 1; TalkBack reads it as a slider.
+     */
+    private final class Slider extends View {
+        int value; Pick onChange;
+        final int min = 60, max = 100;
+        final Well groove = new Well(t.dark, den(), -1);
+        final Raised knob = knob(t.acc, 16);
+        final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Slider(int v, String desc) {
+            super(SettingsActivity.this); value = Math.max(min, Math.min(max, v));
+            setContentDescription(desc); setFocusable(true);
+        }
+        private float left() { return knob.iw / 2f; }
+        private float right() { return getWidth() - knob.iw / 2f; }
+        private float xOf(int v) { return left() + (right() - left()) * (v - min) / (float) (max - min); }
+        private void set(int v) {
+            v = Math.max(min, Math.min(max, v));
+            if (v != value) { value = v; invalidate(); if (onChange != null) onChange.pick(v); }
+        }
+        @Override public boolean onTouchEvent(android.view.MotionEvent e) {
+            int a = e.getActionMasked();
+            if (a == android.view.MotionEvent.ACTION_DOWN) getParent().requestDisallowInterceptTouchEvent(true);
+            if (a == android.view.MotionEvent.ACTION_DOWN || a == android.view.MotionEvent.ACTION_MOVE || a == android.view.MotionEvent.ACTION_UP) {
+                set(Math.round(min + (e.getX() - left()) / (right() - left()) * (max - min)));
+                return true;
+            }
+            return a == android.view.MotionEvent.ACTION_CANCEL || super.onTouchEvent(e);
+        }
+        @Override public boolean onKeyDown(int code, android.view.KeyEvent e) {
+            if (code == android.view.KeyEvent.KEYCODE_DPAD_LEFT) { set(value - 1); return true; }
+            if (code == android.view.KeyEvent.KEYCODE_DPAD_RIGHT) { set(value + 1); return true; }
+            return super.onKeyDown(code, e);
+        }
+        @Override protected void onDraw(Canvas c) {
+            float gh = dp(16), cy = getHeight() / 2f, x = xOf(value);
+            groove.setBounds(Math.round(left() - gh / 2), Math.round(cy - gh / 2), Math.round(right() + gh / 2), Math.round(cy + gh / 2));
+            groove.draw(c);
+            p.setColor((0xE6 << 24) | (t.acc[1] & 0xFFFFFF));
+            float in = dp(2.5f);
+            c.drawRoundRect(left() - gh / 2 + in, cy - gh / 2 + in, x, cy + gh / 2 - in - dp(1), gh / 2 - in, gh / 2 - in, p);
+            int kx = Math.round(x - knob.iw / 2f), ky = Math.round(cy - dp(1.5f) - knob.ih / 2f);
+            knob.setBounds(kx, ky, kx + knob.iw, ky + knob.ih);
+            knob.draw(c);
+        }
+        @Override public void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo info) {
+            super.onInitializeAccessibilityNodeInfo(info);
+            info.setClassName(SeekBar.class.getName());
+            info.setRangeInfo(android.view.accessibility.AccessibilityNodeInfo.RangeInfo.obtain(
+                    android.view.accessibility.AccessibilityNodeInfo.RangeInfo.RANGE_TYPE_INT, min, max, value));
+            info.addAction(android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_FORWARD);
+            info.addAction(android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_BACKWARD);
+        }
+        @Override public boolean performAccessibilityAction(int action, android.os.Bundle args) {
+            if (action == android.view.accessibility.AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) { set(value + 5); return true; }
+            if (action == android.view.accessibility.AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD) { set(value - 5); return true; }
+            return super.performAccessibilityAction(action, args);
         }
     }
 

@@ -1,31 +1,37 @@
 package tw.thomas.calc;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 
 /**
  * Business-calculator logic matching the LB-5003CA function card:
  * chain calc, constant calc (K), add-on / discount %, M+ / M−, GT, overflow "E" with mantissa.
  * Pure Java (no Android imports) so it can be tested on a desktop JVM.
+ *
+ * Arithmetic is decimal (BigDecimal) and, as on the real calculator (and other exam-approved models
+ * with the same logic, unlike Casio), every result is cut off — not rounded — to the 12 digits the
+ * display holds, and that displayed value is what the next step works with.
+ * So 1 ÷ 1.06 = = … (ten times) gives 0.55839477687, and 1 ÷ 3 × 3 = gives 0.99999999999.
  */
 public class CalcEngine {
     public static final int MAXD = 12;
+    private static final BigDecimal E12 = BigDecimal.TEN.pow(MAXD), HUNDRED = BigDecimal.valueOf(100);
+    private static final MathContext WIDE = new MathContext(40, RoundingMode.DOWN);
 
     // entry state
     public String entry = "0";
-    private boolean hasFull = false;   // full-precision value of a computed result
-    private double full = 0;
-    private double acc = 0;
+    private BigDecimal acc = BigDecimal.ZERO;
     public String op = null;           // "add" "sub" "mul" "div"
     private boolean newEntry = true;
     private boolean typed = false;
     private String kOp = null;
-    private double kVal = 0;
+    private BigDecimal kVal = BigDecimal.ZERO;
     public boolean err = false;
     public boolean on = true;
     private String lastKey = null;
 
-    // persistent registers
+    // persistent registers (doubles for storage; values never have more than 12 significant digits)
     public double mem = 0, gt = 0;
 
     public interface Listener { void onRegistersChanged(double mem, double gt); }
@@ -34,58 +40,68 @@ public class CalcEngine {
     private void save() { if (listener != null) listener.onRegistersChanged(mem, gt); }
 
     private void fresh() {
-        entry = "0"; hasFull = false; full = 0; acc = 0; op = null;
-        newEntry = true; typed = false; kOp = null; kVal = 0; err = false; on = true;
+        entry = "0"; acc = BigDecimal.ZERO; op = null;
+        newEntry = true; typed = false; kOp = null; kVal = BigDecimal.ZERO; err = false; on = true;
     }
 
     // ---------------------------------------------------------------- formatting
     static final class F { final String str; final boolean err; F(String s, boolean e) { str = s; err = e; } }
 
-    static F fmt(double x) {
-        if (Double.isNaN(x) || Double.isInfinite(x)) return new F("0", true);
+    /** x cut off (towards zero) to the 12 digits the display can hold. */
+    static BigDecimal cut(BigDecimal x) {
+        BigDecimal a = x.abs();
+        int intDigits = a.compareTo(BigDecimal.ONE) < 0 ? 1 : a.setScale(0, RoundingMode.DOWN).toPlainString().length();
+        return x.setScale(Math.max(0, MAXD - intDigits), RoundingMode.DOWN);
+    }
+
+    /** null result = error (÷ 0) */
+    static F fmt(BigDecimal x) {
+        if (x == null) return new F("0", true);
         boolean e = false;
-        if (Math.abs(x) >= 1e12) {
-            e = true; x = x / 1e12;
-            if (Math.abs(x) >= 1e12) return new F("0", true);
+        if (x.abs().compareTo(E12) >= 0) {          // overflow: E with the leading 12 digits (decimal point shifted 12 places)
+            e = true; x = x.divide(E12);
+            if (x.abs().compareTo(E12) >= 0) return new F("0", true);
         }
-        double a = Math.abs(x);
-        int intDigits = a < 1 ? 1 : String.valueOf((long) Math.floor(a)).length();
-        String s = BigDecimal.valueOf(x).setScale(Math.max(0, MAXD - intDigits), RoundingMode.HALF_UP).toPlainString();
-        if (s.indexOf('.') >= 0) s = s.replaceAll("0+$", "").replaceAll("\\.$", "");
-        if (s.replace("-", "").replace(".", "").length() > MAXD) {   // rounding carried into a 13th digit
-            if (e) return new F("0", true);
-            return fmt(Double.parseDouble(s));
-        }
-        if (s.matches("-0(\\.0*)?")) s = "0";
+        x = cut(x);
+        String s = x.signum() == 0 ? "0" : x.stripTrailingZeros().toPlainString();
         return new F(s, e);
     }
+    static F fmt(double x) { return Double.isNaN(x) || Double.isInfinite(x) ? new F("0", true) : fmt(BigDecimal.valueOf(x)); }
 
-    private double parse(String s) {
-        try { return Double.parseDouble(s); } catch (NumberFormatException ex) { return 0; }
+    private static BigDecimal dec(String s) {
+        try { return new BigDecimal(s); } catch (NumberFormatException ex) { return BigDecimal.ZERO; }
     }
-    private double cur() { return hasFull ? full : parse(entry); }
-    private static double round(double x) { F f = fmt(x); return f.err ? x : Double.parseDouble(f.str); }
+    private static BigDecimal dec(double d) { return BigDecimal.valueOf(d); }
+    private BigDecimal cur() { return dec(entry); }   // the calculator works with what it shows
+    /** register value after an addition: cut to 12 digits like any result (an overflow keeps the exact sum) */
+    private static double reg(BigDecimal x) { return x.abs().compareTo(E12) >= 0 ? x.doubleValue() : cut(x).doubleValue(); }
 
-    private void show(double x) {
+    private void show(BigDecimal x) {
         F f = fmt(x);
         entry = f.str;
-        hasFull = !f.err;
-        full = x;
         if (f.err) err = true;
         newEntry = true;
     }
 
-    private static double calc(double a, String op, double b) {
-        if ("add".equals(op)) return a + b;
-        if ("sub".equals(op)) return a - b;
-        if ("mul".equals(op)) return a * b;
-        if ("div".equals(op)) return b == 0 ? Double.NaN : a / b;
+    private static BigDecimal calc(BigDecimal a, String op, BigDecimal b) {
+        if ("add".equals(op)) return a.add(b);
+        if ("sub".equals(op)) return a.subtract(b);
+        if ("mul".equals(op)) return a.multiply(b);
+        if ("div".equals(op)) return b.signum() == 0 ? null : a.divide(b, WIDE);
         return b;
+    }
+
+    /** √x cut to 12 digits: start from the double square root, then correct the last digit exactly */
+    static BigDecimal sqrt(BigDecimal x) {
+        BigDecimal r = cut(new BigDecimal(Math.sqrt(x.doubleValue()), WIDE));
+        BigDecimal ulp = r.ulp();
+        while (r.multiply(r).compareTo(x) > 0) r = r.subtract(ulp);
+        while (r.add(ulp).multiply(r.add(ulp)).compareTo(x) <= 0) r = r.add(ulp);
+        return r;
     }
 
     // ---------------------------------------------------------------- operations
     private void digit(char d) {
-        hasFull = false;
         if (newEntry) { entry = "0"; newEntry = false; }
         typed = true;
         boolean neg = entry.startsWith("-");
@@ -96,7 +112,6 @@ public class CalcEngine {
     }
 
     private void dot() {
-        hasFull = false;
         if (newEntry) { entry = "0."; newEntry = false; typed = true; return; }
         typed = true;
         if (entry.indexOf('.') < 0 && entry.replace("-", "").replace(".", "").length() < MAXD) entry += ".";
@@ -115,36 +130,36 @@ public class CalcEngine {
 
     /** @param toGt false when the result is only being finished for M+ / M− (it must not go into GT) */
     private void equals(boolean toGt) {
-        double r; boolean counted = toGt;
+        BigDecimal r; boolean counted = toGt;
         if (op != null) {
-            double a = acc, b = cur();
-            if (op.equals("div") && !typed) r = a == 0 ? Double.NaN : 1 / a;   // 5 ÷ = -> 0.2
+            BigDecimal a = acc, b = cur();
+            if (op.equals("div") && !typed) r = a.signum() == 0 ? null : BigDecimal.ONE.divide(a, WIDE);   // 5 ÷ = -> 0.2
             else r = calc(a, op, b);
             // constant: × keeps the first number, + − ÷ keep the second
             if (op.equals("mul")) { kOp = "mul"; kVal = a; } else { kOp = op; kVal = op.equals("div") && !typed ? a : b; }
             op = null;
         } else if (kOp != null) {
-            double x = cur();
-            r = kOp.equals("mul") ? kVal * x : calc(x, kOp, kVal);
+            BigDecimal x = cur();
+            r = kOp.equals("mul") ? kVal.multiply(x) : calc(x, kOp, kVal);
         } else { r = cur(); }                 // "5 =" with nothing pending still counts towards GT, as on the real calculator
         show(r);
-        if (!err && counted) { gt = round(gt + cur()); save(); }
+        if (!err && counted) { gt = reg(dec(gt).add(cur())); save(); }
         acc = cur(); typed = false;
     }
 
     private void percent() {
-        double x = cur(), r;
+        BigDecimal x = cur(), r;
         if (op != null) {
-            double a = acc;
-            if (op.equals("mul")) r = a * x / 100;           // 3000 × 20 % = 600
-            else if (op.equals("div")) r = x == 0 ? Double.NaN : a / x * 100;   // 20 ÷ 500 % = 4
-            else if (op.equals("add")) r = a + a * x / 100;  // 3000 + 20 % = 3600
-            else r = a - a * x / 100;                        // 3000 − 20 % = 2400
+            BigDecimal a = acc, part = a.multiply(x).divide(HUNDRED);
+            if (op.equals("mul")) r = part;                                      // 3000 × 20 % = 600
+            else if (op.equals("div")) r = x.signum() == 0 ? null : a.multiply(HUNDRED).divide(x, WIDE);   // 20 ÷ 500 % = 4
+            else if (op.equals("add")) r = a.add(part);                          // 3000 + 20 % = 3600
+            else r = a.subtract(part);                                           // 3000 − 20 % = 2400
             op = null;
             show(r);
-            if (!err) { gt = round(gt + cur()); save(); }
+            if (!err) { gt = reg(dec(gt).add(cur())); save(); }
         } else {
-            show(x / 100);
+            show(x.divide(HUNDRED));
         }
         acc = cur(); typed = false;
     }
@@ -152,7 +167,7 @@ public class CalcEngine {
     private void memAdd(int sign) {
         if (op != null && typed) equals(false);   // finish the pending calculation, but only = and % feed GT
         if (err) return;
-        mem = round(mem + sign * cur()); save();
+        mem = reg(sign > 0 ? dec(mem).add(cur()) : dec(mem).subtract(cur())); save();
         newEntry = true; typed = false;
     }
 
@@ -165,9 +180,9 @@ public class CalcEngine {
         if (k.equals("onc")) {
             if (err) {                                  // CE on overflow: drop E, keep digits
                 String keep = entry; fresh();
-                entry = keep; hasFull = true; full = parse(keep);
+                entry = keep;
             } else if (!newEntry && typed) {            // CE
-                entry = "0"; hasFull = false; newEntry = true; typed = false;
+                entry = "0"; newEntry = true; typed = false;
             } else fresh();                             // C
             return;
         }
@@ -184,28 +199,27 @@ public class CalcEngine {
                 }
                 break;
             case "neg":
-                if (hasFull) full = -full;
                 if (entry.startsWith("-")) entry = entry.substring(1);
-                else if (cur() != 0 || entry.indexOf('.') >= 0) entry = "-" + entry;
+                else if (cur().signum() != 0 || entry.indexOf('.') >= 0) entry = "-" + entry;
                 typed = true;
                 break;
             case "add": case "sub": case "mul": case "div": operator(k); break;
             case "eq": equals(); break;
             case "pct": percent(); break;
             case "sqrt": {
-                double x = cur();
-                if (x < 0) { entry = "0"; hasFull = false; err = true; }
-                else show(Math.sqrt(x));
+                BigDecimal x = cur();
+                if (x.signum() < 0) { entry = "0"; err = true; }
+                else show(sqrt(x));
                 typed = true;
                 break;
             }
             case "mplus": memAdd(1); break;
             case "mminus": memAdd(-1); break;
-            case "mr": show(mem); typed = true; break;
+            case "mr": show(dec(mem)); typed = true; break;
             case "mc": mem = 0; save(); break;
             case "gt":
                 if ("gt".equals(prev)) { gt = 0; save(); }   // consecutive GT presses clear the GT register; display stays
-                else { show(gt); typed = true; }
+                else { show(dec(gt)); typed = true; }
                 break;
         }
     }

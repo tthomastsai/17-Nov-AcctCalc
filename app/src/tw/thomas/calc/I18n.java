@@ -44,12 +44,13 @@ public final class I18n {
         put("tour_skip", "跳過", "Skip");
         put("tour_next", "下一步", "Next");
         put("tour_start", "開始使用", "Get started");
+        put("tour_more", "更多操作技巧", "More tips");
         put("tour1_t", "歡迎使用會計計算機", "Welcome to Accounting Calculator");
         put("tour1_b", "按鍵配置和運算規則都照 12 位數的桌上型商用計算機設計，以下帶你看幾個重點。",
             "The keys and calculation rules follow a real 12-digit desk calculator. Here are a few things worth knowing.");
         put("tour2_t", "螢幕指示", "Display indicators");
-        put("tour2_b", "MINUS、MEMORY、ERROR、GRAND TOTAL 作用中時，下方的橫條會亮起；右上角會顯示目前的運算符號。",
-            "A bar lights up under MINUS, MEMORY, ERROR or GRAND TOTAL when it is active; the pending operator appears in the top-right corner.");
+        put("tour2_b", "MINUS、MEMORY、ERROR、GRAND TOTAL 作用中時，下方的橫條會亮起；右上角的 + − × ÷ 會亮起目前的運算。",
+            "A bar lights up under MINUS, MEMORY, ERROR or GRAND TOTAL when it is active; in the top-right corner, the pending one of + − × ÷ lights up.");
         put("tour3_t", "GT 總計", "GT (grand total)");
         put("tour3_b", "每次按 = 或 % 算出的結果都會累加。按一下叫出，連按第二下清空。",
             "Every result from = or % is added up. Press once to recall it; press again to clear it.");

@@ -15,7 +15,7 @@ Decisions that are settled, things deliberately left out, and how changes are ma
 ### Settled
 
 - **Look:** a replica of the LIBERTY LB-5003CA: raised opaque keys with a soft shadow, thickness, a lighter top lip and a hairline rim that fades out downwards; LCD; solar panel and "12 digits" header. The settings page uses the same look.
-- **Behaviour:** follows the real calculator, checked key by key on the device (see the key table in the README and `test/cases.txt`). When the app and the device disagree, the device wins.
+- **Behaviour:** follows the real calculator, checked key by key on the device (see the key table in the README and `test/cases.txt`). When the app and the device disagree, the device wins. That includes cutting every result off at 12 digits instead of rounding, the logic shared by the LIBERTY and emore exam calculators (not Casio's).
 - **Themes:** five (Classic Cream, Obsidian, Mint, Sakura Pink, Sky Blue). Obsidian is used automatically in dark mode if that option is on.
 - **Fonts:** Google Sans for the interface and digits; AcctCalc Seven as the optional seven-segment display font.
 - **Material 3:** only the dark-mode switch is a Material 3 component; everything else keeps the calculator's look.
@@ -52,7 +52,7 @@ Decisions that are settled, things deliberately left out, and how changes are ma
 ### 已經定案
 
 - **外觀：** 仿利百代 LB-5003CA：不透明的立體按鍵，有柔和陰影、厚度、頂端較亮的邊和往下淡出的細邊線；液晶螢幕；上方的太陽能板與「12 digits」字樣。設定頁使用同一套質感。
-- **行為：** 以實機為準，逐一按鍵在實機上確認（見 README 的按鍵表和 `test/cases.txt`）。App 和實機不同時，以實機為準。
+- **行為：** 以實機為準，逐一按鍵在實機上確認（見 README 的按鍵表和 `test/cases.txt`）。App 和實機不同時，以實機為準。包括每一步結果無條件捨去到 12 位數、而不是四捨五入，這是利百代、emore 等國考計算機共同的邏輯（Casio 不同）。
 - **主題：** 五個（經典奶油、曜石黑、薄荷綠、櫻花粉、天空藍）。開啟選項時，深色模式自動換成曜石黑。
 - **字型：** 介面和數字用 Google Sans；螢幕數字可選自製的七段字型 AcctCalc Seven。
 - **Material 3：** 只有深色模式開關是 Material 3 元件，其餘維持計算機的質感。
