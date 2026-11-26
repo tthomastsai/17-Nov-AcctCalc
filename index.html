@@ -43,6 +43,11 @@ input[type=range]::-moz-range-track { height: 16px; border-radius: 8px; backgrou
 input[type=range]::-moz-range-progress { height: 16px; border-radius: 8px; background: var(--on); }
 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; margin-top: -1.5px; border-radius: 50%; border: 0; background: var(--knob); box-shadow: var(--knobsh); }
 input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; border: 0; background: var(--knob); box-shadow: var(--knobsh); transform: translateY(-1.5px); }
+.xrow { list-style: none; display: flex; align-items: center; padding: 10px 0; cursor: pointer; font-size: 15px; font-weight: 500; }
+.xrow::-webkit-details-marker { display: none; }
+.xrow .chev { margin-left: auto; display: inline-flex; transition: transform .15s; }
+details[open] > .xrow .chev { transform: rotate(90deg); }
+.dl { border: .9px solid transparent; border-radius: 20px; padding: 10px 18px; margin: 4px 0 6px; font: 700 14px inherit; font-family: inherit; cursor: pointer; }
 .tiles { display: flex; padding: 4px 4px 6px; border-radius: 18px; }
 .tiles button { flex: 1; border: .9px solid transparent; background: transparent; padding: 10px 4px 8px; margin-bottom: 2.5px; border-radius: 14px; cursor: pointer; color: inherit; font-family: inherit; display: flex; flex-direction: column; align-items: center; }
 .tiles .smp { font-size: 26px; line-height: 1.2; }
@@ -316,8 +321,9 @@ const STR = {
   theme_light: ["淺色模式下的主題配色", "Colour theme in light mode"],
   tour_replay: ["重看導覽", "Replay the tour"], tour_skip: ["跳過", "Skip"], tour_next: ["下一步", "Next"], tour_start: ["開始使用", "Get started"], tour_more: ["更多操作技巧", "More tips"],
   get_app: ["在手機上使用", "Use it on your phone"],
-  get_android: ["Android：下載 App（APK）", "Android: download the app (APK)"],
-  get_android_note: ["開啟下載的檔案，依提示允許「安裝不明來源的應用程式」即可安裝。", "Open the downloaded file and allow “Install unknown apps” when asked."],
+  get_android: ["Android：安裝 App", "Android: install the app"],
+  get_android_step: ["下載最新版的 APK 檔：", "Download the latest APK:"], get_android_btn: ["下載 APK", "Download APK"],
+  get_android_note: ["開啟下載的檔案，依提示允許「安裝不明來源的應用程式」即可安裝。之後有新版時，用同樣方式覆蓋安裝就好。", "Open the downloaded file and allow “Install unknown apps” when asked. Install a newer version the same way, over the old one."],
   get_home: ["iPhone、iPad 及其他裝置：加到主畫面", "iPhone, iPad and others: add to the Home Screen"],
   get_home_ios: ["iPhone／iPad（Safari）：點「分享」→「加入主畫面」。", "iPhone / iPad (Safari): tap Share → Add to Home Screen."],
   get_home_other: ["Android（Chrome）：點右上角 ⋮ →「加到主畫面」。電腦版 Chrome／Edge：網址列右側的「安裝」圖示。", "Android (Chrome): tap ⋮ → Add to Home screen. Chrome / Edge on a computer: the Install icon in the address bar."],
@@ -842,14 +848,26 @@ function buildSettings() {
   // tour
   linkRow(card(null), t("tour_replay"), () => { closeSettings(); startTour(); });
 
-  // getting it on a phone: a card of its own, before About (the Android app, or the web version on the Home Screen)
+  // getting it on a phone: a card of its own, before About. Both ways are rows of the same kind that open
+  // to show their steps (Android has a file to download, the others only steps to follow)
+  const expand = (parent, label, fill) => {
+    const d = el("details"); const sm = el("summary", "xrow"); sm.style.color = th.label;
+    sm.append(el("span", null, label)); sm.insertAdjacentHTML("beforeend", `<span class="chev">${svgChevron(th.sub, true)}</span>`);
+    d.appendChild(sm); fill(d); parent.appendChild(d); return d;
+  };
   const gp = card(t("get_app"));
-  linkRow(gp, t("get_android"), () => { window.open("https://github.com/tthomastsai/17-Nov-AcctCalc/tree/main/dist", "_blank", "noopener"); });
-  const an = el("p", "para", t("get_android_note")); an.style.cssText += ";margin-top:-4px;font-size:13px;color:" + th.sub; gp.appendChild(an);
-  const hd = el("details"); const hs = el("summary", null, t("get_home"));
-  hs.style.cssText = "cursor:pointer;font-size:15px;font-weight:500;padding:8px 0;color:" + th.label; hd.appendChild(hs);
-  ["get_home_ios", "get_home_other", "get_home_note"].forEach(k => hd.appendChild(el("p", "para", (k === "get_home_note" ? "" : "• ") + t(k))));
-  gp.appendChild(hd);
+  expand(gp, t("get_android"), d => {
+    d.appendChild(el("p", "para", "1. " + t("get_android_step")));
+    const dl = el("button", "dl", t("get_android_btn")); dl.type = "button";
+    raised(dl, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false }); dl.style.color = th.acc[3];
+    dl.addEventListener("click", () => window.open("https://github.com/tthomastsai/17-Nov-AcctCalc/tree/main/dist", "_blank", "noopener"));
+    d.appendChild(dl);
+    d.appendChild(el("p", "para", "2. " + t("get_android_note")));
+  });
+  expand(gp, t("get_home"), d => {
+    ["get_home_ios", "get_home_other"].forEach(k => d.appendChild(el("p", "para", "• " + t(k))));
+    d.appendChild(el("p", "para", t("get_home_note")));
+  });
 
   // about
   const ab = card(t("about"));
@@ -863,8 +881,8 @@ function buildSettings() {
   // acknowledgements: a card of its own under About
   const ak = card(t("ack"));
   ["ack_design", "ack_gs", "ack_seven", "ack_claude"].forEach(k => ak.appendChild(el("p", "para", "• " + t(k))));
-  const det = el("details"); const sum = el("summary", null, t("licences"));
-  sum.style.cssText = "cursor:pointer;font-size:15px;font-weight:500;padding:8px 0;color:" + th.label; det.appendChild(sum);
+  const det = el("details"); const sum = el("summary", "xrow"); sum.style.color = th.label;
+  sum.append(el("span", null, t("licences"))); sum.insertAdjacentHTML("beforeend", `<span class="chev">${svgChevron(th.sub, true)}</span>`); det.appendChild(sum);
   const pre = el("pre", null, document.getElementById("licence-text").textContent.trim());
   pre.style.cssText = "white-space:pre-wrap;font:12px/1.4 monospace;margin:4px 0 0;user-select:text;-webkit-user-select:text"; det.appendChild(pre);
   ak.appendChild(det);
