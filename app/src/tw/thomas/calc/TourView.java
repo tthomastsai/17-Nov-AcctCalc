@@ -26,6 +26,7 @@ public class TourView extends View {
     private final Typeface t500, t700;
     private final Done onDone;
     private int step = 0;
+    private boolean downNext, downLink;   // which button is being held, for the pressed look
 
     private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint ring = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -117,6 +118,7 @@ public class TourView extends View {
         float nw = button.measureText(nextLabel) + dp(36);
         next.set(card.right - pad - nw, by, card.right - pad, by + btnH);
         Raised pill = new Raised(th.acc[0], th.acc[1], th.acc[2], th.dark, d, -1, 2.5f, 1.5f, 2.5f);
+        pill.pressed = downNext ? 1 : 0;
         pill.setBounds(Math.round(next.left - pill.padL()), Math.round(next.top), Math.round(next.right + pill.padL()), Math.round(next.bottom + pill.padB()));
         pill.draw(c);
         button.setColor(th.acc[3]);
@@ -130,15 +132,25 @@ public class TourView extends View {
         String sk = I18n.t(last ? "tour_more" : "tour_skip");   // last step: a link to the README for more tips
         {
             button.setColor(last ? th.label : th.sub);
+            button.setAlpha(downLink ? 120 : 255);
             button.setTextAlign(Paint.Align.LEFT);
             float sw = button.measureText(sk);
             skip.set(card.left + pad - dp(8), by, card.left + pad + sw + dp(8), by + btnH);
             c.drawText(sk, card.left + pad, next.centerY() - (button.descent() + button.ascent()) / 2, button);
+            button.setAlpha(255);
         }
     }
 
     @Override public boolean onTouchEvent(MotionEvent e) {
-        if (e.getActionMasked() == MotionEvent.ACTION_UP) {
+        int a = e.getActionMasked();
+        if (a == MotionEvent.ACTION_DOWN) {
+            tmp.set(next); tmp.inset(-dp(6), -dp(6));
+            downNext = tmp.contains(e.getX(), e.getY());
+            downLink = !downNext && skip.contains(e.getX(), e.getY());
+            invalidate();
+        } else if (a == MotionEvent.ACTION_CANCEL) { downNext = downLink = false; invalidate(); }
+        if (a == MotionEvent.ACTION_UP) {
+            downNext = downLink = false; invalidate();
             float x = e.getX(), y = e.getY();
             tmp.set(next); tmp.inset(-dp(6), -dp(6));
             if (tmp.contains(x, y)) {

@@ -82,6 +82,22 @@ public class SettingsActivity extends Activity {
         return k;
     }
 
+    /** a light tint while a row or an unselected choice is held down */
+    private android.graphics.drawable.Drawable pressTint(float radiusDp) {
+        android.graphics.drawable.StateListDrawable sl = new android.graphics.drawable.StateListDrawable();
+        GradientDrawable on = new GradientDrawable();
+        on.setColor(t.dark ? 0x14FFFFFF : 0x0F000000); on.setCornerRadius(dp(radiusDp));
+        sl.addState(new int[]{android.R.attr.state_pressed}, on);
+        sl.addState(new int[]{}, new android.graphics.drawable.ColorDrawable(0));
+        return sl;
+    }
+    /** rows reach a little past the card's text column so their press tint has some room */
+    private LinearLayout.LayoutParams rowLp() {
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1, -2);
+        lp.setMargins(-dp(10), 0, -dp(10), 0);
+        return lp;
+    }
+
     private int dp(float v) { return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, v, getResources().getDisplayMetrics())); }
 
     private void build() {
@@ -100,12 +116,12 @@ public class SettingsActivity extends Activity {
         LinearLayout bar = new LinearLayout(this);
         bar.setOrientation(LinearLayout.HORIZONTAL);
         bar.setGravity(Gravity.CENTER_VERTICAL);
-        Raised barBg = cardBg();                                   // back arrow and title share one raised block, sized to them
+        Raised barBg = new Raised(t.dark ? 0xFF2D2F33 : t.bezelTop, t.dark ? 0xFF27292D : Raised.mix(t.bezelTop, t.bezelBot, .55f),
+                t.dark ? 0xFF18191C : t.bezelLine, t.dark, den(), 22, 2.5f, 2, 3);   // back arrow and title share one raised block, sized to them, raised like a key
         bar.setBackground(barBg);
         bar.setPadding(dp(4) + barBg.padL(), dp(4), dp(16) + barBg.padL(), dp(4) + barBg.padB());
         View back = new Chevron(txt);
-        back.setContentDescription(I18n.t("back"));
-        back.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { finish(); } });
+        bar.setContentDescription(I18n.t("back"));
         bar.addView(back, new LinearLayout.LayoutParams(dp(48), dp(48)));
         TextView title = label(I18n.t("settings"), 22, t700, txt);
         title.setPadding(dp(2), 0, 0, 0);
@@ -177,7 +193,7 @@ public class SettingsActivity extends Activity {
             tile.setOrientation(LinearLayout.VERTICAL);
             tile.setGravity(Gravity.CENTER_HORIZONTAL);
             Raised face = new Raised(t.acc[0], t.acc[1], t.acc[2], t.dark, den(), 14, 2.5f, 1.5f, 2.5f);
-            if (sel) tile.setBackground(face);
+            tile.setBackground(sel ? face : pressTint(14));
             tile.setPadding(face.padL(), dp(10), face.padL(), dp(8) + face.padB());
             int fg = sel ? t.acc[3] : t.fn[3];
             TextView sample = label("1'234.5", 26, faces[i], fg);
@@ -212,6 +228,7 @@ public class SettingsActivity extends Activity {
             n.setPadding(0, dp(6), 0, 0);
             n.setGravity(Gravity.CENTER_HORIZONTAL);
             cell.addView(n);
+            cell.setBackground(pressTint(14));
             cell.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) { prefs.edit().putString("theme", opt.id).apply(); build(); }
             });
@@ -372,7 +389,9 @@ public class SettingsActivity extends Activity {
         LinearLayout row = new LinearLayout(this);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(0, dp(8), 0, dp(8));
+        row.setPadding(dp(10), dp(8), dp(10), dp(8));
+        row.setBackground(pressTint(12));
+        row.setLayoutParams(rowLp());
         row.addView(label(s, 15, selected ? t700 : t500, txt), new LinearLayout.LayoutParams(0, -2, 1));
         Check c = new Check(t.acc[1]);
         c.setVisibility(selected ? View.VISIBLE : View.INVISIBLE);
@@ -399,7 +418,9 @@ public class SettingsActivity extends Activity {
         LinearLayout row = new LinearLayout(this);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(0, dp(6), 0, dp(6));
+        row.setPadding(dp(10), dp(6), dp(10), dp(6));
+        row.setBackground(pressTint(12));
+        row.setLayoutParams(rowLp());
         row.addView(label(s, 15, t500, t.label), new LinearLayout.LayoutParams(0, -2, 1));
         Chevron arrow = new Chevron(sub); arrow.right = true;
         row.addView(arrow, new LinearLayout.LayoutParams(dp(20), dp(20)));
@@ -420,7 +441,7 @@ public class SettingsActivity extends Activity {
             v.setGravity(Gravity.CENTER);
             v.setSingleLine(true);
             Raised pill = new Raised(t.acc[0], t.acc[1], t.acc[2], t.dark, den(), -1, 2.5f, 1.5f, 2.5f);
-            if (sel) v.setBackground(pill);
+            v.setBackground(sel ? pill : pressTint(17));
             v.setPadding(dp(4) + pill.padL(), dp(8), dp(4) + pill.padL(), dp(8) + pill.padB());
             v.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View view) { cb.pick(idx); } });
             seg.addView(v, new LinearLayout.LayoutParams(0, -2, 1));
@@ -459,6 +480,12 @@ public class SettingsActivity extends Activity {
         Toggle(boolean on, String desc) {
             super(SettingsActivity.this); this.on = on; pos = on ? 1 : 0;
             setContentDescription(desc); setFocusable(true); setClickable(true);
+        }
+        @Override public boolean onTouchEvent(android.view.MotionEvent e) {
+            int a = e.getActionMasked();
+            if (a == android.view.MotionEvent.ACTION_DOWN) { thumb.pressed = 1; invalidate(); }
+            else if (a == android.view.MotionEvent.ACTION_UP || a == android.view.MotionEvent.ACTION_CANCEL) { thumb.pressed = 0; invalidate(); }
+            return super.onTouchEvent(e);
         }
         @Override public boolean performClick() {
             super.performClick();
@@ -525,7 +552,8 @@ public class SettingsActivity extends Activity {
         }
         @Override public boolean onTouchEvent(android.view.MotionEvent e) {
             int a = e.getActionMasked();
-            if (a == android.view.MotionEvent.ACTION_DOWN) getParent().requestDisallowInterceptTouchEvent(true);
+            if (a == android.view.MotionEvent.ACTION_DOWN) { getParent().requestDisallowInterceptTouchEvent(true); knob.pressed = 1; }
+            if (a == android.view.MotionEvent.ACTION_UP || a == android.view.MotionEvent.ACTION_CANCEL) { knob.pressed = 0; invalidate(); }
             if (a == android.view.MotionEvent.ACTION_DOWN || a == android.view.MotionEvent.ACTION_MOVE || a == android.view.MotionEvent.ACTION_UP) {
                 set(Math.round(min + (e.getX() - left()) / (right() - left()) * (max - min)));
                 return true;

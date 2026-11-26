@@ -94,6 +94,15 @@ final class Raised extends ColorDrawable {   // ColorDrawable only as a concrete
         c.restore();
     }
 
+    /** a view that is pressed sinks its face, like a key */
+    @Override public boolean isStateful() { return true; }
+    @Override protected boolean onStateChange(int[] state) {
+        float p = 0;
+        for (int st : state) if (st == android.R.attr.state_pressed) p = 1;
+        if (p == pressed) return false;
+        pressed = p; invalidateSelf(); return true;
+    }
+
     @Override public int getIntrinsicWidth() { return iw; }
     @Override public int getIntrinsicHeight() { return ih; }
     @Override public void setAlpha(int alpha) {}
