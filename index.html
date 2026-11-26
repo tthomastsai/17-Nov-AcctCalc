@@ -842,6 +842,15 @@ function buildSettings() {
   // tour
   linkRow(card(null), t("tour_replay"), () => { closeSettings(); startTour(); });
 
+  // getting it on a phone: a card of its own, before About (the Android app, or the web version on the Home Screen)
+  const gp = card(t("get_app"));
+  linkRow(gp, t("get_android"), () => { window.open("https://github.com/tthomastsai/17-Nov-AcctCalc/tree/main/dist", "_blank", "noopener"); });
+  const an = el("p", "para", t("get_android_note")); an.style.cssText += ";margin-top:-4px;font-size:13px;color:" + th.sub; gp.appendChild(an);
+  const hd = el("details"); const hs = el("summary", null, t("get_home"));
+  hs.style.cssText = "cursor:pointer;font-size:15px;font-weight:500;padding:8px 0;color:" + th.label; hd.appendChild(hs);
+  ["get_home_ios", "get_home_other", "get_home_note"].forEach(k => hd.appendChild(el("p", "para", (k === "get_home_note" ? "" : "• ") + t(k))));
+  gp.appendChild(hd);
+
   // about
   const ab = card(t("about"));
   const nm = el("div", null, t("title")); nm.style.cssText = "font-size:17px;font-weight:700"; ab.appendChild(nm);
@@ -850,14 +859,6 @@ function buildSettings() {
   const made = el("p", "para"), mt = t("about_made"), mi = mt.indexOf("tthomastsai");   // author name in bold
   made.append(mt.slice(0, mi), el("b", null, "tthomastsai"), mt.slice(mi + 11)); ab.appendChild(made);
 
-  // getting it on a phone: the Android app, or the web version on the Home Screen
-  const gh = el("div", null, t("get_app")); gh.style.cssText = "font-size:15px;font-weight:700;margin:14px 0 2px"; ab.appendChild(gh);
-  linkRow(ab, t("get_android"), () => { window.open("https://github.com/tthomastsai/17-Nov-AcctCalc/tree/main/dist", "_blank", "noopener"); });
-  const an = el("p", "para", t("get_android_note")); an.style.cssText += ";margin-top:-4px;font-size:13px;color:" + th.sub; ab.appendChild(an);
-  const hd = el("details"); const hs = el("summary", null, t("get_home"));
-  hs.style.cssText = "cursor:pointer;font-size:15px;font-weight:500;padding:8px 0;color:" + th.label; hd.appendChild(hs);
-  ["get_home_ios", "get_home_other", "get_home_note"].forEach(k => hd.appendChild(el("p", "para", (k === "get_home_note" ? "" : "• ") + t(k))));
-  ab.appendChild(hd);
 
   // acknowledgements: a card of its own under About
   const ak = card(t("ack"));
