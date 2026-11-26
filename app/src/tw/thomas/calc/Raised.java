@@ -24,6 +24,7 @@ final class Raised extends ColorDrawable {   // ColorDrawable only as a concrete
     final int top, bot, side; final boolean dark;
     final float radius, thick, lip, shOff, shBlur, shA, rim;
     float pressed;                               // 0..1, sinks the face like a pressed key
+    boolean pressable = true;                    // false for a chosen option, which is a position, not a key
     boolean centred;                             // keep as much room above the face as below, so it centres on its view
     int iw = -1, ih = -1;                        // intrinsic size, for thumbs
 
@@ -97,6 +98,7 @@ final class Raised extends ColorDrawable {   // ColorDrawable only as a concrete
     /** a view that is pressed sinks its face, like a key */
     @Override public boolean isStateful() { return true; }
     @Override protected boolean onStateChange(int[] state) {
+        if (!pressable) return false;
         float p = 0;
         for (int st : state) if (st == android.R.attr.state_pressed) p = 1;
         if (p == pressed) return false;
