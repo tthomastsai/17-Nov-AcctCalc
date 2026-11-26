@@ -27,12 +27,13 @@ body { font-family: "Google Sans", Roboto, system-ui, sans-serif; }
 #sheet .head { font-size: 13px; font-weight: 700; margin: 16px 10px 8px; }
 #sheet .card { border-radius: 20px; padding: 16px 18px; margin: 0 4px 9px; border: .9px solid transparent; }
 #sheet .row { display: flex; align-items: center; padding: 8px 0; cursor: pointer; font-size: 15px; font-weight: 500; }
-.rz { transition: transform .06s, box-shadow .06s; }
-.rz:active { transform: translateY(var(--pY)); box-shadow: var(--shP) !important; }
+.rz { transition: transform .22s cubic-bezier(.2,.8,.3,1), box-shadow .22s cubic-bezier(.2,.8,.3,1); }   /* soft release (~3 × 75 ms) */
+.rz.down { transform: translateY(var(--pY)); box-shadow: var(--shP) !important; transition-duration: .055s; }   /* quick press (~3 × 18 ms) */
 #tourCard button:not(.next):active { opacity: .5; }
-.tg:active::after { transform: translateY(1.5px); box-shadow: var(--knobshP); }
-input[type=range]:active::-webkit-slider-thumb { transform: translateY(1.2px); box-shadow: var(--knobshP); }
-input[type=range]:active::-moz-range-thumb { transform: translateY(0); box-shadow: var(--knobshP); }
+.tg::after, input[type=range]::-webkit-slider-thumb { transition: transform .22s cubic-bezier(.2,.8,.3,1), box-shadow .22s cubic-bezier(.2,.8,.3,1), left .15s cubic-bezier(.2,0,0,1); }
+.tg:active::after { transform: translateY(2px); box-shadow: var(--knobshP); transition-duration: .055s, .055s, .15s; }
+input[type=range]:active::-webkit-slider-thumb { transform: translateY(2px); box-shadow: var(--knobshP); transition-duration: .055s; }
+input[type=range]:active::-moz-range-thumb { box-shadow: var(--knobshP); }
 #sheet .row .grow { flex: 1; }
 #sheet .hint { font-size: 12px; font-weight: 500; margin-top: 6px; }
 #sheet .para { font-size: 14px; font-weight: 500; line-height: 1.45; margin: 0 0 8px; }
@@ -712,11 +713,20 @@ function raised(elm, top, bot, side, o) {
     ? `linear-gradient(${top}, ${bot}) padding-box, linear-gradient(rgba(0,0,0,.10), rgba(0,0,0,0) 44px) border-box`
     : `linear-gradient(${top}, ${bot})`;
   elm.style.boxShadow = `inset 0 1.6px 0 ${lip}, 0 ${thick}px 0 ${side}, 0 ${thick + off}px ${blur * 1.6}px rgba(0,0,0,${sh})`;
-  if (o && o.press) {                                   // sinks like a key while held (see .rz:active)
-    elm.classList.add("rz");
-    elm.style.setProperty("--pY", (thick * .8) + "px");
-    elm.style.setProperty("--shP", `inset 0 1.6px 0 ${lip}, 0 ${thick * .2}px 0 ${side}, 0 ${thick * .2 + off * .5}px ${blur * 1.6}px rgba(0,0,0,${sh * .7})`);
-  }
+  if (o && o.press) pressable(elm, lip, side, thick, off, blur, sh);
+}
+/* pressed like a calculator key: the same proportions (face sinks 9/11 of the thickness, the side shrinks to about a
+   fifth, the shadow follows and tightens) and the same timing (quick press, soft release, at least 70 ms for a tap) */
+function pressable(elm, lip, side, thick, off, blur, sh) {
+  elm.classList.add("rz");
+  const t2 = thick * (1 - .85 / 1.1), dy = thick * .9 / 1.1;
+  elm.style.setProperty("--pY", dy + "px");
+  elm.style.setProperty("--shP", `inset 0 1.6px 0 ${lip}, 0 ${t2}px 0 ${side}, 0 ${t2 + off * (1 - 1.1 / 1.6)}px ${blur * .8}px rgba(0,0,0,${sh * .82})`);
+  let at = 0, timer = 0;
+  const down = () => { clearTimeout(timer); at = performance.now(); elm.classList.add("down"); };
+  const up = () => { timer = setTimeout(() => elm.classList.remove("down"), Math.max(0, 70 - (performance.now() - at))); };
+  elm.addEventListener("pointerdown", down);
+  ["pointerup", "pointercancel", "pointerleave"].forEach(ev => elm.addEventListener(ev, up));
 }
 function well(elm) {
   elm.style.background = th.dark ? "rgba(0,0,0,.25)" : "rgba(0,0,0,.08)";
@@ -810,7 +820,7 @@ function buildSettings() {
   range.style.setProperty("--groove", th.dark ? "#1E1F22" : mixHex(th.bezelTop, "#000000", .08));
   range.style.setProperty("--groovesh", th.dark ? "inset 0 2px 4px rgba(0,0,0,.35)" : "inset 0 2px 4px rgba(0,0,0,.14), 0 1px 0 rgba(255,255,255,.7)");
   range.style.setProperty("--knob", `linear-gradient(${th.acc[0]}, ${th.acc[1]})`);
-  range.style.setProperty("--knobshP", `inset 0 1.6px 0 ${mixHex(th.acc[0], "#ffffff", th.dark ? .14 : .45)}, 0 .5px 0 ${th.acc[2]}, 0 1.5px 3px rgba(0,0,0,${th.dark ? .3 : .13})`);
+  range.style.setProperty("--knobshP", `inset 0 1.6px 0 ${mixHex(th.acc[0], "#ffffff", th.dark ? .14 : .45)}, 0 .57px 0 ${th.acc[2]}, 0 1.04px 2.4px rgba(0,0,0,${th.dark ? .34 : .15})`);
   range.style.setProperty("--knobsh", `inset 0 1.6px 0 ${mixHex(th.acc[0], "#ffffff", th.dark ? .14 : .45)}, 0 2.5px 0 ${th.acc[2]}, 0 4px 5px rgba(0,0,0,${th.dark ? .42 : .18})`);
   range.addEventListener("input", () => {
     setP();
@@ -850,7 +860,7 @@ function buildSettings() {
   cb.style.setProperty("--groove", th.dark ? "#1E1F22" : mixHex(th.bezelTop, "#000000", .08));
   cb.style.setProperty("--groovesh", th.dark ? "inset 0 2px 4px rgba(0,0,0,.35)" : "inset 0 2px 4px rgba(0,0,0,.14), 0 1px 0 rgba(255,255,255,.7)");
   cb.style.setProperty("--knob", `linear-gradient(${th.fn[0]}, ${th.fn[1]})`);
-  cb.style.setProperty("--knobshP", `inset 0 1.6px 0 ${mixHex(th.fn[0], "#ffffff", th.dark ? .14 : .45)}, 0 .5px 0 ${th.fn[2]}, 0 1.5px 3px rgba(0,0,0,${th.dark ? .3 : .13})`);
+  cb.style.setProperty("--knobshP", `inset 0 1.6px 0 ${mixHex(th.fn[0], "#ffffff", th.dark ? .14 : .45)}, 0 .57px 0 ${th.fn[2]}, 0 1.04px 2.4px rgba(0,0,0,${th.dark ? .34 : .15})`);
   cb.style.setProperty("--knobsh", `inset 0 1.6px 0 ${mixHex(th.fn[0], "#ffffff", th.dark ? .14 : .45)}, 0 2.5px 0 ${th.fn[2]}, 0 4px 5px rgba(0,0,0,${th.dark ? .42 : .18})`);
   cb.style.setProperty("--tick", `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M3.6 8.1l3.2 3.3 5.6-6.2' fill='none' stroke='${icon}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>`)}")`);
   cb.setAttribute("role", "switch");
