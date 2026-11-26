@@ -22,50 +22,66 @@ body { font-family: "Google Sans", Roboto, system-ui, sans-serif; }
 @media (prefers-reduced-motion: reduce) { #sheet, #c { transition: none; } }
 #sheet .page { max-width: 560px; margin: 0 auto; padding: 8px 12px 28px; box-sizing: border-box; }
 #sheet.open { display: block; }
-#sheet .bar { display: flex; align-items: center; padding: 4px 0 12px; }
-#sheet .bar button { width: 40px; height: 40px; border: 0; padding: 0; margin: 2px 4px 6px 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+#sheet .bar { display: inline-flex; align-items: center; padding: 4px 18px 4px 4px; margin: 4px 4px 6px; border-radius: 20px; border: .9px solid transparent; cursor: pointer; }
+#sheet .bar button { width: 44px; height: 44px; border: 0; padding: 0; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
 #sheet .head { font-size: 13px; font-weight: 700; margin: 16px 10px 8px; }
 #sheet .card { border-radius: 20px; padding: 16px 18px; margin: 0 4px 9px; border: .9px solid transparent; }
 #sheet .row { display: flex; align-items: center; padding: 8px 0; cursor: pointer; font-size: 15px; font-weight: 500; }
+.rz { transition: transform .22s cubic-bezier(.2,.8,.3,1), box-shadow .22s cubic-bezier(.2,.8,.3,1); }   /* soft release (~3 × 75 ms) */
+.rz.down { transform: translateY(var(--pY)); box-shadow: var(--shP) !important; transition-duration: .055s; }   /* quick press (~3 × 18 ms) */
+#tourCard button:not(.next):active { opacity: .5; }
+.tg::after, input[type=range]::-webkit-slider-thumb { transition: transform .22s cubic-bezier(.2,.8,.3,1), box-shadow .22s cubic-bezier(.2,.8,.3,1), left .15s cubic-bezier(.2,0,0,1); }
+.tg:active::after { transform: translateY(2px); box-shadow: var(--knobshP); transition-duration: .055s, .055s, .15s; }
+input[type=range]:active::-webkit-slider-thumb { transform: translateY(2px); box-shadow: var(--knobshP); transition-duration: .055s; }
+input[type=range]:active::-moz-range-thumb { box-shadow: var(--knobshP); }
 #sheet .row .grow { flex: 1; }
 #sheet .hint { font-size: 12px; font-weight: 500; margin-top: 6px; }
 #sheet .para { font-size: 14px; font-weight: 500; line-height: 1.45; margin: 0 0 8px; }
-#sheet h2 { margin: 0 0 4px 8px; font-size: 24px; font-weight: 700; }
+#sheet h2 { margin: 0 0 0 2px; font-size: 22px; font-weight: 700; }
 .sec { font-size: 15px; font-weight: 500; margin: 14px 0 8px; display: flex; justify-content: space-between; }
 .sec.first { margin-top: 0; }
 .sec span:last-child { opacity: .75; }
 .seg { display: flex; padding: 3px 3px 5px; border-radius: 22px; }
 .seg button { flex: 1; border: 0; background: transparent; font: 500 14px/1 inherit; font-family: inherit; padding: 9px 6px; border-radius: 17px; cursor: pointer; color: inherit; margin-bottom: 2.5px; }
-input[type=range] { width: 100%; margin: 4px 0 2px; -webkit-appearance: none; appearance: none; background: transparent; height: 32px; }
-input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(to right, var(--on) var(--p), var(--off) var(--p)); }
-input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--off); }
-input[type=range]::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--on); }
-input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -10px; border-radius: 50%; border: 0; background: var(--knob); box-shadow: var(--knobsh); }
-input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; border: 0; background: var(--knob); box-shadow: var(--knobsh); }
+/* key-height slider: a groove as thick as its knob, filled with the accent up to the knob, which is a small raised key */
+input[type=range] { width: 100%; margin: 6px 0 4px; -webkit-appearance: none; appearance: none; background: transparent; height: 32px; }
+input[type=range]::-webkit-slider-runnable-track { height: 16px; border-radius: 8px; background: linear-gradient(to right, var(--on) var(--p), var(--groove) var(--p)); box-shadow: var(--groovesh); }
+input[type=range]::-moz-range-track { height: 16px; border-radius: 8px; background: var(--groove); box-shadow: var(--groovesh); }
+input[type=range]::-moz-range-progress { height: 16px; border-radius: 8px; background: var(--on); }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; margin-top: -1.5px; border-radius: 50%; border: 0; background: var(--knob); box-shadow: var(--knobsh); }
+input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; border: 0; background: var(--knob); box-shadow: var(--knobsh); transform: translateY(-1.5px); }
+.xrow { list-style: none; display: flex; align-items: center; padding: 10px 0; cursor: pointer; font-size: 15px; font-weight: 500; }
+.xrow::-webkit-details-marker { display: none; }
+.xrow .chev { margin-left: auto; display: inline-flex; transition: transform .15s; }
+details[open] > .xrow .chev { transform: rotate(90deg); }
+.dl { border: .9px solid transparent; border-radius: 20px; padding: 10px 18px; margin: 4px 0 6px; font: 700 14px inherit; font-family: inherit; cursor: pointer; }
+.tiles { display: flex; padding: 4px 4px 6px; border-radius: 18px; }
+.tiles button { flex: 1; border: .9px solid transparent; background: transparent; padding: 10px 4px 8px; margin-bottom: 2.5px; border-radius: 14px; cursor: pointer; color: inherit; font-family: inherit; display: flex; flex-direction: column; align-items: center; }
+.tiles .smp { font-size: 26px; line-height: 1.2; }
+.tiles .nm { font-size: 12px; font-weight: 500; margin-top: 2px; }
 .sw { display: flex; }
 .sw button { flex: 1; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; font: 500 11px inherit; font-family: inherit; cursor: pointer; color: inherit; }
 .sw canvas { width: 48px; height: 48px; }
 .sw span { margin-top: 6px; }
-/* Material 3 switch: 52x32 track, 2px outline when off; thumb 16px off, 24px on (with a check), 28px pressed */
-.tg { -webkit-appearance: none; appearance: none; box-sizing: border-box; width: 52px; height: 32px; border-radius: 16px; border: 2px solid var(--outline); background: var(--offtrack); position: relative; cursor: pointer; flex: none; margin: 0 0 0 12px; transition: background-color .15s, border-color .15s; }
-.tg::after { content: ""; position: absolute; left: 6px; top: 6px; width: 16px; height: 16px; border-radius: 50%; background: var(--outline) no-repeat center / 16px 16px; transition: all .15s cubic-bezier(.2,0,0,1); }
-.tg:checked { background: var(--on); border-color: var(--on); }
-.tg:checked::after { left: 22px; top: 2px; width: 24px; height: 24px; background-color: var(--thumb); background-image: var(--tick); }
-.tg:active::after { left: 0; top: 0; width: 28px; height: 28px; }
-.tg:checked:active::after { left: 20px; top: 0; }
+/* switch: the Material 3 shape (a 52x32 pill holding a round thumb) in the calculator's materials:
+   a recessed groove, tinted with the accent when on, and a raised round key that slides across */
+.tg { -webkit-appearance: none; appearance: none; box-sizing: border-box; width: 52px; height: 32px; border-radius: 16px; border: 0; background: var(--groove); box-shadow: var(--groovesh); position: relative; cursor: pointer; flex: none; margin: 0 0 0 12px; transition: background-color .15s; }
+.tg::after { content: ""; position: absolute; left: 4px; top: 2.5px; width: 24px; height: 24px; border-radius: 50%; background: var(--knob); box-shadow: var(--knobsh); transition: left .15s cubic-bezier(.2,0,0,1); }
+.tg:checked { background: var(--on); }
+.tg:checked::after { left: 24px; background: var(--tick) no-repeat center / 14px 14px, var(--knob); }
 .tg:focus-visible { outline: 2px solid var(--on); outline-offset: 2px; }
 #tour { position: fixed; inset: 0; display: none; z-index: 10; }
 #tour.open { display: block; }
 #tour.nohole { background: rgba(0,0,0,.6); }
 #tourHole { position: absolute; box-shadow: 0 0 0 200vmax rgba(0,0,0,.6); outline: 2px solid rgba(255,255,255,.9); pointer-events: none; }
 #tour.nohole #tourHole { display: none; }
-#tourCard { position: absolute; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 440px; border-radius: 22px; padding: 20px; box-sizing: border-box; }
+#tourCard { position: absolute; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 440px; border-radius: 22px; padding: 20px; box-sizing: border-box; border: .9px solid transparent; }
 #tourCard h3 { margin: 0 0 8px; font-size: 18px; font-weight: 700; }
 #tourCard p { margin: 0; font-size: 15px; font-weight: 500; line-height: 1.45; }
 #tourCard .trow { display: flex; align-items: center; margin-top: 18px; }
 #tourCard .trow span { margin-left: auto; margin-right: 14px; font-size: 13px; font-weight: 500; }
 #tourCard button { border: 0; background: transparent; font: 700 15px inherit; font-family: inherit; cursor: pointer; padding: 12px 8px; margin-left: -8px; }
-#tourCard button.next { border-radius: 22px; padding: 12px 18px; margin: 0; }
+#tourCard button.next { border-radius: 22px; padding: 12px 18px; margin: 0 0 2.5px; }
 </style>
 </head>
 <body>
@@ -76,16 +92,19 @@ input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 
 <script>
 "use strict";
 /* ENGINE START — port of app/src/tw/thomas/calc/CalcEngine.java (keep the two in step) */
+/* Decimal arithmetic on BigInt (value = m / 10^s). As on the real calculator, every result is cut off,
+   not rounded, to the 12 digits the display holds, and the displayed value is what the next step uses. */
 function CalcEngine() {
   const MAXD = 12;
   const E = this;
   E.mem = 0; E.gt = 0; E.onSave = null;
-  let entry, hasFull, full, acc, op, newEntry, typed, kOp, kVal, err, on, lastKey = null;
-  function fresh() { entry = "0"; hasFull = false; full = 0; acc = 0; op = null; newEntry = true; typed = false; kOp = null; kVal = 0; err = false; on = true; }
+  let entry, acc, op, newEntry, typed, kOp, kVal, err, on, lastKey = null;
+  const ZERO = { m: 0n, s: 0 };
+  function fresh() { entry = "0"; acc = ZERO; op = null; newEntry = true; typed = false; kOp = null; kVal = ZERO; err = false; on = true; }
   fresh();
   const save = () => { if (E.onSave) E.onSave(E.mem, E.gt); };
 
-  // plain decimal string of a double, like Java's BigDecimal.valueOf(x).toPlainString()
+  // plain decimal string of a double (no exponent), like Java's BigDecimal.valueOf(x).toPlainString()
   function plain(x) {
     let s = String(x);
     if (!/e/i.test(s)) return s;
@@ -98,61 +117,72 @@ function CalcEngine() {
     else s = digits.slice(0, point) + "." + digits.slice(point);
     return (neg ? "-" : "") + s;
   }
-  // HALF_UP rounding on the decimal string (Java RoundingMode.HALF_UP)
-  function setScale(x, scale) {
-    let s = plain(x), neg = s[0] === "-"; if (neg) s = s.slice(1);
-    let [ip, fp = ""] = s.split(".");
-    fp = (fp + "0".repeat(scale + 1)).slice(0, scale + 1);
-    const roundUp = fp[scale] >= "5";
-    let digits = (ip + fp.slice(0, scale)).split("").map(Number);
-    if (roundUp) {
-      let i = digits.length - 1;
-      while (i >= 0) { if (digits[i] === 9) { digits[i] = 0; i--; } else { digits[i]++; break; } }
-      if (i < 0) digits.unshift(1);
-    }
-    let str = digits.join("");
-    let intLen = str.length - scale;
-    let out = scale > 0 ? str.slice(0, intLen) + "." + str.slice(intLen) : str;
-    out = out.replace(/^0+(?=\d)/, "");
-    return (neg ? "-" : "") + out;
+  const P10 = n => 10n ** BigInt(n);
+  function dec(str) {
+    if (!/^-?\d*\.?\d*$/.test(str) || str === "" || str === "-") return ZERO;
+    const neg = str[0] === "-"; if (neg) str = str.slice(1);
+    const [ip, fp = ""] = str.split(".");
+    const m = BigInt((ip || "0") + fp);
+    return { m: neg ? -m : m, s: fp.length };
   }
-  function fmt(x) {
-    if (!isFinite(x)) return { str: "0", err: true };
+  const num = x => dec(plain(x));
+  const at = (a, s) => a.m * P10(s - a.s);          // a's digits at scale s (s >= a.s)
+  const add = (a, b) => { const s = Math.max(a.s, b.s); return { m: at(a, s) + at(b, s), s }; };
+  const neg = a => ({ m: -a.m, s: a.s });
+  const sub = (a, b) => add(a, neg(b));
+  const mul = (a, b) => ({ m: a.m * b.m, s: a.s + b.s });
+  const div = (a, b) => b.m === 0n ? null : { m: a.m * P10(40 + b.s) / b.m, s: a.s + 40 };   // BigInt division truncates towards 0
+  const sign = a => (a.m > 0n) - (a.m < 0n);
+  const cmp = (a, b) => sign(sub(a, b));
+  const abs = a => (a.m < 0n ? neg(a) : a);
+  const intLen = a => { const i = abs(a).m / P10(a.s); return i === 0n ? 1 : String(i).length; };
+  const E12 = { m: P10(MAXD), s: 0 };
+  function cut(a) {                                   // towards zero, to 12 display digits
+    const t = Math.max(0, MAXD - intLen(a));
+    return a.s > t ? { m: a.m / P10(a.s - t), s: t } : a;
+  }
+  function str(a) {
+    if (a.m === 0n) return "0";
+    let d = String(a.m < 0n ? -a.m : a.m).padStart(a.s + 1, "0");
+    let out = a.s ? d.slice(0, d.length - a.s) + "." + d.slice(d.length - a.s) : d;
+    if (out.indexOf(".") >= 0) out = out.replace(/0+$/, "").replace(/\.$/, "");
+    return (a.m < 0n ? "-" : "") + out;
+  }
+  function fmt(a) {
+    if (a === null) return { str: "0", err: true };
     let e = false;
-    if (Math.abs(x) >= 1e12) { e = true; x = x / 1e12; if (Math.abs(x) >= 1e12) return { str: "0", err: true }; }
-    const a = Math.abs(x);
-    const intDigits = a < 1 ? 1 : String(Math.floor(a)).length;
-    let s = setScale(x, Math.max(0, MAXD - intDigits));
-    if (s.indexOf(".") >= 0) s = s.replace(/0+$/, "").replace(/\.$/, "");
-    if (s.replace("-", "").replace(".", "").length > MAXD) {
-      if (e) return { str: "0", err: true };
-      return fmt(parseFloat(s));
+    if (cmp(abs(a), E12) >= 0) {                      // overflow: E with the leading 12 digits
+      e = true; a = { m: a.m, s: a.s + MAXD };
+      if (cmp(abs(a), E12) >= 0) return { str: "0", err: true };
     }
-    if (/^-0(\.0*)?$/.test(s)) s = "0";
-    return { str: s, err: e };
+    return { str: str(cut(a)), err: e };
   }
-  const parse = s => { const v = parseFloat(s); return isNaN(v) ? 0 : v; };
-  const cur = () => hasFull ? full : parse(entry);
-  const round = x => { const f = fmt(x); return f.err ? x : parseFloat(f.str); };
-  function show(x) { const f = fmt(x); entry = f.str; hasFull = !f.err; full = x; if (f.err) err = true; newEntry = true; }
+  function sqrt(x) {
+    let r = cut(num(Math.sqrt(parseFloat(str(x)))));
+    const ulp = { m: 1n, s: r.s };
+    while (cmp(mul(r, r), x) > 0) r = sub(r, ulp);
+    while (cmp(mul(add(r, ulp), add(r, ulp)), x) <= 0) r = add(r, ulp);
+    return r;
+  }
+  const cur = () => dec(entry);                       // the calculator works with what it shows
+  const reg = a => (cmp(abs(a), E12) >= 0 ? parseFloat(str(a)) : parseFloat(str(cut(a))));
+  function show(a) { const f = fmt(a); entry = f.str; if (f.err) err = true; newEntry = true; }
   function calc(a, o, b) {
-    if (o === "add") return a + b;
-    if (o === "sub") return a - b;
-    if (o === "mul") return a * b;
-    if (o === "div") return b === 0 ? NaN : a / b;
+    if (o === "add") return add(a, b);
+    if (o === "sub") return sub(a, b);
+    if (o === "mul") return mul(a, b);
+    if (o === "div") return div(a, b);
     return b;
   }
   function digit(d) {
-    hasFull = false;
     if (newEntry) { entry = "0"; newEntry = false; }
     typed = true;
-    const neg = entry[0] === "-", body = neg ? entry.slice(1) : entry;
-    if (body === "0") { entry = (neg ? "-" : "") + d; return; }
+    const ng = entry[0] === "-", body = ng ? entry.slice(1) : entry;
+    if (body === "0") { entry = (ng ? "-" : "") + d; return; }
     if (body.replace(".", "").length >= MAXD) return;
     entry += d;
   }
   function dot() {
-    hasFull = false;
     if (newEntry) { entry = "0."; newEntry = false; typed = true; return; }
     typed = true;
     if (entry.indexOf(".") < 0 && entry.replace("-", "").replace(".", "").length < MAXD) entry += ".";
@@ -161,41 +191,42 @@ function CalcEngine() {
     if (op !== null && typed) { show(calc(acc, op, cur())); if (err) return; }
     acc = cur(); op = o; newEntry = true; typed = false;
   }
+  const ONE = { m: 1n, s: 0 }, HUNDRED = { m: 100n, s: 0 };
   function equals(toGt) {
     if (toGt === undefined) toGt = true;   // false when finished by M+ / M− (not added to GT)
     let r, counted = toGt;
     if (op !== null) {
       const a = acc, b = cur();
-      if (op === "div" && !typed) r = a === 0 ? NaN : 1 / a;
+      if (op === "div" && !typed) r = div(ONE, a);
       else r = calc(a, op, b);
       if (op === "mul") { kOp = "mul"; kVal = a; } else { kOp = op; kVal = (op === "div" && !typed) ? a : b; }
       op = null;
     } else if (kOp !== null) {
       const x = cur();
-      r = kOp === "mul" ? kVal * x : calc(x, kOp, kVal);
+      r = kOp === "mul" ? mul(kVal, x) : calc(x, kOp, kVal);
     } else { r = cur(); }                 // "5 =" with nothing pending still counts towards GT, as on the real calculator
     show(r);
-    if (!err && counted) { E.gt = round(E.gt + cur()); save(); }
+    if (!err && counted) { E.gt = reg(add(num(E.gt), cur())); save(); }
     acc = cur(); typed = false;
   }
   function percent() {
     const x = cur(); let r;
     if (op !== null) {
-      const a = acc;
-      if (op === "mul") r = a * x / 100;
-      else if (op === "div") r = x === 0 ? NaN : a / x * 100;
-      else if (op === "add") r = a + a * x / 100;
-      else r = a - a * x / 100;
+      const a = acc, part = { m: a.m * x.m, s: a.s + x.s + 2 };   // a × x / 100
+      if (op === "mul") r = part;
+      else if (op === "div") r = div(mul(a, HUNDRED), x);
+      else if (op === "add") r = add(a, part);
+      else r = sub(a, part);
       op = null;
       show(r);
-      if (!err) { E.gt = round(E.gt + cur()); save(); }
-    } else show(x / 100);
+      if (!err) { E.gt = reg(add(num(E.gt), cur())); save(); }
+    } else show({ m: x.m, s: x.s + 2 });
     acc = cur(); typed = false;
   }
-  function memAdd(sign) {
+  function memAdd(sg) {
     if (op !== null && typed) equals(false);
     if (err) return;
-    E.mem = round(E.mem + sign * cur()); save();
+    E.mem = reg(sg > 0 ? add(num(E.mem), cur()) : sub(num(E.mem), cur())); save();
     newEntry = true; typed = false;
   }
   E.press = function (k) {
@@ -204,8 +235,8 @@ function CalcEngine() {
     if (k === "off") { fresh(); on = false; return; }
     if (k === "ac") { fresh(); E.gt = 0; E.mem = 0; save(); return; }
     if (k === "onc") {
-      if (err) { const keep = entry; fresh(); entry = keep; hasFull = true; full = parse(keep); }
-      else if (!newEntry && typed) { entry = "0"; hasFull = false; newEntry = true; typed = false; }
+      if (err) { const keep = entry; fresh(); entry = keep; }
+      else if (!newEntry && typed) { entry = "0"; newEntry = true; typed = false; }
       else fresh();
       return;
     }
@@ -218,22 +249,21 @@ function CalcEngine() {
         if (!newEntry) { entry = entry.slice(0, -1); if (entry === "" || entry === "-") entry = "0"; }
         break;
       case "neg":
-        if (hasFull) full = -full;
         if (entry[0] === "-") entry = entry.slice(1);
-        else if (cur() !== 0 || entry.indexOf(".") >= 0) entry = "-" + entry;
+        else if (sign(cur()) !== 0 || entry.indexOf(".") >= 0) entry = "-" + entry;
         typed = true;
         break;
       case "add": case "sub": case "mul": case "div": operator(k); break;
       case "eq": equals(); break;
       case "pct": percent(); break;
-      case "sqrt": { const x = cur(); if (x < 0) { entry = "0"; hasFull = false; err = true; } else show(Math.sqrt(x)); typed = true; break; }
+      case "sqrt": { const x = cur(); if (sign(x) < 0) { entry = "0"; err = true; } else show(sqrt(x)); typed = true; break; }
       case "mplus": memAdd(1); break;
       case "mminus": memAdd(-1); break;
-      case "mr": show(E.mem); typed = true; break;
+      case "mr": show(num(E.mem)); typed = true; break;
       case "mc": E.mem = 0; save(); break;
       case "gt":
         if (prev === "gt") { E.gt = 0; save(); }
-        else { show(E.gt); typed = true; }
+        else { show(num(E.gt)); typed = true; }
         break;
     }
   };
@@ -296,11 +326,19 @@ const STR = {
   auto_dark: ["深色模式時自動切換為曜石黑", "Switch to Obsidian in dark mode"],
   auto_dark_on: ["目前是深色模式，正在使用曜石黑", "Dark mode is on, so Obsidian is in use"],
   theme_light: ["淺色模式下的主題配色", "Colour theme in light mode"],
-  tour_replay: ["重看導覽", "Replay the tour"], tour_skip: ["跳過", "Skip"], tour_next: ["下一步", "Next"], tour_start: ["開始使用", "Get started"],
+  tour_replay: ["重看導覽", "Replay the tour"], tour_skip: ["跳過", "Skip"], tour_next: ["下一步", "Next"], tour_start: ["開始使用", "Get started"], tour_more: ["更多操作技巧", "More tips"],
+  get_app: ["在手機上使用", "Use it on your phone"],
+  get_android: ["Android：安裝 App", "Android: install the app"],
+  get_android_step: ["下載最新版的 APK 檔：", "Download the latest APK:"], get_android_btn: ["下載 APK", "Download APK"],
+  get_android_note: ["開啟下載的檔案，依提示允許「安裝不明來源的應用程式」即可安裝。之後有新版時，用同樣方式覆蓋安裝就好。", "Open the downloaded file and allow “Install unknown apps” when asked. Install a newer version the same way, over the old one."],
+  get_home: ["iPhone、iPad：加到主畫面", "iPhone, iPad: add to the Home Screen"],
+  get_home_intro: ["目前沒有 iOS 版 App，可以把這個網頁版加到主畫面，當作 App 使用：", "There is no iOS app, but you can add this web version to the Home Screen and use it as one:"],
+  get_home_ios: ["在 Safari 開啟這個網頁，點「分享」→「加入主畫面」。", "Open this page in Safari, then tap Share → Add to Home Screen."],
+  get_home_note: ["之後從主畫面開啟，會像 App 一樣全螢幕顯示，離線也能使用。", "It then opens full screen from the Home Screen, like an app, and works offline too."],
   tour1_t: ["歡迎使用會計計算機", "Welcome to Accounting Calculator"],
   tour1_b: ["按鍵配置和運算規則都照 12 位數的桌上型商用計算機設計，以下帶你看幾個重點。", "The keys and calculation rules follow a real 12-digit desk calculator. Here are a few things worth knowing."],
   tour2_t: ["螢幕指示", "Display indicators"],
-  tour2_b: ["MINUS、MEMORY、ERROR、GRAND TOTAL 作用中時，下方的橫條會亮起；右上角會顯示目前的運算符號。", "A bar lights up under MINUS, MEMORY, ERROR or GRAND TOTAL when it is active; the pending operator appears in the top-right corner."],
+  tour2_b: ["MINUS、MEMORY、ERROR、GRAND TOTAL 作用中時，下方的橫條會亮起；右上角的 + − × ÷ 會亮起目前的運算。", "A bar lights up under MINUS, MEMORY, ERROR or GRAND TOTAL when it is active; in the top-right corner, the pending one of + − × ÷ lights up."],
   tour3_t: ["GT 總計", "GT (grand total)"],
   tour3_b: ["每次按 = 或 % 算出的結果都會累加。按一下叫出，連按第二下清空。", "Every result from = or % is added up. Press once to recall it; press again to clear it."],
   tour4_t: ["常數計算", "Constant calculation"],
@@ -484,16 +522,18 @@ function drawLcd() {
     fillRR(cx - 2.3 * u, bt, cx + 2.3 * u, bt + u, .2 * u);
     x += w + 2.2 * u;
   }
+  // + − × ÷ each in a fixed place at the top right; the one pending lights up, the others stay as faint segments
+  const op = on ? eng.op() : null, ops = ["add", "sub", "mul", "div"], glyph = ["+", "−", "×", "÷"];
+  setText(500, 3 * u, ink, 0); text.align = "center";
+  const slot = 3.4 * u, oc = lcd.t + 1.3 * u + 1.35 * u;
+  for (let i = 0; i < 4; i++) {
+    text.c.a = (op === ops[i] ? 230 : 13) / 255;
+    const b = bounds(glyph[i]);
+    drawText(glyph[i], lcd.r - 2.4 * u - slot * (3.5 - i), oc - (b.top + b.bottom) / 2);
+  }
+  text.align = "left";
   fill.c.a = 1;
   if (!on) return;
-
-  const op = eng.op();
-  if (op) {
-    const o = { add: "+", sub: "−", mul: "×", div: "÷" }[op];
-    setText(500, 5 * u, ink, 0); text.c.a = 230 / 255; text.align = "right";
-    const b = bounds(o);
-    drawText(o, lcd.r - 2.4 * u, lcd.t + 3.3 * u - (b.top + b.bottom) / 2);
-  }
   const s = (neg && !full12 ? "−" : "") + eng.displayDigits();
   let size = 10.5 * u;
   if (sevenSeg) { size *= .748 / .76; setText(400, size, ink, 0); text.family = "'AcctCalc Seven', monospace"; }   // same digit height
@@ -673,6 +713,20 @@ function raised(elm, top, bot, side, o) {
     ? `linear-gradient(${top}, ${bot}) padding-box, linear-gradient(rgba(0,0,0,.10), rgba(0,0,0,0) 44px) border-box`
     : `linear-gradient(${top}, ${bot})`;
   elm.style.boxShadow = `inset 0 1.6px 0 ${lip}, 0 ${thick}px 0 ${side}, 0 ${thick + off}px ${blur * 1.6}px rgba(0,0,0,${sh})`;
+  if (o && o.press) pressable(elm, lip, side, thick, off, blur, sh);
+}
+/* pressed like a calculator key: the same proportions (face sinks 9/11 of the thickness, the side shrinks to about a
+   fifth, the shadow follows and tightens) and the same timing (quick press, soft release, at least 70 ms for a tap) */
+function pressable(elm, lip, side, thick, off, blur, sh) {
+  elm.classList.add("rz");
+  const t2 = thick * (1 - .85 / 1.1), dy = thick * .9 / 1.1;
+  elm.style.setProperty("--pY", dy + "px");
+  elm.style.setProperty("--shP", `inset 0 1.6px 0 ${lip}, 0 ${t2}px 0 ${side}, 0 ${t2 + off * (1 - 1.1 / 1.6)}px ${blur * .8}px rgba(0,0,0,${sh * .82})`);
+  let at = 0, timer = 0;
+  const down = () => { clearTimeout(timer); at = performance.now(); elm.classList.add("down"); };
+  const up = () => { timer = setTimeout(() => elm.classList.remove("down"), Math.max(0, 70 - (performance.now() - at))); };
+  elm.addEventListener("pointerdown", down);
+  ["pointerup", "pointercancel", "pointerleave"].forEach(ev => elm.addEventListener(ev, up));
 }
 function well(elm) {
   elm.style.background = th.dark ? "rgba(0,0,0,.25)" : "rgba(0,0,0,.08)";
@@ -683,7 +737,7 @@ function segmented(items, selected, onPick) {
   well(seg);
   items.forEach((label, i) => {
     const b = document.createElement("button"); b.type = "button"; b.textContent = label;
-    if (i === selected) { raised(b, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false }); b.style.color = th.acc[3]; } else b.style.color = th.fn[3];
+    if (i === selected) { raised(b, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false }); b.style.color = th.acc[3]; } else b.style.color = th.fn[3];   // a selector: does not sink
     b.addEventListener("click", () => onPick(i));
     seg.appendChild(b);
   });
@@ -709,7 +763,7 @@ function swatch(theme, sel) {
   g.beginPath(); g.arc(cx, cy + dd * .9, rr2, 0, 7); g.fillStyle = theme.acc[0]; g.fill();
   return c;
 }
-const APP_VERSION = "3.0.1";
+const APP_VERSION = "3.1.0";
 const svgChevron = (color, right) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="${right ? "M9 5l7 7-7 7" : "M15 5l-7 7 7 7"}"/></svg>`;
 const svgCheck = color => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>`;
 function buildSettings() {
@@ -738,8 +792,8 @@ function buildSettings() {
   // top bar
   const bar = el("div", "bar");
   const back = el("button"); back.type = "button"; back.setAttribute("aria-label", t("back")); back.innerHTML = svgChevron(txt, false);
-  raised(back, th.fn[0], th.fn[1], th.fn[2], { thick: 2.5, off: 2, blur: 3 });
-  back.addEventListener("click", closeSettings);
+  raised(bar, th.dark ? "#2D2F33" : th.bezelTop, th.dark ? "#27292D" : mixHex(th.bezelTop, th.bezelBot, .55), th.dark ? "#18191C" : th.bezelLine, { thick: 2.5, off: 2, blur: 3, press: true });
+  bar.addEventListener("click", closeSettings);                    // the whole block goes back
   bar.append(back, el("h2", null, t("settings"))); page.appendChild(bar);
 
   // language
@@ -762,8 +816,11 @@ function buildSettings() {
   const range = document.createElement("input");
   range.type = "range"; range.min = 60; range.max = 100; range.value = Math.round(keyScale * 100);
   const setP = () => range.style.setProperty("--p", ((range.value - 60) / 40 * 100) + "%");
-  range.style.setProperty("--on", th.acc[1]); range.style.setProperty("--off", th.sub); setP();
+  range.style.setProperty("--on", th.acc[1]); setP();
+  range.style.setProperty("--groove", th.dark ? "#1E1F22" : mixHex(th.bezelTop, "#000000", .08));
+  range.style.setProperty("--groovesh", th.dark ? "inset 0 2px 4px rgba(0,0,0,.35)" : "inset 0 2px 4px rgba(0,0,0,.14), 0 1px 0 rgba(255,255,255,.7)");
   range.style.setProperty("--knob", `linear-gradient(${th.acc[0]}, ${th.acc[1]})`);
+  range.style.setProperty("--knobshP", `inset 0 1.6px 0 ${mixHex(th.acc[0], "#ffffff", th.dark ? .14 : .45)}, 0 .57px 0 ${th.acc[2]}, 0 1.04px 2.4px rgba(0,0,0,${th.dark ? .34 : .15})`);
   range.style.setProperty("--knobsh", `inset 0 1.6px 0 ${mixHex(th.acc[0], "#ffffff", th.dark ? .14 : .45)}, 0 2.5px 0 ${th.acc[2]}, 0 4px 5px rgba(0,0,0,${th.dark ? .42 : .18})`);
   range.addEventListener("input", () => {
     setP();
@@ -772,15 +829,19 @@ function buildSettings() {
   });
   ac.appendChild(range);
   sec(ac, t("lcd_font"));
+  // two tiles side by side in a groove, the chosen one raised: a large sample with the font's name under it
+  const tiles = el("div", "tiles"); well(tiles);
   [["sans", "Google Sans", FONT], ["seven", t("font_seven"), "'AcctCalc Seven', monospace"]].forEach(([id, name, fam]) => {
     const on = (id === "seven") === sevenSeg;
-    const row = el("div", "row"); const l = el("span", "grow", name); if (on) l.style.fontWeight = "700"; row.appendChild(l);
-    const sample = el("span", null, "1'234.5"); sample.style.cssText = `font-family:${fam};font-size:20px;margin-right:12px;color:${th.sub}`;
-    row.appendChild(sample);
-    const ck = el("span"); ck.style.cssText = "width:22px;height:22px;display:inline-flex"; if (on) ck.innerHTML = svgCheck(th.acc[1]); row.appendChild(ck);
-    row.addEventListener("click", () => { sevenSeg = id === "seven"; store.set("lcdFont", id); invalidate(); buildSettings(); });
-    ac.appendChild(row);
+    const b = el("button"); b.type = "button"; b.setAttribute("aria-pressed", on ? "true" : "false");
+    if (on) raised(b, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false });
+    b.style.color = on ? th.acc[3] : th.fn[3];
+    const smp = el("span", "smp", "1'234.5"); smp.style.fontFamily = fam;
+    b.append(smp, el("span", "nm", name));
+    b.addEventListener("click", () => { sevenSeg = id === "seven"; store.set("lcdFont", id); invalidate(); buildSettings(); });
+    tiles.appendChild(b);
   });
+  ac.appendChild(tiles);
   sec(ac, t(autoDark ? "theme_light" : "theme"));   // with dark mode on, the choice here only applies in light mode
   const sw = el("div", "sw");
   THEMES.forEach(opt => {
@@ -794,10 +855,13 @@ function buildSettings() {
   const dr = el("label", "sec"); dr.style.alignItems = "center"; dr.style.cursor = "pointer"; dr.style.marginTop = "18px";
   dr.appendChild(el("span", null, t("auto_dark")));
   const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = autoDark; cb.className = "tg";
-  const icon = th.dark ? th.acc[1] : th.acc[2];
-  cb.style.setProperty("--on", th.acc[1]); cb.style.setProperty("--outline", th.sub);
-  cb.style.setProperty("--offtrack", th.dark ? "#36383D" : mixHex(th.bg, "#000000", .06));
-  cb.style.setProperty("--thumb", th.dark ? th.acc[3] : "#ffffff");
+  const icon = th.acc[2];
+  cb.style.setProperty("--on", th.acc[1]);
+  cb.style.setProperty("--groove", th.dark ? "#1E1F22" : mixHex(th.bezelTop, "#000000", .08));
+  cb.style.setProperty("--groovesh", th.dark ? "inset 0 2px 4px rgba(0,0,0,.35)" : "inset 0 2px 4px rgba(0,0,0,.14), 0 1px 0 rgba(255,255,255,.7)");
+  cb.style.setProperty("--knob", `linear-gradient(${th.fn[0]}, ${th.fn[1]})`);
+  cb.style.setProperty("--knobshP", `inset 0 1.6px 0 ${mixHex(th.fn[0], "#ffffff", th.dark ? .14 : .45)}, 0 .57px 0 ${th.fn[2]}, 0 1.04px 2.4px rgba(0,0,0,${th.dark ? .34 : .15})`);
+  cb.style.setProperty("--knobsh", `inset 0 1.6px 0 ${mixHex(th.fn[0], "#ffffff", th.dark ? .14 : .45)}, 0 2.5px 0 ${th.fn[2]}, 0 4px 5px rgba(0,0,0,${th.dark ? .42 : .18})`);
   cb.style.setProperty("--tick", `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M3.6 8.1l3.2 3.3 5.6-6.2' fill='none' stroke='${icon}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>`)}")`);
   cb.setAttribute("role", "switch");
   cb.addEventListener("change", () => { autoDark = cb.checked; store.set("autoDark", autoDark ? "1" : "0"); setTimeout(() => { th = effective(); applyChrome(); invalidate(); buildSettings(); }, 160); });   // let the thumb slide first
@@ -805,7 +869,31 @@ function buildSettings() {
   if (autoDark && systemDark()) { const note = el("div", "hint", t("auto_dark_on")); note.style.color = th.sub; ac.appendChild(note); }
 
   // tour
-  linkRow(card(null), t("tour_replay"), () => { closeSettings(); startTour(); });
+  const help = card(null);
+  linkRow(help, t("tour_replay"), () => { closeSettings(); startTour(); });
+  linkRow(help, t("tour_more"), () => window.open("https://github.com/tthomastsai/17-Nov-AcctCalc#readme", "_blank", "noopener"));   // same link as the tour's last step
+
+  // getting it on a phone: a card of its own, before About. Both ways are rows of the same kind that open
+  // to show their steps (Android has a file to download, the others only steps to follow)
+  const expand = (parent, label, fill) => {
+    const d = el("details"); const sm = el("summary", "xrow"); sm.style.color = th.label;
+    sm.append(el("span", null, label)); sm.insertAdjacentHTML("beforeend", `<span class="chev">${svgChevron(th.sub, true)}</span>`);
+    d.appendChild(sm); fill(d); parent.appendChild(d); return d;
+  };
+  const gp = card(t("get_app"));
+  expand(gp, t("get_android"), d => {
+    d.appendChild(el("p", "para", "1. " + t("get_android_step")));
+    const dl = el("button", "dl", t("get_android_btn")); dl.type = "button";
+    raised(dl, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false, press: true }); dl.style.color = th.acc[3];
+    dl.addEventListener("click", () => window.open("https://github.com/tthomastsai/17-Nov-AcctCalc/tree/main/dist", "_blank", "noopener"));
+    d.appendChild(dl);
+    d.appendChild(el("p", "para", "2. " + t("get_android_note")));
+  });
+  expand(gp, t("get_home"), d => {
+    d.appendChild(el("p", "para", t("get_home_intro")));
+    d.appendChild(el("p", "para", "• " + t("get_home_ios")));
+    d.appendChild(el("p", "para", t("get_home_note")));
+  });
 
   // about
   const ab = card(t("about"));
@@ -815,11 +903,12 @@ function buildSettings() {
   const made = el("p", "para"), mt = t("about_made"), mi = mt.indexOf("tthomastsai");   // author name in bold
   made.append(mt.slice(0, mi), el("b", null, "tthomastsai"), mt.slice(mi + 11)); ab.appendChild(made);
 
+
   // acknowledgements: a card of its own under About
   const ak = card(t("ack"));
   ["ack_design", "ack_gs", "ack_seven", "ack_claude"].forEach(k => ak.appendChild(el("p", "para", "• " + t(k))));
-  const det = el("details"); const sum = el("summary", null, t("licences"));
-  sum.style.cssText = "cursor:pointer;font-size:15px;font-weight:500;padding:8px 0;color:" + th.label; det.appendChild(sum);
+  const det = el("details"); const sum = el("summary", "xrow"); sum.style.color = th.label;
+  sum.append(el("span", null, t("licences"))); sum.insertAdjacentHTML("beforeend", `<span class="chev">${svgChevron(th.sub, true)}</span>`); det.appendChild(sum);
   const pre = el("pre", null, document.getElementById("licence-text").textContent.trim());
   pre.style.cssText = "white-space:pre-wrap;font:12px/1.4 monospace;margin:4px 0 0;user-select:text;-webkit-user-select:text"; det.appendChild(pre);
   ak.appendChild(det);
@@ -858,14 +947,19 @@ function tourRect(id) {
 function renderTour() {
   const id = TOUR[tourStep], last = tourStep === TOUR.length - 1, n = tourStep + 1;
   tourCard.innerHTML = "";
-  tourCard.style.background = th.dark ? "#2A2C30" : th.bezelTop; tourCard.style.color = th.fn[3];
+  raised(tourCard, th.dark ? "#2D2F33" : th.bezelTop, th.dark ? "#27292D" : mixHex(th.bezelTop, th.bezelBot, .55), th.dark ? "#18191C" : th.bezelLine);   // raised like the keys
+  tourCard.style.color = th.fn[3];
   const h = document.createElement("h3"); h.textContent = t("tour" + n + "_t");
   const p = document.createElement("p"); p.textContent = t("tour" + n + "_b");
   const row = document.createElement("div"); row.className = "trow";
-  if (!last) { const sk = document.createElement("button"); sk.type = "button"; sk.textContent = t("tour_skip"); sk.style.color = th.sub; sk.addEventListener("click", endTour); row.appendChild(sk); }
+  const sk = document.createElement("button"); sk.type = "button";
+  if (!last) { sk.textContent = t("tour_skip"); sk.style.color = th.sub; sk.addEventListener("click", endTour); }
+  else { sk.textContent = t("tour_more"); sk.style.color = th.label; sk.addEventListener("click", () => window.open("https://github.com/tthomastsai/17-Nov-AcctCalc#readme", "_blank", "noopener")); }   // last step: the README has more tips
+  row.appendChild(sk);
   const ct = document.createElement("span"); ct.textContent = n + " / " + TOUR.length; ct.style.color = th.sub; row.appendChild(ct);
   const nx = document.createElement("button"); nx.type = "button"; nx.className = "next"; nx.textContent = t(last ? "tour_start" : "tour_next");
-  nx.style.background = th.acc[1]; nx.style.color = th.acc[3]; nx.addEventListener("click", tourNext); row.appendChild(nx);
+  raised(nx, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false, press: true }); nx.style.color = th.acc[3];
+  nx.addEventListener("click", tourNext); row.appendChild(nx);
   tourCard.append(h, p, row);
   const vh = window.innerHeight, m = 16;
   if (!id) { tourEl.classList.add("nohole"); tourCard.style.top = Math.max(m, (vh - tourCard.offsetHeight) / 2) + "px"; return; }
