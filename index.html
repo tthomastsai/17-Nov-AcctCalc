@@ -26,10 +26,9 @@ body { font-family: "Google Sans", Roboto, system-ui, sans-serif; }
 #sheet .bar button { width: 44px; height: 44px; border: 0; padding: 0; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
 #sheet .head { font-size: 13px; font-weight: 700; margin: 16px 10px 8px; }
 #sheet .card { border-radius: 20px; padding: 16px 18px; margin: 0 4px 9px; border: .9px solid transparent; }
-#sheet .row { display: flex; align-items: center; padding: 8px 10px; margin: 0 -10px; border-radius: 12px; cursor: pointer; font-size: 15px; font-weight: 500; }
+#sheet .row { display: flex; align-items: center; padding: 8px 0; cursor: pointer; font-size: 15px; font-weight: 500; }
 .rz { transition: transform .06s, box-shadow .06s; }
 .rz:active { transform: translateY(var(--pY)); box-shadow: var(--shP) !important; }
-#sheet .row:active, #sheet .xrow:active, .seg button:active, .tiles button:active, .sw button:active { background-color: var(--press); }
 #tourCard button:not(.next):active { opacity: .5; }
 .tg:active::after { transform: translateY(1.5px); box-shadow: var(--knobshP); }
 input[type=range]:active::-webkit-slider-thumb { transform: translateY(1.2px); box-shadow: var(--knobshP); }
@@ -50,7 +49,7 @@ input[type=range]::-moz-range-track { height: 16px; border-radius: 8px; backgrou
 input[type=range]::-moz-range-progress { height: 16px; border-radius: 8px; background: var(--on); }
 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; margin-top: -1.5px; border-radius: 50%; border: 0; background: var(--knob); box-shadow: var(--knobsh); }
 input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; border: 0; background: var(--knob); box-shadow: var(--knobsh); transform: translateY(-1.5px); }
-.xrow { list-style: none; display: flex; align-items: center; padding: 10px; margin: 0 -10px; border-radius: 12px; cursor: pointer; font-size: 15px; font-weight: 500; }
+.xrow { list-style: none; display: flex; align-items: center; padding: 10px 0; cursor: pointer; font-size: 15px; font-weight: 500; }
 .xrow::-webkit-details-marker { display: none; }
 .xrow .chev { margin-left: auto; display: inline-flex; transition: transform .15s; }
 details[open] > .xrow .chev { transform: rotate(90deg); }
@@ -60,7 +59,7 @@ details[open] > .xrow .chev { transform: rotate(90deg); }
 .tiles .smp { font-size: 26px; line-height: 1.2; }
 .tiles .nm { font-size: 12px; font-weight: 500; margin-top: 2px; }
 .sw { display: flex; }
-.sw button { flex: 1; border: 0; background: transparent; padding: 4px 0; border-radius: 14px; display: flex; flex-direction: column; align-items: center; font: 500 11px inherit; font-family: inherit; cursor: pointer; color: inherit; }
+.sw button { flex: 1; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; font: 500 11px inherit; font-family: inherit; cursor: pointer; color: inherit; }
 .sw canvas { width: 48px; height: 48px; }
 .sw span { margin-top: 6px; }
 /* switch: the Material 3 shape (a 52x32 pill holding a round thumb) in the calculator's materials:
@@ -728,7 +727,7 @@ function segmented(items, selected, onPick) {
   well(seg);
   items.forEach((label, i) => {
     const b = document.createElement("button"); b.type = "button"; b.textContent = label;
-    if (i === selected) { raised(b, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false, press: true }); b.style.color = th.acc[3]; } else b.style.color = th.fn[3];
+    if (i === selected) { raised(b, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false }); b.style.color = th.acc[3]; } else b.style.color = th.fn[3];   // a selector: does not sink
     b.addEventListener("click", () => onPick(i));
     seg.appendChild(b);
   });
@@ -760,7 +759,6 @@ const svgCheck = color => `<svg width="22" height="22" viewBox="0 0 24 24" fill=
 function buildSettings() {
   const txt = th.fn[3], y = sheet.scrollTop;
   sheet.innerHTML = ""; sheet.style.background = th.bg; sheet.style.color = txt;
-  sheet.style.setProperty("--press", th.dark ? "rgba(255,255,255,.08)" : "rgba(0,0,0,.06)");
   const page = document.createElement("div"); page.className = "page"; sheet.appendChild(page);
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
   const card = heading => {
@@ -826,7 +824,7 @@ function buildSettings() {
   [["sans", "Google Sans", FONT], ["seven", t("font_seven"), "'AcctCalc Seven', monospace"]].forEach(([id, name, fam]) => {
     const on = (id === "seven") === sevenSeg;
     const b = el("button"); b.type = "button"; b.setAttribute("aria-pressed", on ? "true" : "false");
-    if (on) raised(b, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false, press: true });
+    if (on) raised(b, th.acc[0], th.acc[1], th.acc[2], { thick: 2.5, off: 1.5, blur: 2.5, rim: false });
     b.style.color = on ? th.acc[3] : th.fn[3];
     const smp = el("span", "smp", "1'234.5"); smp.style.fontFamily = fam;
     b.append(smp, el("span", "nm", name));
