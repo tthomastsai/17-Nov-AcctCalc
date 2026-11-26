@@ -21,7 +21,7 @@
 1 2 add 3 4 eq | 46
 1 0 sub 2 5 eq | -15
 7 div 3 eq | 2.33333333333
-1 div 3 mul 3 eq | 1
+1 div 3 mul 3 eq | 0.99999999999   # 每步只留顯示的 12 位（實機確認）
 dot 1 add dot 2 eq | 0.3
 2 mul 3 eq eq | 12   # Casio × constant: 2 × 6
 2 mul 3 eq 4 eq | 8   # constant 2 × 4
@@ -59,13 +59,13 @@ dot 1 add dot 2 eq | 0.3
 0 0 0 dot 5 0 | 0.50
 1 add 2 mul | 3   # chain
 1 add 2 mul 4 eq | 12
-1 div 3 eq mul 3 eq | 1
+1 div 3 eq mul 3 eq | 0.99999999999
 1 div 3 eq neg add 1 eq | 0.66666666667
 1 0 div 4 eq back | 2.5
 # --- 常數計算：換數字再按 = ---
 5 4 mul 5 eq 2 eq | 108   # × 記住第一個數
 5 4 mul 5 eq 3 eq | 162
-2 4 0 div eq | 0.00416666667   # a ÷ = 取倒數
+2 4 0 div eq | 0.00416666666   # a ÷ = 取倒數（無條件捨去）
 2 4 0 div eq 2 eq | 0.00833333333   # ÷ 記住除數
 2 4 0 div eq 5 eq | 0.02083333333
 5 add 5 eq 6 eq | 11   # + 記住加數
@@ -82,7 +82,7 @@ dot 1 add dot 2 eq | 0.3
 1 0 add 5 eq mplus gt | 15   # 先按 = 進 GT，再 M+ 不會重複加
 # --- 邊界情況（程式碼審查建議） ---
 dot 1 add dot 2 eq sub dot 3 eq | 0   # 0.1 + 0.2 − 0.3 不會顯示浮點誤差
-1 div 3 eq mul 3 eq sub 1 eq | 0
+1 div 3 eq mul 3 eq sub 1 eq | -0.00000000001
 0 div 0 eq | 0   # 錯誤
 1 neg div 0 eq | 0   # 負數 ÷ 0 也是錯誤
 1 div 0 eq add 2 eq | 0   # 錯誤狀態下其他按鍵無效
@@ -108,3 +108,11 @@ dot 0 0 0 0 0 0 0 0 0 0 1 | 0.00000000001   # 最小可顯示小數
 5 eq mplus gt | 5   # M+ 不會重複加進 GT
 # --- 實機確認：5 = = 讓 GT 變 10，叫出 GT 再按 = 會加上自己 → 20 ---
 5 eq eq gt eq gt | 20
+# --- 每步結果無條件捨去到 12 位（與利百代、emore 等國考第一類計算機相同，Casio 不同；實機確認） ---
+2 div 3 eq | 0.66666666666
+2 neg div 3 eq | -0.66666666666   # 負數往 0 的方向捨去
+1 div 1 dot 0 6 eq eq eq eq eq eq eq eq eq eq | 0.55839477687   # 1.06 的 −10 次方，除以 1.06 十次
+dot 7 mul 3 eq | 2.1   # 十進位運算，不會變成 2.09999999999
+2 sqrt | 1.41421356237
+1 0 0 sqrt | 10
+1 div 3 eq mplus 1 div 3 eq mplus mr | 0.66666666666

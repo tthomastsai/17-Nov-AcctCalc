@@ -24,7 +24,7 @@ An Android app modelled on the 12-digit business calculator on my desk. Its keys
 
 | Key | What it does |
 |---|---|
-| `+ − × ÷` | Chain calculations. While you enter the second number, the pending operator is shown in the top-right corner of the display. |
+| `+ − × ÷` | Chain calculations. The four signs have fixed places in the top-right corner of the display; the pending one lights up. |
 | `=` | Finishes the calculation. Afterwards, enter a new number and press `=` to repeat the same operation with it, or press `=` again to repeat it on the result (see *Constant calculation*). |
 | `%` | `3000 × 20 %` → 600; `3000 + 20 %` → 3'600 (mark-up); `3000 − 20 %` → 2'400 (discount); `20 ÷ 500 %` → 4 |
 | `√` | Square root of the number on the display. It works mid-calculation too: `9 √ × 6 =` → 18. |
@@ -82,9 +82,9 @@ You don't need Android Studio or Gradle, just JDK 17 or later and two parts of t
 BUILD_TOOLS=~/Android/Sdk/build-tools/35.0.1 ANDROID_JAR=~/Android/Sdk/platforms/android-34/android.jar ./build.sh
 ```
 
-Before it builds anything, `build.sh` runs the 103 test cases in `test/cases.txt` against the calculation engine, including every example from the function card, and then 21,000 random key sequences that check the display never shows anything other than a number of up to 12 digits. It only compiles and signs `build/Calculator.apk` if all of these pass, and any compile error stops the build.
+Before it builds anything, `build.sh` runs the 110 test cases in `test/cases.txt` against the calculation engine, including every example from the function card, and then 21,000 random key sequences that check the display never shows anything other than a number of up to 12 digits. It only compiles and signs `build/Calculator.apk` if all of these pass, and any compile error stops the build.
 
-To test the web version's engine on its own, run `node test/web-engine.test.js` (the same 103 cases).
+To test the web version's engine on its own, run `node test/web-engine.test.js` (the same 110 cases).
 
 ### Project structure
 
@@ -146,7 +146,7 @@ Google Sans is licensed under the SIL Open Font License 1.1 (`app/assets/fonts/O
 
 | 按鍵 | 行為 |
 |---|---|
-| `+ − × ÷` | 連續計算；輸入第二個數時，螢幕右上會顯示目前的運算符號 |
+| `+ − × ÷` | 連續計算；四個符號固定在螢幕右上角，作用中的那個會亮起 |
 | `=`（常數計算） | 算完一次後，輸入新數字再按 `=` 會重複同樣的運算；直接再按 `=` 則對結果重複運算，見下方說明 |
 | `%` | `3000 × 20 %` → 600；`3000 + 20 %` → 3'600（加成）；`3000 − 20 %` → 2'400（折扣）；`20 ÷ 500 %` → 4 |
 | `√` | 對螢幕上的數開根號，可以接在算式中（`9 √ × 6 =` → 18） |
@@ -203,9 +203,9 @@ sudo apt install aapt dalvik-exchange apksigner zipalign android-sdk-platform-23
 ./build.sh
 ```
 
-網頁版的運算邏輯可以用 `node test/web-engine.test.js` 測試（同樣 103 組案例）。
+網頁版的運算邏輯可以用 `node test/web-engine.test.js` 測試（同樣 110 組案例）。
 
-`build.sh` 會先用 `test/cases.txt` 的 103 組案例測試運算邏輯（包含功能說明卡上的全部範例），再跑 21,000 組隨機按鍵序列，確認螢幕永遠只會顯示 12 位數以內的數字。全部通過才會編譯、簽章，輸出 `build/Calculator.apk`；任何編譯錯誤都會讓建置停下。
+`build.sh` 會先用 `test/cases.txt` 的 110 組案例測試運算邏輯（包含功能說明卡上的全部範例），再跑 21,000 組隨機按鍵序列，確認螢幕永遠只會顯示 12 位數以內的數字。全部通過才會編譯、簽章，輸出 `build/Calculator.apk`；任何編譯錯誤都會讓建置停下。
 
 ### 專案結構
 
