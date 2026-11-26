@@ -182,7 +182,8 @@ public class SettingsActivity extends Activity {
             int fg = sel ? t.acc[3] : t.fn[3];
             TextView sample = label("1'234.5", 26, faces[i], fg);
             sample.setGravity(Gravity.CENTER);
-            tile.addView(sample);
+            sample.setIncludeFontPadding(false);          // the two fonts have different line heights: give both samples
+            tile.addView(sample, new LinearLayout.LayoutParams(-1, dp(36)));   // the same box so the names line up
             TextView nm = label(fontNames[i], 12, t500, fg);
             nm.setGravity(Gravity.CENTER); nm.setPadding(0, dp(2), 0, 0);
             tile.addView(nm);
