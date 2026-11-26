@@ -14,6 +14,7 @@ Changes are listed under *Unreleased* until a batch is released; see [`docs/DESI
 - Settings: the back arrow and title share one raised block; the display-digit choice is two tiles with a large sample; the key-height slider has a smaller knob in a groove as thick as it; the dark-mode switch keeps the Material 3 pill shape in the calculator's materials; the font-licence window follows the dark theme.
 - Tour: the card and its button are raised like the keys; the last step links to the README for more tips.
 - Web version: a "Use it on your phone" card before About (APK for Android, Add to Home Screen elsewhere).
+- Android: the web-version link moves out of About into a "Use it on other devices" card before it.
 
 ### 3.0.1
 - The settings page shares the calculator's look: raised cards with soft shadows and a little thickness, a round back key, a raised accent pill in a recessed groove for the position choice, a raised slider knob and raised theme swatches.
@@ -75,6 +76,7 @@ Changes are listed under *Unreleased* until a batch is released; see [`docs/DESI
 - 設定頁：返回箭頭和標題合成一塊浮起的區塊；螢幕數字字體改成兩張並排、附大範例的選項卡；按鍵高度滑桿的圓鈕縮小，凹槽和圓鈕一樣粗；深色模式開關維持 Material 3 的膠囊形狀，但改用計算機的質感；字型授權視窗跟著深色主題。
 - 導覽：卡片和按鈕改成和按鍵一樣浮起；最後一步可連到 README 看更多操作技巧。
 - 網頁版：「關於」前面新增「在手機上使用」卡片（Android 下載 APK，其他裝置加到主畫面）。
+- Android 版：網頁版連結從「關於」移出，改成「關於」前面的「在其他裝置上使用」卡片。
 
 ### 3.0.1
 - 設定頁改成和計算機一致的質感：卡片浮起、有柔和陰影和一點厚度；返回鍵是圓形按鍵；機身位置的選項是凹槽裡浮起的強調色按鍵；滑桿的圓鈕和主題色票也是浮起的。

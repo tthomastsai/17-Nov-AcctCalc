@@ -241,6 +241,17 @@ public class SettingsActivity extends Activity {
             @Override public void onClick(View v) { setResult(RESULT_OK, new Intent().putExtra(EXTRA_TOUR, true)); finish(); }
         }));
 
+        // ---- other devices: a card of its own before About (as the web version has "Use it on your phone")
+        LinearLayout other = section(page, I18n.t("other_devices"));
+        other.addView(linkRow(I18n.t("about_web"), new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WEB_URL))); } catch (Exception e) {}
+            }
+        }));
+        TextView on = para(I18n.t("other_devices_note"));
+        on.setTextColor(sub); on.setTextSize(13);
+        other.addView(on);
+
         // ---- about
         LinearLayout about = section(page, I18n.t("about"));
         String ver = "";
@@ -253,11 +264,6 @@ public class SettingsActivity extends Activity {
         TextView made = para(I18n.t("about_made"));
         made.setText(bold(I18n.t("about_made"), AUTHOR));
         about.addView(made);
-        about.addView(linkRow(I18n.t("about_web"), new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WEB_URL))); } catch (Exception e) {}
-            }
-        }));
 
         // ---- acknowledgements: a card of its own under About
         LinearLayout ack = section(page, I18n.t("ack"));

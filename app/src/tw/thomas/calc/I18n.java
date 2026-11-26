@@ -38,7 +38,9 @@ public final class I18n {
         put("about_font", "字型：Google Sans、AcctCalc Seven（本專案自製），皆為 SIL Open Font License 1.1", "Fonts: Google Sans and AcctCalc Seven (made for this app), both under the SIL Open Font License 1.1");
         put("lcd_font", "螢幕數字字體", "Display digits");
         put("font_seven", "七段顯示", "Seven-segment");
-        put("about_web", "網頁版", "Web version");
+        put("about_web", "網頁版：iPhone、iPad 及電腦", "Web version: iPhone, iPad and computers");
+        put("other_devices", "在其他裝置上使用", "Use it on other devices");
+        put("other_devices_note", "用瀏覽器開啟後，可以加到主畫面，像 App 一樣全螢幕使用，離線也能用。", "Open it in a browser and add it to the Home Screen to use it full screen like an app, offline too.");
         put("back", "返回", "Back");
         put("tour_replay", "重看導覽", "Replay the tour");
         put("tour_skip", "跳過", "Skip");
